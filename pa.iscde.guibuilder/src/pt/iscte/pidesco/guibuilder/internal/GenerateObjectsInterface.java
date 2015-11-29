@@ -7,4 +7,5 @@ public interface GenerateObjectsInterface {
 	public String generateTextField(String[] parameters);
 	public String generateCheckBox(String[] parameters);
 	public String generateRadioButton(String[] parameters);
+	public String generateAction(String[] parameters);
 }

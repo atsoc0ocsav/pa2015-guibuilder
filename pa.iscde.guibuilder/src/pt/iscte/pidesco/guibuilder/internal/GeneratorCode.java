@@ -113,6 +113,12 @@ public class GeneratorCode {
 			return null;
 		}
 
+		@Override
+		public String generateAction(String[] parameters) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 
 	private class SWIObjects implements GenerateObjectsInterface {
@@ -143,6 +149,12 @@ public class GeneratorCode {
 
 		@Override
 		public String generateRadioButton(String[] parameters) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String generateAction(String[] parameters) {
 			// TODO Auto-generated method stub
 			return null;
 		}
