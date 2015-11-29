@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.internal.ComponentInComposite;
+import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 
 public class GuiBuilderView implements PidescoView {
 	/*
@@ -214,8 +215,10 @@ public class GuiBuilderView implements PidescoView {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				// TODO Define method
-				System.out.println("Double click");
+				
+				System.out.println("Double click->Created method action");
+				//create dialog to select target
+				new GeneratorCode(GeneratorCode.selectTarget.SWI, null);
 			}
 		});
 
