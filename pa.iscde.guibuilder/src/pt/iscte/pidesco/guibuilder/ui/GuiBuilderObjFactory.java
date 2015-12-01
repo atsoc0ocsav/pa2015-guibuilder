@@ -3,14 +3,15 @@ package pt.iscte.pidesco.guibuilder.ui;
 import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -52,22 +53,14 @@ public class GuiBuilderObjFactory {
 
 	public static Figure createGuiBuilderCanvas(Canvas canvas, Map<String, Image> imageMap) {
 		if (imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME) != null) {
-			Label label = new Label(canvas, SWT.NONE);
-			Image image = imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME);
-			image = resizeImage(image, DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height);
+			Image img = imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME);
+			ImageFigure image = new ImageFigure();
+			image.setImage(resizeImage(img, DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
+			image.setBounds(new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
+					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
 
-			label.setBackgroundImage(image);
-			label.setBounds(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
-					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height);
-
-			RectangleFigure backgroundTextField = new RectangleFigure();
-			backgroundTextField.setBounds(
-					new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
-							DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
-
-			// new FigureMoverResizer(backgroundTextField, canvas, "", false,
-			// FigureMoverResizer.Handle.BOT_RIGHT);
-			return backgroundTextField;
+			new ImageResizer(image, null, "", false, img, FigureMoverResizer.Handle.BOT_RIGHT);
+			return image;
 		} else {
 			RectangleFigure fig = new RectangleFigure();
 			fig.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
@@ -79,8 +72,9 @@ public class GuiBuilderObjFactory {
 	}
 
 	public static ComponentInComposite createComponentFamilyObject(String cmpName, Canvas canvas, Figure contents) {
-		Point cursorLocation = Display.getCurrent().getCursorLocation();
-		Point relativeCursorLocation = Display.getCurrent().getFocusControl().toControl(cursorLocation);
+		org.eclipse.swt.graphics.Point cursorLocation = Display.getCurrent().getCursorLocation();
+		org.eclipse.swt.graphics.Point relativeCursorLocation = Display.getCurrent().getFocusControl()
+				.toControl(cursorLocation);
 
 		GuiLabels.GUIBuilderComponent component = null;
 		for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {

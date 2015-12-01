@@ -10,5 +10,15 @@
             icon="icon_gui.png">
       </view>
    </extension>
+   <extension
+         id="guibuilder"
+         name="GUI Builder"
+         point="pa.iscde.test.textext">
+      <item
+            class="pt.iscte.pidesco.guibuilder.ui.GuiBuilderView"
+            icon="icon_gui.png"
+            name="GUI Builder">
+      </item>
+   </extension>
 
 </plugin>

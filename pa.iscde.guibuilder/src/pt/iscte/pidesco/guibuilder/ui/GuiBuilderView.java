@@ -36,11 +36,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import pa.iscde.test.Teste;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.internal.ComponentInComposite;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 
-public class GuiBuilderView implements PidescoView {
+public class GuiBuilderView implements PidescoView,Teste {
 	/*
 	 * Parameterization (measures in pixels)
 	 */
@@ -216,7 +217,6 @@ public class GuiBuilderView implements PidescoView {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-
 				System.out.println("Double click->Created method action \n");
 
 			}
@@ -364,5 +364,10 @@ public class GuiBuilderView implements PidescoView {
 				event.data = objectTypeOrdinal + "\t" + button.getText();
 			}
 		});
+	}
+
+	@Override
+	public String getHelloWorld() {
+			return "Hello World from GuiBuilderView";
 	}
 }

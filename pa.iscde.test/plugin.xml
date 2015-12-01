@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="textext" name="Test Extension" schema="schema/textext.exsd"/>
+   <extension
+         id="view"
+         name="Extension points view"
+         point="pt.iscte.pidesco.view">
+      <view
+            class="pa.iscde.test.ExtensionPointsView"
+            icon="smiley.png">
+      </view>
+   </extension>
+
+</plugin>

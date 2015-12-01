@@ -17,11 +17,11 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
 
 public class FigureMoverResizer implements MouseListener, MouseMotionListener {
-	private static final int CORNER = 10;
-	private static final Dimension MIN_DIM = new Dimension(CORNER*3, CORNER*3);
+	protected static final int CORNER = 10;
+	protected static final Dimension MIN_DIM = new Dimension(CORNER*3, CORNER*3);
 	private boolean moveable;
-	private Canvas canvas;
-	private String text;
+	protected Canvas canvas;
+	protected String text;
 
 	public enum Handle {
 		TOP_LEFT {
@@ -85,10 +85,10 @@ public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 		}
 	}
 
-	private final IFigure figure;
-	private Point location;
-	private Handle handle;
-	private ArrayList<Handle> handlers;
+	protected final IFigure figure;
+	protected Point location;
+	protected Handle handle;
+	protected ArrayList<Handle> handlers;
 
 	public FigureMoverResizer(IFigure figure, Canvas canvas, String text, boolean moveable, Handle... handlers) {
 		if (figure == null)
