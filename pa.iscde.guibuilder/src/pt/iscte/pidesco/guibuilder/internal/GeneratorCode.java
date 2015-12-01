@@ -2,11 +2,14 @@ package pt.iscte.pidesco.guibuilder.internal;
 
 public class GeneratorCode {
 
+	private String code = "";
+
 	public GeneratorCode(GeneratorCode.selectTarget target, String targetObject) {
 		// Choose String targetObject or maybe ComponentInComposite components
 
 		if (target.equals(selectTarget.SWING)) {
 			SwingOjects swingObjects = new SwingOjects();
+			code += code + swingObjects.generateFrame(new String[] { "New Frame", "500", "500" });
 
 			switch (targetObject) {
 			case "button":
@@ -63,7 +66,7 @@ public class GeneratorCode {
 				break;
 			}
 		}
-
+		System.out.println(code);
 	}
 
 	public enum selectTarget {
@@ -82,6 +85,15 @@ public class GeneratorCode {
 	}
 
 	private class SwingOjects implements GenerateObjectsInterface {
+
+		@Override
+		public String generateFrame(String[] parameters) {
+
+			return new String("\n \t JFrame frame = new JFrame(\""+parameters[0]+"\"); \n"
+					+ "\t frame.setSize("+parameters[1]+","+parameters[2]+"); \n"
+					+ "\t frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); \n"
+					+ "\t frame.setVisible(true); \n \n");
+		}
 
 		@Override
 		public String generateButton(String[] parameters) {
@@ -122,6 +134,12 @@ public class GeneratorCode {
 	}
 
 	private class SWIObjects implements GenerateObjectsInterface {
+
+		@Override
+		public String generateFrame(String[] parameters) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
 		@Override
 		public String generateButton(String[] parameters) {

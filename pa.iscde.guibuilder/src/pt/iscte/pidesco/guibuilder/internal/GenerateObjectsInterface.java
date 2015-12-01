@@ -2,6 +2,7 @@ package pt.iscte.pidesco.guibuilder.internal;
 
 public interface GenerateObjectsInterface {
 
+	public String generateFrame(String[] parameters);
 	public String generateButton(String[] parameters);
 	public String generateLabel(String[] parameters);
 	public String generateTextField(String[] parameters);

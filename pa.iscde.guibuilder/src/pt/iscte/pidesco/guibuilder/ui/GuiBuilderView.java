@@ -21,6 +21,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -215,10 +216,9 @@ public class GuiBuilderView implements PidescoView {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				
-				System.out.println("Double click->Created method action");
-				//create dialog to select target
-				new GeneratorCode(GeneratorCode.selectTarget.SWI, null);
+
+				System.out.println("Double click->Created method action \n");
+
 			}
 		});
 
@@ -227,11 +227,12 @@ public class GuiBuilderView implements PidescoView {
 	private void openDialogMenu(Canvas canvas, FigureMoverResizer fmr, int x, int y) {
 		Menu popupMenu = new Menu(canvas);
 		MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
-		renameItem.setText("Rename");
+		renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
+		addDialogMenuListener(renameItem, canvas, fmr, x, y);
 
 		// Menu COLOR
 		MenuItem colorItem = new MenuItem(popupMenu, SWT.CASCADE);
-		colorItem.setText("Choose Background Color");
+		colorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_COLOR.str());
 		Menu chooseColorItemMenu = new Menu(colorItem);
 		colorItem.setMenu(chooseColorItemMenu);
 
@@ -241,7 +242,18 @@ public class GuiBuilderView implements PidescoView {
 			addDialogMenuListener(item, canvas, fmr, x, y);
 		}
 
+		MenuItem goToCodeItem = new MenuItem(popupMenu, SWT.NONE);
+		goToCodeItem.setText(GuiLabels.DialogMenuLabel.GO_TO_CODE.str());
+		goToCodeItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// create dialog to select target
+				new GeneratorCode(GeneratorCode.selectTarget.SWING, "");
+			}
+		});
+
 		popupMenu.setVisible(true);
+
 	}
 
 	private void addDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureMoverResizer fmr,
@@ -259,7 +271,7 @@ public class GuiBuilderView implements PidescoView {
 				if (itemText.equals(GuiLabels.DialogMenuLabel.RENAME.str())) {
 					String inputText = new InputDialog(x, y, topComposite.getShell(), SWT.BAR).open();
 					fmr.setText(inputText);
-				} else {
+				} else if (itemText.equals(GuiLabels.DialogMenuLabel.CHOOSE_COLOR.str())) {
 					for (GuiLabels.Color c : GuiLabels.Color.values()) {
 						if (c.name().equals(itemText)) {
 							if (itemText.equals(GuiLabels.Color.Other.name())) {
