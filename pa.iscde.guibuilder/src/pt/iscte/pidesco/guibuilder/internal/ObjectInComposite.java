@@ -2,13 +2,13 @@ package pt.iscte.pidesco.guibuilder.internal;
 
 import pt.iscte.pidesco.guibuilder.ui.FigureMoverResizer;
 
-public class ComponentInComposite {
+public class ObjectInComposite {
 
 	private String id;
 	private Object object;
 	private FigureMoverResizer fmr;
 	
-	public ComponentInComposite(String id, Object object, FigureMoverResizer fmr) {
+	public ObjectInComposite(String id, Object object, FigureMoverResizer fmr) {
 		this.id = id;
 		this.object = object;
 		this.fmr = fmr;
@@ -37,6 +37,4 @@ public class ComponentInComposite {
 	public void setFmr(FigureMoverResizer fmr) {
 		this.fmr = fmr;
 	}
-	
-
 }

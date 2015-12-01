@@ -27,36 +27,49 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
-import pt.iscte.pidesco.guibuilder.internal.ComponentInComposite;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
+import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 
-public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
+public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	/*
 	 * Parameterization (measures in pixels)
 	 */
+	// Dimensions and images
 	private final Dimension BOTTOM_COMPOSITE_BUTTONS_DIM = new Dimension(150, 90);
 	private final int BOTTOM_COMPOSITE_MINIMUM_HEIGHT = BOTTOM_COMPOSITE_BUTTONS_DIM.height + 78;
 	private final String COMPONENTS_TAB_ICON_FILENAME = "icon_tab_components.png";
 	private final String LAYOUTS_TAB_ICON_FILENAME = "icon_tab_layouts.png";
 	private final String CONTAINERS_TAB_ICON_FILENAME = "icon_tab_containers.png";
 
+	// Messages
+	private final String INITIAL_MSG = "Welcome to GUIBuilder!";
+	private final String ADDED_OBJECT_MSG = "Added %s to canvas"; // Where %s is the component name
+	private final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas"; // Where %s is the component name
+
 	/*
 	 * Variables
 	 */
+	private Composite viewArea;
+	private Map<String, Image> imageMap;
 	private Composite topComposite;
 	private Composite bottomComposite;
-	private ArrayList<ComponentInComposite> components = new ArrayList<ComponentInComposite>();
+	private ArrayList<ObjectInComposite> components = new ArrayList<ObjectInComposite>();
+	private Text messageArea;
 
 	/*
 	 * Constructors and main methods
@@ -66,35 +79,52 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 	}
 
 	@Override
-	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
-		createBaseFrame(viewArea, imageMap);
-		populateTopComposite(topComposite, imageMap);
-		populateBottomComposite(bottomComposite, imageMap);
+	public void createContents(final Composite viewArea, final Map<String, Image> imageMap) {
+		this.viewArea = viewArea;
+		this.imageMap = imageMap;
+		createBaseFrame();
+		populateTopComposite();
+		populateBottomComposite();
 	}
 
-	// TODO Change to include status bar
-	private void createBaseFrame(Composite viewArea, Map<String, Image> imageMap) {
-		viewArea.setLayout(new FillLayout());
+	private void createBaseFrame() {
+		viewArea.setLayout(new GridLayout(1, false));
 
 		// Create a LiveSashForm with VERTICAL and with a minimum height
 		LiveSashForm sashForm = new LiveSashForm(viewArea, SWT.VERTICAL);
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.verticalAlignment = SWT.FILL;
+		gridData.grabExcessVerticalSpace = true;
+		sashForm.setLayoutData(gridData);
 
+		// Top Composite (the GUIBuilder canvas)
 		topComposite = new Composite(sashForm, SWT.BORDER);
 		topComposite.setLayout(new FillLayout());
 
+		// Bottom Composite (where the tabs with the elements are)
 		bottomComposite = new Composite(sashForm, SWT.BORDER);
 		bottomComposite.setLayout(new FillLayout());
 
-		// Define the relation between both composites
-		sashForm.setWeights(new int[] { 6, 2 });
+		// Define the relation between both top and bottom composites
+		sashForm.setWeights(new int[] { 7, 2 });
 		sashForm.dragMinimum = BOTTOM_COMPOSITE_MINIMUM_HEIGHT;
+
+		// Create the message fiels
+		messageArea = new Text(viewArea, SWT.READ_ONLY | SWT.BORDER);
+		messageArea.setText(INITIAL_MSG);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		messageArea.setLayoutData(gridData);
 	}
 
 	/*
 	 * Top composite methods
 	 */
-	private void populateTopComposite(Composite composite, Map<String, Image> imageMap) {
-		final Canvas canvas = new Canvas(composite, SWT.NONE);
+	private void populateTopComposite() {
+		final Canvas canvas = new Canvas(topComposite, SWT.NONE);
 		LightweightSystem lws = new LightweightSystem(canvas);
 		final Figure contents = new Figure();
 
@@ -105,7 +135,7 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 		contents.add(GuiBuilderObjFactory.createGuiBuilderCanvas(canvas, imageMap));
 
 		// Create the drop target on the composite
-		DropTarget dt = new DropTarget(composite, DND.DROP_MOVE);
+		DropTarget dt = new DropTarget(topComposite, DND.DROP_MOVE);
 		dt.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		dt.addDropListener(new DropTargetAdapter() {
 			public void drop(DropTargetEvent event) {
@@ -117,19 +147,27 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 					int index = Integer.parseInt(data[0]);
 					GuiLabels.GUIBuilderObjectFamily of = GuiLabels.GUIBuilderObjectFamily.values()[index];
 					String objectName = data[1];
+					ObjectInComposite newObject = null;
 
 					switch (of) {
 					case COMPONENTS:
-						components.add(GuiBuilderObjFactory.createComponentFamilyObject(objectName, canvas, contents));
+						newObject = GuiBuilderObjFactory.createComponentFamilyObject(objectName, canvas, contents);
 						break;
 					case LAYOUTS:
-						components.add(GuiBuilderObjFactory.createLayoutFamilyObject(objectName, canvas, contents));
+						newObject = GuiBuilderObjFactory.createLayoutFamilyObject(objectName, canvas, contents);
 						break;
 					case CONTAINERS:
-						components.add(GuiBuilderObjFactory.createContainerFamilyObject(objectName, canvas, contents));
+						newObject = GuiBuilderObjFactory.createContainerFamilyObject(objectName, canvas, contents);
 						break;
 					default:
 						throw new IllegalAccessError("Switch case not defined!");
+					}
+
+					if (newObject != null) {
+						components.add(newObject);
+						setMessage(ADDED_OBJECT_MSG, objectName);
+					} else {
+						setMessage(OUT_OF_BOUNDS_OBJECT_MSG,Display.getCurrent().getSystemColor(SWT.COLOR_RED),objectName);
 					}
 				}
 			}
@@ -137,14 +175,13 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 		mouseEventTopComposite(canvas);
 	}
 
-	// TODO Refactoring
 	private void mouseEventTopComposite(final Canvas canvas) {
 		canvas.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseUp(MouseEvent event) {
 				if (event.button == 3) { // Right click
-					for (ComponentInComposite componentInComposite : components) {
+					for (ObjectInComposite componentInComposite : components) {
 						boolean found = false;
 
 						for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
@@ -217,8 +254,7 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				System.out.println("Double click->Created method action \n");
-
+				System.out.println("Double click-> Created method action \n");
 			}
 		});
 
@@ -295,8 +331,8 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 	/*
 	 * Bottom composite methods
 	 */
-	private void populateBottomComposite(Composite composite, Map<String, Image> imageMap) {
-		TabFolder tabFolder = new TabFolder(composite, SWT.TOP);
+	private void populateBottomComposite() {
+		TabFolder tabFolder = new TabFolder(bottomComposite, SWT.TOP);
 
 		for (GuiLabels.GUIBuilderObjectFamily tabLabel : GuiLabels.GUIBuilderObjectFamily.values()) {
 			TabItem tabItem = new TabItem(tabFolder, SWT.NULL);
@@ -366,8 +402,20 @@ public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 		});
 	}
 
+	/*
+	 * Other methods
+	 */
+	public void setMessage(String message, Object... args) {
+		setMessage(message,Display.getCurrent().getSystemColor(SWT.COLOR_BLACK),args);
+	}
+	
+	public void setMessage(String message,Color color, Object... args){
+		messageArea.setForeground(color);
+		messageArea.setText(String.format(message, args));
+	}
+
 	@Override
 	public String getHelloWorld() {
-			return "Hello World from GuiBuilderView";
+		return "Hello World from GuiBuilderView";
 	}
 }

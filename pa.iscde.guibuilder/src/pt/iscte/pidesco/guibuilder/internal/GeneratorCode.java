@@ -7,6 +7,9 @@ public class GeneratorCode {
 	public GeneratorCode(GeneratorCode.selectTarget target, String targetObject) {
 		// Choose String targetObject or maybe ComponentInComposite components
 
+		// TODO refactoring.....
+		System.err.println("I need refactoring!!!!!!!!!!");
+		
 		if (target.equals(selectTarget.SWING)) {
 			SwingOjects swingObjects = new SwingOjects();
 			code += code + swingObjects.generateFrame(new String[] { "New Frame", "500", "500" });
