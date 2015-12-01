@@ -1,5 +1,5 @@
 package pa.iscde.test;
 
-public interface Teste {
+public interface ExtensionTestInterface {
 	public String getHelloWorld();
 }

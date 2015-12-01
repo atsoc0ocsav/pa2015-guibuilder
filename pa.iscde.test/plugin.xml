@@ -3,8 +3,8 @@
 <plugin>
    <extension-point id="textext" name="Test Extension" schema="schema/textext.exsd"/>
    <extension
-         id="view"
-         name="Extension points view"
+         id="extensionPointTest"
+         name="Extension Point Test"
          point="pt.iscte.pidesco.view">
       <view
             class="pa.iscde.test.ExtensionPointsView"

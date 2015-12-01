@@ -1,9 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="pa.iscde.test" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="pa.iscde.extensionTest" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="pa.iscde.test" id="textext" name="Test Extension"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]

@@ -13,7 +13,7 @@
    <extension
          id="guibuilder"
          name="GUI Builder"
-         point="pa.iscde.test.textext">
+         point="pa.iscde.extensionTest.textext">
       <item
             class="pt.iscte.pidesco.guibuilder.ui.GuiBuilderView"
             icon="icon_gui.png"

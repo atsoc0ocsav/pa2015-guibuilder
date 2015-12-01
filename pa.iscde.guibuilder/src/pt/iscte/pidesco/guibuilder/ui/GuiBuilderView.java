@@ -36,12 +36,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import pa.iscde.test.Teste;
+import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.internal.ComponentInComposite;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 
-public class GuiBuilderView implements PidescoView,Teste {
+public class GuiBuilderView implements PidescoView,ExtensionTestInterface {
 	/*
 	 * Parameterization (measures in pixels)
 	 */

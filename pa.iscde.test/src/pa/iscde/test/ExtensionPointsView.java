@@ -84,9 +84,9 @@ public class ExtensionPointsView implements PidescoView {
 						System.out.println("Att: " + att + "\t Content: " + e.getAttribute(att));
 					}
 					if (combo.getItem(combo.getSelectionIndex()).endsWith("textext")) {
-						Teste o;
+						ExtensionTestInterface o;
 						try {
-							o = (Teste) e.createExecutableExtension("class");
+							o = (ExtensionTestInterface) e.createExecutableExtension("class");
 
 							System.out.println(o.getHelloWorld());
 						} catch (CoreException e1) {
