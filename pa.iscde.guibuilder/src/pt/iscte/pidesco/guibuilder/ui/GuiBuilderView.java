@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -148,16 +149,17 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					GuiLabels.GUIBuilderObjectFamily of = GuiLabels.GUIBuilderObjectFamily.values()[index];
 					String objectName = data[1];
 					ObjectInComposite newObject = null;
-
+					Point position =event.display.map(null, topComposite, new Point(event.x, event.y));
+					
 					switch (of) {
 					case COMPONENTS:
-						newObject = GuiBuilderObjFactory.createComponentFamilyObject(objectName, canvas, contents);
+						newObject = GuiBuilderObjFactory.createComponentFamilyObject(position,objectName, canvas, contents);
 						break;
 					case LAYOUTS:
-						newObject = GuiBuilderObjFactory.createLayoutFamilyObject(objectName, canvas, contents);
+						newObject = GuiBuilderObjFactory.createLayoutFamilyObject(position,objectName, canvas, contents);
 						break;
 					case CONTAINERS:
-						newObject = GuiBuilderObjFactory.createContainerFamilyObject(objectName, canvas, contents);
+						newObject = GuiBuilderObjFactory.createContainerFamilyObject(position,objectName, canvas, contents);
 						break;
 					default:
 						throw new IllegalAccessError("Switch case not defined!");

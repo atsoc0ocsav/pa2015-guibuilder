@@ -14,11 +14,13 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Control;
 
 public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 	protected static final int CORNER = 10;
-	protected static final Dimension MIN_DIM = new Dimension(CORNER*3, CORNER*3);
+	protected static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
 	private boolean moveable;
 	protected Canvas canvas;
 	protected String text;
@@ -89,6 +91,7 @@ public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 	protected Point location;
 	protected Handle handle;
 	protected ArrayList<Handle> handlers;
+	private Control control;
 
 	public FigureMoverResizer(IFigure figure, Canvas canvas, String text, boolean moveable, Handle... handlers) {
 		if (figure == null)
@@ -103,6 +106,13 @@ public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 		figure.addMouseMotionListener(this);
 
 		updateText(figure, canvas, text);
+		this.control = null;
+	}
+
+	public FigureMoverResizer(IFigure figure, Control control, Canvas canvas, String text, boolean moveable,
+			Handle... handlers) {
+		this(figure, canvas, text, moveable, handlers);
+		this.control = control;
 	}
 
 	public void updateText(final IFigure figure, Canvas canvas, final String text) {
@@ -154,10 +164,14 @@ public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 		if (handle != null) { // resize
 			Rectangle newPos = handle.getNewPosition(bounds, offset);
 
-			if (newPos.getSize().height > MIN_DIM.height && newPos.getSize().width > MIN_DIM.width) {
+			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width) {
 				layoutMgr.setConstraint(figure, newPos);
 				updateMgr.addDirtyRegion(figure.getParent(), newPos);
 				layoutMgr.layout(figure.getParent());
+
+				if (control != null) {
+					control.setSize(newPos.getSize().width, newPos.getSize().height);
+				}
 			}
 		} else { // move
 			if (moveable) {
@@ -165,6 +179,10 @@ public class FigureMoverResizer implements MouseListener, MouseMotionListener {
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
 				updateMgr.addDirtyRegion(figure.getParent(), bounds);
+
+				if (control != null) {
+					control.setLocation(figure.getBounds().x, figure.getBounds().y);
+				}
 			}
 		}
 

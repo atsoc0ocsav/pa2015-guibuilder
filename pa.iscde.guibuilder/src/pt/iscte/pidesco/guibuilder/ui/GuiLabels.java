@@ -20,7 +20,7 @@ public class GuiLabels {
 	}
 
 	public enum DialogMenuLabel {
-		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE ("Go to Code");
+		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code");
 
 		private String str;
 
@@ -48,9 +48,9 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderComponent {
-		// BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"),
-		// RADIO_BTN("Radio Button"), CHK_BOX("Check Box");
-		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box");
+		 BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"),
+		 RADIO_BTN("Radio Button"), CHK_BOX("Check Box");
+		//BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box");
 
 		private String str;
 

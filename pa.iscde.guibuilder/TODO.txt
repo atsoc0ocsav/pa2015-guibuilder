@@ -1,8 +1,5 @@
 TODO List:
 - Add messages in message area when actions are performed (add stuff, change parameters)
 - Imagem no lugar certo
-- Resize da Label (com rectângulo por trás)
 - Meter nome e imagem na janela (guibuilder)
 - Double click - go to code
-- Set invalid drop no rato, nas zonas fora do layout
-

@@ -1,14 +1,19 @@
 package pt.iscte.pidesco.guibuilder.ui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -16,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
@@ -24,21 +30,11 @@ public class GuiBuilderObjFactory {
 	/*
 	 * GUIBuilder specific parameters
 	 */
-	// Dimensions Canvas
+	// Dimensions
 	private static final Point DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET = new Point(5, 5);
 	private static final Dimension DEFAULT_FAKEWINDOW_INIT_DIM = new Dimension(400, 400);
 	private static int TOPBAR_HEIGH = 100;
-
-	// Dimensions Elements
-	private static final Dimension DEFAULT_BUTTON_DIM = new Dimension(100, 90);
-	private static final Dimension DEFAULT_LABEL_BACKGND_DIM = new Dimension(70, 30);
-	private static final Dimension DEFAULT_LABEL_DIM = new Dimension(55, 15);
-	private static final Dimension DEFAULT_TXTFIELD_BACKGND_DIM = new Dimension(150, 40);
-	private static final Dimension DEFAULT_TXTFIELD_DIM = new Dimension(100, 20);
-	private static final Dimension DEFAULT_RADIOBTN_BACKGND_DIM = new Dimension(150, 40);
-	private static final Dimension DEFAULT_RADIOBTN_DIM = new Dimension(100, 20);
-	private static final Dimension DEFAULT_CHCKBOX_BACKGND_DIM = new Dimension(150, 40);
-	private static final Dimension DEFAULT_CHCKBOX_DIM = new Dimension(100, 20);
+	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
 
 	// Default text
 	private static final String DEFAULT_BTN_TXT = "New Button";
@@ -63,7 +59,8 @@ public class GuiBuilderObjFactory {
 			image.setBounds(new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
 					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
 
-			new ImageResizer(image, null, "", false, img, FigureMoverResizer.Handle.BOT_RIGHT);
+			// new ImageResizer(image, null, "", false, img,
+			// FigureMoverResizer.Handle.BOT_RIGHT);
 			return image;
 		} else {
 			RectangleFigure fig = new RectangleFigure();
@@ -75,15 +72,8 @@ public class GuiBuilderObjFactory {
 		}
 	}
 
-	public static ObjectInComposite createComponentFamilyObject(String cmpName, Canvas canvas, Figure contents) {
-		Point absCursorLocation = Display.getCurrent().getCursorLocation();
-		Point mousePosition = Display.getCurrent().getFocusControl().toControl(absCursorLocation);
-
-		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-			mousePosition.x = mousePosition.x + WINDOWS_MOUSE_OFFSET.x;
-			mousePosition.y = absCursorLocation.y + WINDOWS_MOUSE_OFFSET.y;
-		}
-
+	public static ObjectInComposite createComponentFamilyObject(Point position, String cmpName, Canvas canvas,
+			Figure contents) {
 		GuiLabels.GUIBuilderComponent component = null;
 		for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
 			if (c.str().equals(cmpName)) {
@@ -92,142 +82,147 @@ public class GuiBuilderObjFactory {
 			}
 		}
 
-		switch (component) {
-		case BTN:
-			RoundedRectangle button = new RoundedRectangle();
-			button.setCornerDimensions(new Dimension(20, 20));
+		if (insideCanvas(position)) {
+			switch (component) {
+			case BTN:
+				FontMetrics fmButton = new GC(canvas).getFontMetrics();
+				Point buttonSize = new Point(
+						(fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
+						fmButton.getHeight() + LABELS_MARGIN.height);
 
-			boolean insideCanvas = true;
-			if (mousePosition.x < DEFAULT_FAKEWINDOW_INIT_DIM.width && mousePosition.x > (DEFAULT_BUTTON_DIM.width / 2)
-					&& mousePosition.y < DEFAULT_FAKEWINDOW_INIT_DIM.height
-					&& mousePosition.y > (DEFAULT_BUTTON_DIM.height / 2)) {
-				button.setBounds(new Rectangle(mousePosition.x - (DEFAULT_BUTTON_DIM.width / 2),
-						mousePosition.y - (DEFAULT_BUTTON_DIM.height / 2), DEFAULT_BUTTON_DIM.width,
-						DEFAULT_BUTTON_DIM.height));
-				// System.out.println("Option 1");
-			} else if (mousePosition.x < (DEFAULT_BUTTON_DIM.width / 2)
-					&& mousePosition.y < (DEFAULT_BUTTON_DIM.height / 2)) {
-				button.setBounds(new Rectangle(0, 0, DEFAULT_BUTTON_DIM.width, DEFAULT_BUTTON_DIM.height));
-				// System.out.println("Option 2");
-			} else if (mousePosition.x < (DEFAULT_BUTTON_DIM.width / 2)
-					&& mousePosition.x < DEFAULT_FAKEWINDOW_INIT_DIM.width
-					&& mousePosition.y < DEFAULT_FAKEWINDOW_INIT_DIM.height) {
-				button.setBounds(new Rectangle(0, mousePosition.y - (DEFAULT_BUTTON_DIM.height / 2),
-						DEFAULT_BUTTON_DIM.width, DEFAULT_BUTTON_DIM.height));
-				// System.out.println("Option 3");
+				RectangleFigure backgroundButton = new RectangleFigure();
+				backgroundButton.setBounds(new Rectangle(position.x, position.y, buttonSize.x, buttonSize.y));
+				backgroundButton.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				contents.add(backgroundButton);
 
-			} else if (mousePosition.y < (DEFAULT_BUTTON_DIM.height / 2)
-					&& mousePosition.x < DEFAULT_FAKEWINDOW_INIT_DIM.width
-					&& mousePosition.y < DEFAULT_FAKEWINDOW_INIT_DIM.height) {
-				button.setBounds(new Rectangle(mousePosition.x - (DEFAULT_BUTTON_DIM.width / 2), 0,
-						DEFAULT_BUTTON_DIM.width, DEFAULT_BUTTON_DIM.height));
-				// System.out.println("Option 4");
-			} else {
-				insideCanvas = false;
-			}
+				Button button = new Button(canvas, SWT.BORDER);
+				button.setText(DEFAULT_BTN_TXT);
+				button.setLocation(position.x, position.y);
+				button.setSize(buttonSize);
+				button.setEnabled(false);
 
-			if (insideCanvas) {
-				contents.add(button);
-				FigureMoverResizer fmrButton = new FigureMoverResizer(button, canvas, DEFAULT_BTN_TXT, true,
-						FigureMoverResizer.Handle.values());
+				FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, button, canvas, DEFAULT_BTN_TXT,
+						true, FigureMoverResizer.Handle.values());
 
 				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), button, fmrButton);
-			} else {
-				return null;
+
+			case LABEL:
+				FontMetrics fmLabel = new GC(canvas).getFontMetrics();
+				Point labelSize = new Point(
+						(fmLabel.getAverageCharWidth() * DEFAULT_LABEL_TXT.length()) + LABELS_MARGIN.width,
+						fmLabel.getHeight() + LABELS_MARGIN.height);
+
+				RectangleFigure backgroundLabel = new RectangleFigure();
+				backgroundLabel.setBounds(new Rectangle(position.x, position.y, labelSize.x, labelSize.y));
+				backgroundLabel.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				contents.add(backgroundLabel);
+
+				Label label = new Label(canvas, SWT.BORDER);
+				label.setText(DEFAULT_LABEL_TXT);
+				label.setLocation(position.x, position.y);
+				label.setSize(labelSize);
+				label.setEnabled(false);
+
+				FigureMoverResizer fmrLabel = new FigureMoverResizer(backgroundLabel, label, canvas, DEFAULT_LABEL_TXT,
+						true, FigureMoverResizer.Handle.values());
+
+				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), label, fmrLabel);
+
+			case TEXTFIELD:
+				FontMetrics fmTxtField = new GC(canvas).getFontMetrics();
+				Point txtFieldSize = new Point(
+						(fmTxtField.getAverageCharWidth() * DEFAULT_TXTFIELD_TXT.length()) + LABELS_MARGIN.width,
+						fmTxtField.getHeight() + LABELS_MARGIN.height);
+
+				RectangleFigure backgroundTxtField = new RectangleFigure();
+				backgroundTxtField.setBounds(new Rectangle(position.x, position.y, txtFieldSize.x, txtFieldSize.y));
+				backgroundTxtField.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				contents.add(backgroundTxtField);
+
+				Text txtField = new Text(canvas, SWT.BORDER);
+				txtField.setText(DEFAULT_TXTFIELD_TXT);
+				txtField.setLocation(position.x, position.y);
+				txtField.setSize(txtFieldSize);
+				txtField.setEditable(false);
+				txtField.setEnabled(false);
+
+				FigureMoverResizer fmrTxtField = new FigureMoverResizer(backgroundTxtField, txtField, canvas,
+						DEFAULT_TXTFIELD_TXT, true, FigureMoverResizer.Handle.values());
+
+				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), txtField, fmrTxtField);
+
+			case RADIO_BTN:
+				FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
+				Point radioBtnSize = new Point(
+						(fmRadioBtn.getAverageCharWidth() * DEFAULT_RADIOBTN_TXT.length()) + LABELS_MARGIN.width + 10,
+						fmRadioBtn.getHeight() + LABELS_MARGIN.height);
+
+				RectangleFigure backgroundRadioBtn = new RectangleFigure();
+				backgroundRadioBtn.setBounds(new Rectangle(position.x, position.y, radioBtnSize.x, radioBtnSize.y));
+				backgroundRadioBtn.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				contents.add(backgroundRadioBtn);
+
+				Button radioBtn = new Button(canvas, SWT.RADIO);
+				radioBtn.setText(DEFAULT_RADIOBTN_TXT);
+				radioBtn.setLocation(position.x, position.y);
+				radioBtn.setSelection(true);
+				radioBtn.setSize(radioBtnSize);
+				radioBtn.setEnabled(false);
+
+				FigureMoverResizer fmrRadioBtn = new FigureMoverResizer(backgroundRadioBtn, radioBtn, canvas,
+						DEFAULT_RADIOBTN_TXT, true, FigureMoverResizer.Handle.values());
+
+				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), radioBtn, fmrRadioBtn);
+
+			case CHK_BOX:
+				FontMetrics fmChckBox = new GC(canvas).getFontMetrics();
+				Point chckBoxSize = new Point(
+						(fmChckBox.getAverageCharWidth() * DEFAULT_CHCKBOX_TXT.length()) + LABELS_MARGIN.width + 18,
+						fmChckBox.getHeight() + LABELS_MARGIN.height);
+
+				RectangleFigure backgroundChckBox = new RectangleFigure();
+				backgroundChckBox.setBounds(new Rectangle(position.x, position.y, chckBoxSize.x, chckBoxSize.y));
+				backgroundChckBox.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				contents.add(backgroundChckBox);
+
+				Button chckBox = new Button(canvas, SWT.CHECK);
+				chckBox.setText(DEFAULT_CHCKBOX_TXT);
+				chckBox.setLocation(position.x, position.y);
+				chckBox.setSize(chckBoxSize);
+				chckBox.setEnabled(false);
+
+				FigureMoverResizer fmrChckBox = new FigureMoverResizer(backgroundChckBox, chckBox, canvas,
+						DEFAULT_CHCKBOX_TXT, true, FigureMoverResizer.Handle.values());
+
+				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), chckBox, fmrChckBox);
+
+			default:
+				throw new IllegalAccessError("Switch case not defined!");
 			}
-
-		case LABEL:
-			Label label = new Label(canvas, SWT.BORDER);
-			label.setText(DEFAULT_LABEL_TXT);
-			label.setSize(DEFAULT_LABEL_DIM.width, DEFAULT_LABEL_DIM.height);
-			label.setLocation(mousePosition.x, mousePosition.y);
-
-			RoundedRectangle backgroundLabel = new RoundedRectangle();
-			backgroundLabel.setCornerDimensions(new Dimension(10, 10));
-			backgroundLabel.setBounds(new Rectangle(mousePosition.x, mousePosition.y, DEFAULT_LABEL_BACKGND_DIM.width,
-					DEFAULT_LABEL_BACKGND_DIM.height));
-			contents.add(backgroundLabel);
-
-			// FigureMoverResizer fmrLabel = new
-			// FigureMoverResizer(backgroundLabel, canvas, label,
-			// DEFAULT_LABEL_DIM.width, DEFAULT_LABEL_DIM.height);
-
-			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), label, null);
-
-		case TEXTFIELD:
-			Text textField = new Text(canvas, SWT.BORDER);
-			textField.setText(DEFAULT_TXTFIELD_TXT);
-			textField.setSize(DEFAULT_TXTFIELD_DIM.width, DEFAULT_TXTFIELD_DIM.height);
-			textField.setLocation(mousePosition.x, mousePosition.y);
-
-			RoundedRectangle backgroundTextField = new RoundedRectangle();
-			backgroundTextField.setCornerDimensions(new Dimension(10, 10));
-			backgroundTextField.setBounds(new Rectangle(mousePosition.x, mousePosition.y,
-					DEFAULT_TXTFIELD_BACKGND_DIM.width, DEFAULT_TXTFIELD_BACKGND_DIM.height));
-			contents.add(backgroundTextField);
-
-			// FigureMoverResizer fmrTextField = new
-			// FigureMoverResizer(backgroundTextField, canvas, textField,
-			// DEFAULT_TXTFIELD_DIM.width, DEFAULT_TXTFIELD_DIM.height);
-
-			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), textField, null);
-
-		// case RADIO_BTN:
-		// Button radioButton = new Button(canvas, SWT.RADIO);
-		// radioButton.setText(DEFAULT_RADIOBTN_TXT);
-		// radioButton.setSize(DEFAULT_RADIOBTN_DIM.width,DEFAULT_RADIOBTN_DIM.height);
-		// radioButton.setLocation(mousePosition.x,
-		// mousePosition.y);
-		// radioButton.setSelection(true);
-		//
-		// RoundedRectangle backgroundRadioButton = new RoundedRectangle();
-		// backgroundRadioButton.setCornerDimensions(new Dimension(10, 10));
-		// backgroundRadioButton.setBounds(new
-		// Rectangle(mousePosition.x, mousePosition.y,
-		// DEFAULT_RADIOBTN_BACKGND_DIM.width,
-		// DEFAULT_RADIOBTN_BACKGND_DIM.height));
-		// contents.add(backgroundRadioButton);
-		//
-		// // FigureMoverResizer fmrRadioButton = new
-		// // FigureMoverResizer(backgroundRadioButton, canvas, radioButton,
-		// // DEFAULT_RADIOBTN_DIM.x, DEFAULT_RADIOBTN_DIM.y);
-		//
-		// return new ComponentInComposite(cmpName + "\t" +
-		// System.currentTimeMillis(), radioButton, null);
-
-		case CHK_BOX:
-			Button checkBox = new Button(canvas, SWT.CHECK);
-			checkBox.setText(DEFAULT_CHCKBOX_TXT);
-			checkBox.setSize(DEFAULT_CHCKBOX_DIM.width, DEFAULT_CHCKBOX_DIM.height);
-			checkBox.setLocation(mousePosition.x, mousePosition.y);
-
-			RoundedRectangle backgroundCheckBox = new RoundedRectangle();
-			backgroundCheckBox.setCornerDimensions(new Dimension(10, 10));
-			backgroundCheckBox.setBounds(new org.eclipse.draw2d.geometry.Rectangle(mousePosition.x, mousePosition.y,
-					DEFAULT_CHCKBOX_BACKGND_DIM.width, DEFAULT_CHCKBOX_BACKGND_DIM.height));
-			contents.add(backgroundCheckBox);
-
-			// FigureMoverResizer fmrCheckBox = new
-			// FigureMoverResizer(backgroundCheckBox, canvas, checkBox,
-			// DEFAULT_CHCKBOX_DIM.x, DEFAULT_CHCKBOX_DIM.y);
-
-			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), checkBox, null);
-
-		default:
-			throw new IllegalAccessError("Switch case not defined!");
+		} else {
+			return null;
 		}
 	}
 
-	public static ObjectInComposite createLayoutFamilyObject(String cmpName, Canvas canvas, Figure contents) {
+	public static ObjectInComposite createLayoutFamilyObject(Point position, String cmpName, Canvas canvas,
+			Figure contents) {
 		// TODO Define method
 		System.err.println("Method undefined");
 		return null;
 	}
 
-	public static ObjectInComposite createContainerFamilyObject(String cmpName, Canvas canvas, Figure contents) {
+	public static ObjectInComposite createContainerFamilyObject(Point position, String cmpName, Canvas canvas,
+			Figure contents) {
 		// TODO Define method
 		System.err.println("Method undefined");
 		return null;
+	}
+
+	private static boolean insideCanvas(Point position) {
+		return position.x < (DEFAULT_FAKEWINDOW_INIT_DIM.width + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x)
+				&& position.y < (DEFAULT_FAKEWINDOW_INIT_DIM.height + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y)
+				&& position.x > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x
+				&& position.y > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y;
 	}
 
 	/*
