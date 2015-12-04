@@ -1,17 +1,17 @@
 package pt.iscte.pidesco.guibuilder.internal;
 
-import pt.iscte.pidesco.guibuilder.ui.FigureMoverResizer;
+import org.eclipse.draw2d.Figure;
 
 public class ObjectInComposite {
 
 	private String id;
-	private Object object;
-	private FigureMoverResizer fmr;
-	
-	public ObjectInComposite(String id, Object object, FigureMoverResizer fmr) {
+	private Figure figure;
+	private ObjectMoverResizer mr;
+
+	public ObjectInComposite(String id, Figure figure, ObjectMoverResizer fmr) {
 		this.id = id;
-		this.object = object;
-		this.fmr = fmr;
+		this.figure = figure;
+		this.mr = fmr;
 	}
 
 	public String getId() {
@@ -22,19 +22,19 @@ public class ObjectInComposite {
 		this.id = id;
 	}
 
-	public Object getObject() {
-		return object;
+	public Figure getFigure() {
+		return figure;
 	}
 
-	public void setObject(Object object) {
-		this.object = object;
+	public void setFigure(Figure figure) {
+		this.figure = figure;
 	}
 
-	public FigureMoverResizer getFmr() {
-		return fmr;
+	public ObjectMoverResizer getFmr() {
+		return mr;
 	}
 
-	public void setFmr(FigureMoverResizer fmr) {
-		this.fmr = fmr;
+	public void setMr(ObjectMoverResizer mr) {
+		this.mr = mr;
 	}
 }
