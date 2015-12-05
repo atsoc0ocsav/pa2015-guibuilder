@@ -2,8 +2,6 @@ package pt.iscte.pidesco.guibuilder.ui;
 
 import java.util.Map;
 
-import javax.imageio.ImageReader;
-
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.RectangleFigure;
@@ -58,16 +56,36 @@ public class GuiBuilderObjFactory {
 
 			Image img = imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME);
 			canvasBackground = new ImageFigure();
-			canvasBackground
-					.setImage(resizeImage(img, DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
+
+			/*
+			 * Thank to Chris Aniszczyk for providing this lines of code ;)
+			 * http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
+			 */
+			Image scaled = new Image(Display.getDefault(), DEFAULT_FAKEWINDOW_INIT_DIM.width,
+					DEFAULT_FAKEWINDOW_INIT_DIM.height);
+			GC gc = new GC(scaled);
+			gc.setAntialias(SWT.ON);
+			gc.setInterpolation(SWT.HIGH);
+			gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height, 0, 0,
+					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height);
+			gc.dispose();
+
+			canvasBackground.setImage(scaled);
 			canvasBackground.setBounds(
 					new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
 							DEFAULT_FAKEWINDOW_INIT_DIM.width + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x,
 							DEFAULT_FAKEWINDOW_INIT_DIM.height + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y));
 
-			new ImageResizer(canvasBackground, img, canvas, false, ImageResizer.Handle.BOT_RIGHT);
+			RectangleFigure backgroundCanvas = new RectangleFigure();
+			backgroundCanvas.setBounds(canvasBackground.getBounds());
+			backgroundCanvas.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+			backgroundCanvas.add(canvasBackground);
 
-			return canvasBackground;
+			new ImageResizer(canvasBackground, img.getImageData(),scaled, backgroundCanvas, canvas, false,
+					ImageResizer.Handle.BOT_RIGHT);
+			img.dispose();
+			
+			return backgroundCanvas;
 		} else {
 			RectangleFigure fig = new RectangleFigure();
 			fig.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
@@ -241,20 +259,5 @@ public class GuiBuilderObjFactory {
 				&& position.y < (DEFAULT_FAKEWINDOW_INIT_DIM.height + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y)
 				&& position.x > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x
 				&& position.y > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y;
-	}
-
-	/*
-	 * Thank to Chris Aniszczyk for providing this lines of code ;)
-	 * http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
-	 */
-	private Image resizeImage(Image image, int width, int height) {
-		Image scaled = new Image(Display.getDefault(), width, height);
-		GC gc = new GC(scaled);
-		gc.setAntialias(SWT.ON);
-		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, width, height);
-		gc.dispose();
-		image.dispose(); // don't forget about me!
-		return scaled;
 	}
 }

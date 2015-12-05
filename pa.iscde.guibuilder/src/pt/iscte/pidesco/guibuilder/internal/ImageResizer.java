@@ -8,6 +8,7 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.UpdateManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -15,51 +16,54 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
 public class ImageResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	protected static final int CORNER = 50;
 	protected static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
-	
-	private Image imageFile = null;
-	private ImageFigure image;
 
-	public ImageResizer(ImageFigure image, Image imageFile, Canvas canvas, boolean moveable, Handle... handlers) {
-		if (imageFile == null)
+	private ImageData imageData = null;
+	private ImageFigure imageFigure;
+	private RectangleFigure rectangle;
+	private Image image;
+
+	public ImageResizer(ImageFigure imageFigure, ImageData imageData, Image image, RectangleFigure rectangle, Canvas canvas,
+			boolean moveable, Handle... handlers) {
+		if (imageData == null || image == null)
 			throw new NullPointerException();
 
 		this.image = image;
-		this.imageFile = imageFile;
+		this.imageFigure=imageFigure;
+		this.imageData = imageData;
+		this.rectangle = rectangle;
 		this.canvas = canvas;
 		this.moveable = moveable;
 		this.handlers = new ArrayList<Handle>(Arrays.asList(handlers));
-		image.addMouseListener(this);
-		image.addMouseMotionListener(this);
+
+		rectangle.addMouseListener(this);
+		rectangle.addMouseMotionListener(this);
 	}
 
-	private static Image resizeImage(Image image, int width, int height) {
-		Image scaled = new Image(Display.getDefault(), width, height);
+	private Image resizeImage(Image i, int width, int height) {
+		Image scaled = new Image(Display.getCurrent(), width, height);
 		GC gc = new GC(scaled);
 		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, width, height);
+		gc.drawImage(i, 0, 0, i.getBounds().width, i.getBounds().height, 0, 0, width, height);
 		gc.dispose();
-		image.dispose(); // don't forget about me!
+		//image.dispose(); // don't forget about me!
+		System.out.println("Resized");
 		return scaled;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent event) {
 		if (event.button == 1) {
-			Dimension d = event.getLocation().getDifference(image.getBounds().getLocation());
+			Dimension d = event.getLocation().getDifference(rectangle.getBounds().getLocation());
 
-			System.out.println("d: "+d);
-			System.out.println("bounds: "+image.getBounds());
-			
-			Handle tmpHandle = Handle.getHandle(d.width, d.height, CORNER,image.getBounds());
-			System.out.println("handle: "+tmpHandle);
-			
+			Handle tmpHandle = Handle.getHandle(d.width, d.height, CORNER, rectangle.getBounds());
 			if (handlers.contains(tmpHandle)) {
 				handle = tmpHandle;
 			}
@@ -84,29 +88,30 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 
 		location = newLocation;
 
-		UpdateManager updateMgr = image.getUpdateManager();
-		LayoutManager layoutMgr = image.getParent().getLayoutManager();
-		Rectangle bounds = image.getBounds();
-		updateMgr.addDirtyRegion(image.getParent(), bounds);
-		
+		UpdateManager updateMgr = rectangle.getUpdateManager();
+		LayoutManager layoutMgr = rectangle.getParent().getLayoutManager();
+		Rectangle bounds = rectangle.getBounds();
+		updateMgr.addDirtyRegion(rectangle.getParent(), bounds);
+
 		if (handle != null) { // resize
 			Rectangle newPos = handle.getNewPosition(bounds, offset);
 
-			System.out.println("hAELLO");
-			
-			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width) {
-				layoutMgr.setConstraint(image, newPos);
-				updateMgr.addDirtyRegion(image.getParent(), newPos);
-				layoutMgr.layout(image.getParent());
+			System.out.println("Hello");
 
-//				control.setSize(newPos.getSize().width, newPos.getSize().height);
-//				Image newImage = resizeImage(imageFile, newPos.getSize().width, newPos.getSize().height);
-//				image.setImage(newImage);
+			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width) {
+				Image img =resizeImage(new Image(canvas.getDisplay(), imageData), newPos.getSize().width,newPos.getSize().height);
 				
-//				canvasBackground.setBounds(new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
-//						DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
-//				img.dispose();
-//				return canvasBackground;
+				System.out.println("Dim: "+img.getBounds());
+				imageFigure.erase();
+				imageFigure.setImage(img);// 
+				imageFigure.setBounds(rectangle.getBounds());
+				image=img;
+
+				System.out.println(imageFigure.getParent());
+				
+				layoutMgr.setConstraint(rectangle, newPos);
+				updateMgr.addDirtyRegion(rectangle.getParent(), newPos);
+				layoutMgr.layout(rectangle.getParent());
 			}
 		}
 		event.consume();

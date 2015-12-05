@@ -149,12 +149,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		lws.setContents(contents);
 
 		contents.add(objectFactory.createGuiBuilderCanvas(topCanvas, imageMap));
-//		
-//		RectangleFigure backgroundButton = new RectangleFigure();
-//		backgroundButton.setBounds(new Rectangle(position.x, position.y, buttonSize.x + BACKGND_MARGIN.width,
-//				buttonSize.y + BACKGND_MARGIN.height));
-//		backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
-//		contents.add(backgroundButton);
 
 		// Create the drop target on the composite
 		DropTarget dt = new DropTarget(topComposite, DND.DROP_MOVE);
