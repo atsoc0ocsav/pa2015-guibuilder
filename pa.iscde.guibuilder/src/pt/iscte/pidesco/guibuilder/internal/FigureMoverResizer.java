@@ -25,11 +25,11 @@ import org.eclipse.swt.widgets.Display;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class FigureMoverResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
-	protected static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
+	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
 	private final IFigure figure;
 	private String text;
 	private boolean enableText = true;
-	private Dimension controlMargin = new Dimension(0,0);
+	private Dimension controlMargin = new Dimension(0, 0);
 
 	public FigureMoverResizer(IFigure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text,
 			boolean moveable, Handle... handlers) {
@@ -98,7 +98,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			}
 
 			updateText();
-		}else{
+		} else {
 			canvas.layout(true);
 			canvas.redraw();
 			canvas.update();
@@ -108,7 +108,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 	@Override
 	public void mousePressed(MouseEvent event) {
 		if (event.button == 1) { // Left Button
-			Dimension d=event.getLocation().getDifference(figure.getBounds().getLocation());
+			Dimension d = event.getLocation().getDifference(figure.getBounds().getLocation());
 
 			Handle tmpHandle = Handle.getHandle(d.width, d.height, figure.getBounds());
 
@@ -157,7 +157,10 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				}
 			}
 		} else { // move
-			if (moveable) {
+			Point pos = new Point(bounds.getCopy().translate(offset.width, offset.height).x,
+					bounds.getCopy().translate(offset.width, offset.height).y);
+
+			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y)) {
 				bounds = bounds.getCopy().translate(offset.width, offset.height);
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
@@ -167,11 +170,13 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 					control.setLocation(figure.getBounds().x + controlMargin.width / 2,
 							figure.getBounds().y + controlMargin.height / 2);
 				}
+			}else if(!guiBuilderView.isInsideCanvas(pos.x, pos.y)){
+				guiBuilderView.setMessage(GuiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
 			}
 		}
 
 		if (enableText)
-			updateText(figure,canvas,text);
+			updateText(figure, canvas, text);
 
 		event.consume();
 	}
@@ -216,7 +221,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 		if (enableText)
 			updateText();
 	}
-	
+
 	public void setControlMargin(Dimension controlMargin) {
 		this.controlMargin = controlMargin;
 	}

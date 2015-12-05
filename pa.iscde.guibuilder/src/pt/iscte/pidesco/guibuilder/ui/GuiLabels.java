@@ -20,7 +20,7 @@ public class GuiLabels {
 	}
 
 	public enum DialogMenuLabel {
-		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code");
+		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code"), SET_WINDW_TITLE("Set window title");
 
 		private String str;
 

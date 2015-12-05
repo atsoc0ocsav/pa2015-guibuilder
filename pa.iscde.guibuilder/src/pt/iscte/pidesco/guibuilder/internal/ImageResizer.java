@@ -14,62 +14,83 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+
+import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class ImageResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
-	protected static final int CORNER = 50;
-	protected static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
+	private static final int CORNER = 50;
+	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
 
-	private ImageData imageData = null;
-	private ImageFigure imageFigure;
-	private RectangleFigure rectangle;
-	private Image image;
+	private GuiBuilderView guiBuilderView;
+	private ImageData canvasImageData;
+	private ImageData canvasTopbarImageData;
+	private ImageFigure canvasBackgroundFigure;
+	private ImageFigure canvasTopbarFigure;
+	private int topbarHeight;
+	private RectangleFigure backgroundRectangle;
+	private Label label = null;
 
-	public ImageResizer(ImageFigure imageFigure, ImageData imageData, Image image, RectangleFigure rectangle, Canvas canvas,
-			boolean moveable, Handle... handlers) {
-		if (imageData == null || image == null)
+	public ImageResizer(GuiBuilderView guiBuilderView, ImageFigure canvasBackgroundFigure,
+			ImageFigure canvasTopBarFigure, ImageData canvasBackgroundImageData, ImageData canvasTopbarImageData,
+			int topbarHeight, RectangleFigure backgroundRectangle, Canvas canvas, boolean moveable,
+			Handle... handlers) {
+		if (canvasBackgroundFigure == null || canvasBackgroundImageData == null)
 			throw new NullPointerException();
 
-		this.image = image;
-		this.imageFigure=imageFigure;
-		this.imageData = imageData;
-		this.rectangle = rectangle;
+		this.guiBuilderView = guiBuilderView;
+		this.canvasBackgroundFigure = canvasBackgroundFigure;
+		this.canvasTopbarFigure = canvasTopBarFigure;
+		this.canvasImageData = canvasBackgroundImageData;
+		this.canvasTopbarImageData = canvasTopbarImageData;
+		this.topbarHeight = topbarHeight;
+
+		this.backgroundRectangle = backgroundRectangle;
 		this.canvas = canvas;
 		this.moveable = moveable;
 		this.handlers = new ArrayList<Handle>(Arrays.asList(handlers));
 
-		rectangle.addMouseListener(this);
-		rectangle.addMouseMotionListener(this);
+		backgroundRectangle.addMouseListener(this);
+		backgroundRectangle.addMouseMotionListener(this);
 	}
 
-	private Image resizeImage(Image i, int width, int height) {
+	/*
+	 * Thank to Chris Aniszczyk for providing this lines of code ;)
+	 * http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
+	 */
+	private Image resizeImage(Image i, int srcx, int srcy, int width, int height) {
 		Image scaled = new Image(Display.getCurrent(), width, height);
 		GC gc = new GC(scaled);
 		gc.setAntialias(SWT.ON);
 		gc.setInterpolation(SWT.HIGH);
-		gc.drawImage(i, 0, 0, i.getBounds().width, i.getBounds().height, 0, 0, width, height);
+		gc.drawImage(i, srcx, srcy, i.getBounds().width - srcx, i.getBounds().height - srcy, 0, 0, width, height);
 		gc.dispose();
-		//image.dispose(); // don't forget about me!
-		System.out.println("Resized");
+
 		return scaled;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent event) {
 		if (event.button == 1) {
-			Dimension d = event.getLocation().getDifference(rectangle.getBounds().getLocation());
+			Dimension d = event.getLocation().getDifference(backgroundRectangle.getBounds().getLocation());
 
-			Handle tmpHandle = Handle.getHandle(d.width, d.height, CORNER, rectangle.getBounds());
+			Handle tmpHandle = Handle.getHandle(d.width, d.height, CORNER, backgroundRectangle.getBounds());
 			if (handlers.contains(tmpHandle)) {
 				handle = tmpHandle;
 			}
 
 			location = event.getLocation();
 			event.consume();
+		} else if (event.button == 3) {
+			guiBuilderView.openDialogMenu(this, event.x, event.y);
 		}
 	}
 
@@ -88,30 +109,39 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 
 		location = newLocation;
 
-		UpdateManager updateMgr = rectangle.getUpdateManager();
-		LayoutManager layoutMgr = rectangle.getParent().getLayoutManager();
-		Rectangle bounds = rectangle.getBounds();
-		updateMgr.addDirtyRegion(rectangle.getParent(), bounds);
+		UpdateManager updateMgr = backgroundRectangle.getUpdateManager();
+		LayoutManager layoutMgr = backgroundRectangle.getParent().getLayoutManager();
+		Rectangle bounds = backgroundRectangle.getBounds();
+		updateMgr.addDirtyRegion(backgroundRectangle.getParent(), bounds);
 
 		if (handle != null) { // resize
 			Rectangle newPos = handle.getNewPosition(bounds, offset);
 
-			System.out.println("Hello");
-
 			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width) {
-				Image img =resizeImage(new Image(canvas.getDisplay(), imageData), newPos.getSize().width,newPos.getSize().height);
-				
-				System.out.println("Dim: "+img.getBounds());
-				imageFigure.erase();
-				imageFigure.setImage(img);// 
-				imageFigure.setBounds(rectangle.getBounds());
-				image=img;
+				Image topBarImage = resizeImage(new Image(canvas.getDisplay(), canvasTopbarImageData), 0, 0,
+						newPos.getSize().width, topbarHeight);
 
-				System.out.println(imageFigure.getParent());
-				
-				layoutMgr.setConstraint(rectangle, newPos);
-				updateMgr.addDirtyRegion(rectangle.getParent(), newPos);
-				layoutMgr.layout(rectangle.getParent());
+				Image canvasImage = resizeImage(new Image(canvas.getDisplay(), canvasImageData), 0, 50,
+						newPos.getSize().width, newPos.getSize().height - topbarHeight);
+
+				canvasBackgroundFigure.erase();
+				canvasTopbarFigure.erase();
+
+				canvasBackgroundFigure.setImage(canvasImage);
+				canvasTopbarFigure.setImage(topBarImage);
+
+				Rectangle canvasBounds = new Rectangle(backgroundRectangle.getLocation().x,
+						backgroundRectangle.getLocation().y + topbarHeight, backgroundRectangle.getSize().width,
+						backgroundRectangle.getSize().height - topbarHeight);
+				Rectangle topbarBounds = new Rectangle(backgroundRectangle.getLocation().x,
+						backgroundRectangle.getLocation().y, backgroundRectangle.getSize().width, topbarHeight);
+
+				canvasBackgroundFigure.setBounds(canvasBounds);
+				canvasTopbarFigure.setBounds(topbarBounds);
+
+				layoutMgr.setConstraint(backgroundRectangle, newPos);
+				updateMgr.addDirtyRegion(backgroundRectangle.getParent(), newPos);
+				layoutMgr.layout(backgroundRectangle.getParent());
 			}
 		}
 		event.consume();
@@ -126,6 +156,33 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 		event.consume();
 	}
 
+	public void setText(String str) {
+		if (label == null) {
+			label = new Label(canvas, SWT.NONE);
+		}
+
+		label.setText(str);
+
+		FontMetrics fm = new GC(canvas).getFontMetrics();
+		Point position = new Point(canvasTopbarFigure.getLocation().x + 40,
+				canvasTopbarFigure.getLocation().y + ((canvasTopbarFigure.getSize().height - fm.getHeight()) / 2));
+
+		System.out.println(position);
+
+		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		label.setLocation(position.x, position.y);
+		label.setSize((fm.getAverageCharWidth() * str.length()) + 2, fm.getHeight() + 2);
+
+		int color = canvasTopbarImageData.getPixel(position.x, position.y);
+		RGB rgb = new RGB(color & 0xFF, (color & 0xFF00)>> 8, (color & 0xFF0000)>>16);
+
+		label.setBackground(new Color(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getDevice(), rgb));
+		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+	}
+
+	/*
+	 * Not used
+	 */
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub

@@ -24,76 +24,96 @@ import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 
 public class GuiBuilderObjFactory {
 	// Dimensions
-	private final Point DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET = new Point(5, 5);
-	private final Dimension DEFAULT_FAKEWINDOW_INIT_DIM = new Dimension(400, 400);
-	private int TOPBAR_HEIGH = 100;
-	private final Dimension LABELS_MARGIN = new Dimension(5, 5);
-	private final Dimension BACKGND_MARGIN = new Dimension(6, 6);
+	private static final Point DEFAULT_CANVAS_POS_OFFSET = new Point(5, 5);
+	private static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
+	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
+	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
+	private static final Dimension BACKGND_MARGIN = new Dimension(6, 6);
 
 	// Default text
-	private final String DEFAULT_BTN_TXT = "New Button";
-	private final String DEFAULT_LABEL_TXT = "New Label";
-	private final String DEFAULT_TXTFIELD_TXT = "New Textfield";
-	private final String DEFAULT_RADIOBTN_TXT = "New choice";
-	private final String DEFAULT_CHCKBOX_TXT = "New checkbox";
+	private static final String DEFAULT_BTN_TXT = "New Button";
+	private static final String DEFAULT_LABEL_TXT = "New Label";
+	private static final String DEFAULT_TXTFIELD_TXT = "New Textfield";
+	private static final String DEFAULT_RADIOBTN_TXT = "New choice";
+	private static final String DEFAULT_CHCKBOX_TXT = "New checkbox";
 
 	// Files
-	private final String BUILDER_CANVAS_BACKGND_FILENAME = "fake_window_complete_canvas.png";
-	private final String CANVAS_TOPBAR_FILENAME = "fake_window_topbar.png";
+	private static final String CANVAS_BACKGND_FILENAME = "fake_window_complete_canvas.png";
+	private static final String CANVAS_TOPBAR_FILENAME = "fake_window_topbar.png";
 
 	// Other
-	private final Point WINDOWS_MOUSE_OFFSET = new Point(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x,
-			-(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y + 113));
 	private GuiBuilderView guiBuilderView;
-	private ImageFigure canvasBackground;
+	private ImageFigure canvasBackgnd;
+	private ImageFigure canvasTopbar;
 
 	public GuiBuilderObjFactory(GuiBuilderView guiBuilderView) {
 		this.guiBuilderView = guiBuilderView;
 	}
 
 	public Figure createGuiBuilderCanvas(Canvas canvas, Map<String, Image> imageMap) {
-		if (imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME) != null) {
+		if (imageMap.get(CANVAS_BACKGND_FILENAME) != null && imageMap.get(CANVAS_TOPBAR_FILENAME) != null) {
+			Image imgCanvas = imageMap.get(CANVAS_BACKGND_FILENAME);
+			Image imgCanvasTopbar = imageMap.get(CANVAS_TOPBAR_FILENAME);
 
-			Image img = imageMap.get(BUILDER_CANVAS_BACKGND_FILENAME);
-			canvasBackground = new ImageFigure();
+			Image scaledImgCanvas = resizeImage(imgCanvas, 0, 50, DEFAULT_CANVAS_INIT_DIM.width,
+					DEFAULT_CANVAS_INIT_DIM.height);
+			Image scaledImgCanvasTopbar = resizeImage(imgCanvasTopbar, 0, 0, DEFAULT_CANVAS_TOPBAR_INIT_DIM.width,
+					DEFAULT_CANVAS_TOPBAR_INIT_DIM.height);
 
-			/*
-			 * Thank to Chris Aniszczyk for providing this lines of code ;)
-			 * http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
-			 */
-			Image scaled = new Image(Display.getDefault(), DEFAULT_FAKEWINDOW_INIT_DIM.width,
-					DEFAULT_FAKEWINDOW_INIT_DIM.height);
-			GC gc = new GC(scaled);
-			gc.setAntialias(SWT.ON);
-			gc.setInterpolation(SWT.HIGH);
-			gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height, 0, 0,
-					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height);
-			gc.dispose();
+			canvasBackgnd = new ImageFigure(scaledImgCanvas);
+			canvasTopbar = new ImageFigure(scaledImgCanvasTopbar);
 
-			canvasBackground.setImage(scaled);
-			canvasBackground.setBounds(
-					new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
-							DEFAULT_FAKEWINDOW_INIT_DIM.width + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x,
-							DEFAULT_FAKEWINDOW_INIT_DIM.height + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y));
+			Rectangle canvasBackgndBounds = new Rectangle(DEFAULT_CANVAS_POS_OFFSET.x,
+					DEFAULT_CANVAS_POS_OFFSET.y + DEFAULT_CANVAS_TOPBAR_INIT_DIM.height, DEFAULT_CANVAS_INIT_DIM.width,
+					DEFAULT_CANVAS_INIT_DIM.height);
+			Rectangle canvasTopbarBounds = new Rectangle(DEFAULT_CANVAS_POS_OFFSET.x, DEFAULT_CANVAS_POS_OFFSET.y,
+					DEFAULT_CANVAS_TOPBAR_INIT_DIM.width, DEFAULT_CANVAS_TOPBAR_INIT_DIM.height);
+			Rectangle rectangleFigureBounds = new Rectangle(DEFAULT_CANVAS_POS_OFFSET.x, DEFAULT_CANVAS_POS_OFFSET.y,
+					DEFAULT_CANVAS_INIT_DIM.width,
+					DEFAULT_CANVAS_INIT_DIM.height + DEFAULT_CANVAS_TOPBAR_INIT_DIM.height);
+
+			canvasBackgnd.setBounds(canvasBackgndBounds);
+			canvasTopbar.setBounds(canvasTopbarBounds);
 
 			RectangleFigure backgroundCanvas = new RectangleFigure();
-			backgroundCanvas.setBounds(canvasBackground.getBounds());
-			backgroundCanvas.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
-			backgroundCanvas.add(canvasBackground);
 
-			new ImageResizer(canvasBackground, img.getImageData(),scaled, backgroundCanvas, canvas, false,
-					ImageResizer.Handle.BOT_RIGHT);
-			img.dispose();
-			
+			backgroundCanvas.setBounds(rectangleFigureBounds);
+			backgroundCanvas.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+
+			backgroundCanvas.add(canvasBackgnd);
+			backgroundCanvas.add(canvasTopbar);
+
+			new ImageResizer(guiBuilderView, canvasBackgnd, canvasTopbar, imgCanvas.getImageData(),
+					imgCanvasTopbar.getImageData(), DEFAULT_CANVAS_TOPBAR_INIT_DIM.height, backgroundCanvas, canvas,
+					false, ImageResizer.Handle.BOT_RIGHT);
+
+			imgCanvas.dispose();
+			imgCanvasTopbar.dispose();
+
 			return backgroundCanvas;
 		} else {
 			RectangleFigure fig = new RectangleFigure();
 			fig.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			fig.setBounds(new Rectangle(DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x, DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y,
-					DEFAULT_FAKEWINDOW_INIT_DIM.width, DEFAULT_FAKEWINDOW_INIT_DIM.height));
+			fig.setBounds(new Rectangle(DEFAULT_CANVAS_POS_OFFSET.x, DEFAULT_CANVAS_POS_OFFSET.y,
+					DEFAULT_CANVAS_INIT_DIM.width, DEFAULT_CANVAS_INIT_DIM.height));
 			new FigureMoverResizer(fig, guiBuilderView, null, "", false, FigureMoverResizer.Handle.BOT_RIGHT);
 			return fig;
 		}
+	}
+
+	/*
+	 * Thank to Chris Aniszczyk for providing this lines of code ;)
+	 * http://aniszczyk.org/2007/08/09/resizing-images-using-swt/
+	 */
+	private Image resizeImage(Image image, int srcx, int srcy, int width, int height) {
+		Image scaled = new Image(Display.getDefault(), width, height);
+		GC gc = new GC(scaled);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+		gc.drawImage(image, srcx, srcy, image.getBounds().width - srcx, image.getBounds().height - srcy, 0, 0, width,
+				height);
+		gc.dispose();
+		return scaled;
 	}
 
 	public ObjectInComposite createComponentFamilyObject(Point position, String cmpName, Canvas canvas,
@@ -106,7 +126,7 @@ public class GuiBuilderObjFactory {
 			}
 		}
 
-		if (insideCanvas(position)) {
+		if (isInsideCanvas(position)) {
 			switch (component) {
 			case BTN:
 				FontMetrics fmButton = new GC(canvas).getFontMetrics();
@@ -254,10 +274,15 @@ public class GuiBuilderObjFactory {
 		return null;
 	}
 
-	public boolean insideCanvas(Point position) {
-		return position.x < (DEFAULT_FAKEWINDOW_INIT_DIM.width + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x)
-				&& position.y < (DEFAULT_FAKEWINDOW_INIT_DIM.height + DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y)
-				&& position.x > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.x
-				&& position.y > DEFAULT_CANVAS_LEFTTOPCORNER_OFFSET.y;
+	public boolean isInsideCanvas(Point pos) {
+		return isInsideCanvas(pos.x, pos.y);
+	}
+
+	public boolean isInsideCanvas(int x, int y) {
+		Dimension canvasDim = canvasBackgnd.getSize();
+
+		return x < (canvasDim.width + DEFAULT_CANVAS_POS_OFFSET.x)
+				&& y < (canvasDim.height + DEFAULT_CANVAS_POS_OFFSET.y + DEFAULT_CANVAS_TOPBAR_INIT_DIM.height)
+				&& x >= DEFAULT_CANVAS_POS_OFFSET.x && y >= DEFAULT_CANVAS_TOPBAR_INIT_DIM.height;
 	}
 }
