@@ -29,6 +29,7 @@ import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 public class ImageResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final int CORNER = 50;
 	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
+	private static final int TITLE_LEFTSPACE = 30;
 
 	private GuiBuilderView guiBuilderView;
 	private ImageData canvasImageData;
@@ -164,10 +165,8 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 		label.setText(str);
 
 		FontMetrics fm = new GC(canvas).getFontMetrics();
-		Point position = new Point(canvasTopbarFigure.getLocation().x + 40,
+		Point position = new Point(canvasTopbarFigure.getLocation().x + TITLE_LEFTSPACE,
 				canvasTopbarFigure.getLocation().y + ((canvasTopbarFigure.getSize().height - fm.getHeight()) / 2));
-
-		System.out.println(position);
 
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		label.setLocation(position.x, position.y);

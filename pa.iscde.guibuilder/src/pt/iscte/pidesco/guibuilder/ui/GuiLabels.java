@@ -20,7 +20,8 @@ public class GuiLabels {
 	}
 
 	public enum DialogMenuLabel {
-		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code"), SET_WINDW_TITLE("Set window title");
+		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code"), SET_WINDW_TITLE(
+				"Set window title");
 
 		private String str;
 
@@ -34,7 +35,9 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderObjectFamily {
-		COMPONENTS("Components"), LAYOUTS("Layouts"), CONTAINERS("Containers");
+		COMPONENTS("Components"), LAYOUTS("Layouts");
+		// COMPONENTS("Components"), LAYOUTS("Layouts"),
+		// CONTAINERS("Containers");
 
 		private String str;
 
@@ -48,9 +51,8 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderComponent {
-		 BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"),
-		 RADIO_BTN("Radio Button"), CHK_BOX("Check Box");
-		//BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box");
+//		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), RADIO_BTN("Radio Button"), CHK_BOX("Check Box");
+		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box");
 
 		private String str;
 
@@ -64,9 +66,9 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderLayout {
-		// FLOW("Flow \n Layout"), ABSOLUTE("Absolute \n Layout"),
-		// BORDER("Border \n Layout");
-		ABSOLUTE("Absolute \n Layout");
+		// FLOW("Flow Layout"), ABSOLUTE("Absolute Layout"),
+		// BORDER("Border Layout");
+		FLOW("Flow Layout"), ABSOLUTE("Absolute Layout");
 
 		private String str;
 

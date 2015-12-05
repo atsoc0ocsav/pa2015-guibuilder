@@ -44,6 +44,7 @@ import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.internal.ObjectMoverResizer;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderLayout;
 
 public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	/*
@@ -54,12 +55,15 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private final int BOTTOM_COMPOSITE_MINIMUM_HEIGHT = BOTTOM_COMPOSITE_BUTTONS_DIM.height + 78;
 	private final String COMPONENTS_TAB_ICON_FILENAME = "icon_tab_components.png";
 	private final String LAYOUTS_TAB_ICON_FILENAME = "icon_tab_layouts.png";
+	@SuppressWarnings("unused")
 	private final String CONTAINERS_TAB_ICON_FILENAME = "icon_tab_containers.png";
 
 	// Messages
 	private final String INITIAL_MSG = "Welcome to GUIBuilder!";
-	public static final String ADDED_OBJECT_MSG = "Added %s to canvas";
+	private static final String ADDED_OBJECT_MSG = "Added %s to canvas";
 	public static final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas";
+	public static final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
+	private static final String SET_LAYOUT = "Set %s on canvas";
 
 	/*
 	 * Variables
@@ -72,6 +76,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
 	private Canvas topCanvas;
+	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
 
 	/*
 	 * Constructors and main methods
@@ -159,25 +164,38 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					case COMPONENTS:
 						newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
 								contents);
+						
+						if (newObject != null) {
+							components.add(newObject);
+							setMessage(ADDED_OBJECT_MSG, objectName);
+						} else {
+							setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
+									objectName);
+						}						
 						break;
 					case LAYOUTS:
-						newObject = objectFactory.createLayoutFamilyObject(position, objectName, topCanvas, contents);
+						// newObject =
+						// objectFactory.createLayoutFamilyObject(position,
+						// objectName, topCanvas, contents);
+
+						for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
+							if (l.str().equals(objectName)) {
+								activeLayout = l;
+								setMessage(SET_LAYOUT, objectName);
+							}
+						}
 						break;
-					case CONTAINERS:
-						newObject = objectFactory.createContainerFamilyObject(position, objectName, topCanvas,
-								contents);
-						break;
+					// case CONTAINERS:
+					// newObject =
+					// objectFactory.createContainerFamilyObject(position,
+					// objectName, topCanvas,
+					// contents);
+					// break;
 					default:
 						throw new IllegalAccessError("Switch case not defined!");
 					}
 
-					if (newObject != null) {
-						components.add(newObject);
-						setMessage(ADDED_OBJECT_MSG, objectName);
-					} else {
-						setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
-								objectName);
-					}
+					
 				}
 			}
 		});
@@ -228,18 +246,21 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
 				break;
 
-			case CONTAINERS:
-				tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
-				for (GuiLabels.GUIBuilderContainer c : GuiLabels.GUIBuilderContainer.values()) {
-					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
-					button.setAlignment(SWT.CENTER);
-					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal());
-				}
-				compositeButtons.setSize(
-						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderContainer.values().length,
-						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
-				break;
+			// case CONTAINERS:
+			// tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
+			// for (GuiLabels.GUIBuilderContainer c :
+			// GuiLabels.GUIBuilderContainer.values()) {
+			// Button button = new Button(compositeButtons, SWT.CENTER |
+			// SWT.WRAP | SWT.PUSH);
+			// button.setAlignment(SWT.CENTER);
+			// button.setText(c.str());
+			// addDragListener(button, tabLabel.ordinal());
+			// }
+			// compositeButtons.setSize(
+			// BOTTOM_COMPOSITE_BUTTONS_DIM.width *
+			// GuiLabels.GUIBuilderContainer.values().length,
+			// BOTTOM_COMPOSITE_BUTTONS_DIM.height);
+			// break;
 
 			default:
 				throw new IllegalAccessError("Switch case not defined!");
@@ -319,10 +340,11 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 						if (inputText != null) {
 							((ImageResizer) fmr).setText(inputText);
+							setMessage(CHANGED_TITLE_MSG, inputText);
 						}
 					}
 				});
-				
+
 				popupMenu.setVisible(true);
 			}
 		}
@@ -354,7 +376,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	}
 
 	/*
-	 * Other methods
+	 * Getters and Setters
 	 */
 	public void setMessage(String message, Object... args) {
 		setMessage(message, Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), args);
@@ -381,15 +403,19 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public Composite getTopComposite() {
 		return topComposite;
 	}
-	
-	public void addComponentTopComposite(ObjectInComposite newObject){
+
+	public void addComponentTopComposite(ObjectInComposite newObject) {
 		components.add(newObject);
 	}
-	
-	public boolean isInsideCanvas(int x, int y){
+
+	public boolean isInsideCanvas(int x, int y) {
 		return objectFactory.isInsideCanvas(x, y);
 	}
 
+	public GuiLabels.GUIBuilderLayout getActiveLayout() {
+		return activeLayout;
+	}
+	
 	@Override
 	public String getHelloWorld() {
 		return "Hello World from GuiBuilderView";

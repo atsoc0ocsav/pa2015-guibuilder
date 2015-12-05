@@ -1,4 +1,2 @@
 TODO List:
-- Add messages in message area when actions are performed (add stuff, change parameters)
-- Meter nome e imagem na janela (guibuilder)
 - Double click - go to code

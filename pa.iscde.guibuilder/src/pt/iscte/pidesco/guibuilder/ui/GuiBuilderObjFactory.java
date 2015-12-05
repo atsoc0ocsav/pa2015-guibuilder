@@ -34,6 +34,7 @@ public class GuiBuilderObjFactory {
 	private static final String DEFAULT_BTN_TXT = "New Button";
 	private static final String DEFAULT_LABEL_TXT = "New Label";
 	private static final String DEFAULT_TXTFIELD_TXT = "New Textfield";
+	@SuppressWarnings("unused")
 	private static final String DEFAULT_RADIOBTN_TXT = "New choice";
 	private static final String DEFAULT_CHCKBOX_TXT = "New checkbox";
 
@@ -202,31 +203,37 @@ public class GuiBuilderObjFactory {
 				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundTxtField,
 						fmrTxtField);
 
-			case RADIO_BTN:
-				FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
-				Point radioBtnSize = new Point(
-						(fmRadioBtn.getAverageCharWidth() * DEFAULT_RADIOBTN_TXT.length()) + LABELS_MARGIN.width + 10,
-						fmRadioBtn.getHeight() + LABELS_MARGIN.height);
-
-				RectangleFigure backgroundRadioBtn = new RectangleFigure();
-				backgroundRadioBtn.setBounds(new Rectangle(position.x, position.y,
-						radioBtnSize.x + BACKGND_MARGIN.width, radioBtnSize.y + BACKGND_MARGIN.height));
-				backgroundRadioBtn.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
-				contents.add(backgroundRadioBtn);
-
-				Button radioBtn = new Button(canvas, SWT.RADIO);
-				radioBtn.setText(DEFAULT_RADIOBTN_TXT);
-				radioBtn.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-				radioBtn.setSelection(true);
-				radioBtn.setSize(radioBtnSize);
-				radioBtn.setEnabled(false);
-
-				FigureMoverResizer fmrRadioBtn = new FigureMoverResizer(backgroundRadioBtn, guiBuilderView, radioBtn,
-						canvas, true, FigureMoverResizer.Handle.values());
-				fmrRadioBtn.setControlMargin(BACKGND_MARGIN);
-
-				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundRadioBtn,
-						fmrRadioBtn);
+			// case RADIO_BTN:
+			// FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
+			// Point radioBtnSize = new Point(
+			// (fmRadioBtn.getAverageCharWidth() *
+			// DEFAULT_RADIOBTN_TXT.length()) + LABELS_MARGIN.width + 10,
+			// fmRadioBtn.getHeight() + LABELS_MARGIN.height);
+			//
+			// RectangleFigure backgroundRadioBtn = new RectangleFigure();
+			// backgroundRadioBtn.setBounds(new Rectangle(position.x,
+			// position.y,
+			// radioBtnSize.x + BACKGND_MARGIN.width, radioBtnSize.y +
+			// BACKGND_MARGIN.height));
+			// backgroundRadioBtn.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+			// contents.add(backgroundRadioBtn);
+			//
+			// Button radioBtn = new Button(canvas, SWT.RADIO);
+			// radioBtn.setText(DEFAULT_RADIOBTN_TXT);
+			// radioBtn.setLocation(position.x + BACKGND_MARGIN.width / 2,
+			// position.y + BACKGND_MARGIN.height / 2);
+			// radioBtn.setSelection(true);
+			// radioBtn.setSize(radioBtnSize);
+			// radioBtn.setEnabled(false);
+			//
+			// FigureMoverResizer fmrRadioBtn = new
+			// FigureMoverResizer(backgroundRadioBtn, guiBuilderView, radioBtn,
+			// canvas, true, FigureMoverResizer.Handle.values());
+			// fmrRadioBtn.setControlMargin(BACKGND_MARGIN);
+			//
+			// return new ObjectInComposite(cmpName + "\t" +
+			// System.currentTimeMillis(), backgroundRadioBtn,
+			// fmrRadioBtn);
 
 			case CHK_BOX:
 				FontMetrics fmChckBox = new GC(canvas).getFontMetrics();
@@ -262,8 +269,8 @@ public class GuiBuilderObjFactory {
 	}
 
 	public ObjectInComposite createLayoutFamilyObject(Point position, String cmpName, Canvas canvas, Figure contents) {
-		// TODO Define method
-		System.err.println("Method undefined");
+		// TODO Define graphical component
+		// System.err.println("Method undefined");
 		return null;
 	}
 
