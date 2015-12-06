@@ -14,10 +14,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
@@ -277,30 +279,31 @@ public class GuiBuilderObjFactory {
 
 	}
 
-	public ObjectInComposite createComponentWidgetObject(Point position, String cmpName, Canvas canvas,
-			Figure contents) {
+	public ObjectInComposite createComponentWidgetObject(Control widget, String nameWidget, Point position,
+			String cmpName, Canvas canvas, Figure contents) {
 
-		FontMetrics fmButton = new GC(canvas).getFontMetrics();
-		Point buttonSize = new Point((fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
-				fmButton.getHeight() + LABELS_MARGIN.height);
+		if (isInsideCanvas(position)) {
+			FontMetrics fmButton = new GC(canvas).getFontMetrics();
+			Point widgetSize = new Point(
+					(fmButton.getAverageCharWidth() * (nameWidget.length() + 3)) + LABELS_MARGIN.width,
+					fmButton.getHeight() + LABELS_MARGIN.height);
 
-		RectangleFigure backgroundButton = new RectangleFigure();
-		backgroundButton.setBounds(new Rectangle(position.x, position.y, buttonSize.x + BACKGND_MARGIN.width,
-				buttonSize.y + BACKGND_MARGIN.height));
-		backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
-		contents.add(backgroundButton);
+			RectangleFigure backgroundButton = new RectangleFigure();
+			backgroundButton.setBounds(new Rectangle(position.x, position.y, widgetSize.x + BACKGND_MARGIN.width,
+					widgetSize.y + BACKGND_MARGIN.height));
+			backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+			contents.add(backgroundButton);
 
-		Button button = new Button(canvas, SWT.BORDER);
-		button.setText(DEFAULT_BTN_TXT);
-		button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-		button.setSize(buttonSize);
-		button.setEnabled(false);
+			widget.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+			widget.setSize(widgetSize);
+			FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, widget, canvas,
+					true, FigureMoverResizer.Handle.values());
 
-		FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button, canvas, true,
-				FigureMoverResizer.Handle.values());
-		fmrButton.setControlMargin(BACKGND_MARGIN);
+			fmrButton.setControlMargin(BACKGND_MARGIN);
 
-		return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton);
+			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton);
+		}
+		return null;
 
 	}
 

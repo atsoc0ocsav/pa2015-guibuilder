@@ -77,8 +77,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private ArrayList<ObjectInComposite> components = new ArrayList<ObjectInComposite>();
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
-	private Canvas topCanvas;
+	public static Canvas topCanvas;
 	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
+	private int idWidget = 0;
 
 	/*
 	 * Constructors and main methods
@@ -166,19 +167,36 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					case COMPONENTS:
 						newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
 								contents);
-						
-						if(objectName.equals("widget")){
-							newObject = objectFactory.createComponentWidgetObject(position, objectName, topCanvas,
-									contents);
-							System.out.println("desenhar aqui");
-						}
 
+						if (objectName.contains("widget")) {
+
+							ExtensionPointsData extensionPointsData = new ExtensionPointsData();
+							for (int i = 0; i < extensionPointsData.getWidgets().length; i++) {
+								if (objectName.contains(extensionPointsData.getWidgetNames()[i])) {
+									newObject = objectFactory.createComponentWidgetObject(
+											extensionPointsData.getWidgets()[i],
+											extensionPointsData.getWidgetNames()[i], position, objectName, topCanvas,
+											contents);
+								}
+							}
+
+						}
+						// need refactoring
 						if (newObject != null) {
 							components.add(newObject);
-							setMessage(ADDED_OBJECT_MSG, objectName);
+							if (objectName.contains("widget")) {
+								setMessage(ADDED_OBJECT_MSG, objectName.replaceAll("widget", ""));
+							} else {
+								setMessage(ADDED_OBJECT_MSG, objectName);
+							}
 						} else {
-							setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
-									objectName);
+							if (objectName.contains("widget")) {
+								setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
+										objectName.replaceAll("widget", ""));
+							} else {
+								setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
+										objectName);
+							}
 						}
 						break;
 					case LAYOUTS:
@@ -199,7 +217,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					// objectName, topCanvas,
 					// contents);
 					// break;
-					
 
 					default:
 						throw new IllegalAccessError("Switch case not defined!");
@@ -235,7 +252,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 					button.setAlignment(SWT.CENTER);
 					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal(),false);
+					addDragListener(button, tabLabel.ordinal(), false);
 				}
 				// add widget
 				addNewWidget(compositeButtons, tabLabel);
@@ -251,14 +268,13 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 					button.setAlignment(SWT.CENTER);
 					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal(),false);
+					addDragListener(button, tabLabel.ordinal(), false);
 				}
 				compositeButtons.setSize(
 						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderLayout.values().length,
 						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
 				break;
-				
-			
+
 			// case CONTAINERS:
 			// tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
 			// for (GuiLabels.GUIBuilderContainer c :
@@ -281,18 +297,18 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		}
 	}
 
-	private void addDragListener(final Button button, final int objectTypeOrdinal,final boolean isWidget) {
+	private void addDragListener(final Button button, final int objectTypeOrdinal, final boolean isWidget) {
 		DragSource ds = new DragSource(button, DND.DROP_MOVE);
 		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 
 		ds.addDragListener(new DragSourceAdapter() {
 			public void dragSetData(DragSourceEvent event) {
-				if(!isWidget){
+				if (!isWidget) {
 					event.data = objectTypeOrdinal + "\t" + button.getText();
-				}else{
-					event.data = objectTypeOrdinal + "\t" + "widget";
+				} else {
+					event.data = objectTypeOrdinal + "\t" + "widget" + button.getText();
 				}
-				
+
 			}
 		});
 	}
@@ -304,7 +320,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 			button.setAlignment(SWT.CENTER);
 			button.setText(extensionPointsData.getWidgetNames()[i]);
-			addDragListener(button, tabLabel.ordinal(),true);
+			addDragListener(button, tabLabel.ordinal(), true);
 		}
 
 	}

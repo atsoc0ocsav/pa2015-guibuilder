@@ -6,10 +6,14 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.Control;
+
+import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class ExtensionPointsData {
 
 	private String[] widgetNames = null;
+	private Control[] widgets = null;
 
 	public ExtensionPointsData() {
 
@@ -30,6 +34,8 @@ public class ExtensionPointsData {
 				try {
 					o = (WidgetInterface) c.createExecutableExtension("class");
 					widgetNames = o.getWidgetNames();
+					 o.createWidgets(GuiBuilderView.topCanvas);
+					 widgets= o.getWidgets();
 					// System.out.println("Name: " + o.getWidgetNames());
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block
@@ -37,6 +43,10 @@ public class ExtensionPointsData {
 				}
 			}
 		}
+	}
+
+	public Control[] getWidgets() {
+		return widgets;
 	}
 
 	public String[] getWidgetNames() {

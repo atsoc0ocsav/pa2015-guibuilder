@@ -92,7 +92,7 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Implement WidgetInterface]
+         [Implement WidgetInterface, Not is necessary define location of widget, getWidgetNames() is the name to show in Tabbar]
       </documentation>
    </annotation>
 
