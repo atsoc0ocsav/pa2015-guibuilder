@@ -12,8 +12,11 @@
       </item>
    </extension>
    <extension
-         name="asdas"
          point="pt.iscte.pidesco.guibuilder.widget">
+      <item
+            class="pt.iscte.pidesco.guibuilder.extensions.WidgetInterface"
+            name="WidgetExtension">
+      </item>
    </extension>
 
 </plugin>
