@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Text;
 
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
+import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
@@ -82,7 +83,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	 * Constructors and main methods
 	 */
 	public GuiBuilderView() {
-
+		
 	}
 
 	@Override
@@ -228,6 +229,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					button.setText(c.str());
 					addDragListener(button, tabLabel.ordinal());
 				}
+				//add widget 
+				addNewWidget(compositeButtons);
+				
 				compositeButtons.setSize(
 						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderComponent.values().length,
 						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
@@ -266,6 +270,16 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				throw new IllegalAccessError("Switch case not defined!");
 			}
 		}
+	}
+
+	private void addNewWidget(Composite compositeButtons) {
+		new ExtensionPointsData(); //objectivo receber a string que foi definida por outros para o widget
+		
+		Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+		button.setAlignment(SWT.CENTER);
+		//button.setText("ola");
+		//addDragListener(button, tabLabel.ordinal());
+		
 	}
 
 	private void addDragListener(final Button button, final int objectTypeOrdinal) {

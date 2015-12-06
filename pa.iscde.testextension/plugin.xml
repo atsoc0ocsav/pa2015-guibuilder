@@ -11,5 +11,9 @@
             name="testExtension">
       </item>
    </extension>
+   <extension
+         name="asdas"
+         point="pt.iscte.pidesco.guibuilder.widget">
+   </extension>
 
 </plugin>

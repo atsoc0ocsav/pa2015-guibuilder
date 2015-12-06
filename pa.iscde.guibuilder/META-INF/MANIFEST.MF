@@ -12,4 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  pa.iscde.extensionTest;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: pt.iscte.pidesco.guibuilder.ui
+Export-Package: pt.iscte.pidesco.guibuilder.extensions,
+ pt.iscte.pidesco.guibuilder.ui
+Import-Package: org.eclipse.jface.viewers
