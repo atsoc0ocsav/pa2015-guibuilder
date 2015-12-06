@@ -46,6 +46,7 @@ import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.internal.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderLayout;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	/*
@@ -165,6 +166,12 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					case COMPONENTS:
 						newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
 								contents);
+						
+						if(objectName.equals("widget")){
+							newObject = objectFactory.createComponentWidgetObject(position, objectName, topCanvas,
+									contents);
+							System.out.println("desenhar aqui");
+						}
 
 						if (newObject != null) {
 							components.add(newObject);
@@ -192,6 +199,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					// objectName, topCanvas,
 					// contents);
 					// break;
+					
+
 					default:
 						throw new IllegalAccessError("Switch case not defined!");
 					}
@@ -226,10 +235,10 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 					button.setAlignment(SWT.CENTER);
 					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal());
+					addDragListener(button, tabLabel.ordinal(),false);
 				}
 				// add widget
-				addNewWidget(compositeButtons);
+				addNewWidget(compositeButtons, tabLabel);
 
 				compositeButtons.setSize(
 						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderComponent.values().length,
@@ -242,13 +251,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 					button.setAlignment(SWT.CENTER);
 					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal());
+					addDragListener(button, tabLabel.ordinal(),false);
 				}
 				compositeButtons.setSize(
 						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderLayout.values().length,
 						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
 				break;
-
+				
+			
 			// case CONTAINERS:
 			// tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
 			// for (GuiLabels.GUIBuilderContainer c :
@@ -271,28 +281,32 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		}
 	}
 
-	private void addNewWidget(Composite compositeButtons) {
+	private void addDragListener(final Button button, final int objectTypeOrdinal,final boolean isWidget) {
+		DragSource ds = new DragSource(button, DND.DROP_MOVE);
+		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+
+		ds.addDragListener(new DragSourceAdapter() {
+			public void dragSetData(DragSourceEvent event) {
+				if(!isWidget){
+					event.data = objectTypeOrdinal + "\t" + button.getText();
+				}else{
+					event.data = objectTypeOrdinal + "\t" + "widget";
+				}
+				
+			}
+		});
+	}
+
+	private void addNewWidget(Composite compositeButtons, GUIBuilderObjectFamily tabLabel) {
 		ExtensionPointsData extensionPointsData = new ExtensionPointsData();
 
 		for (int i = 0; i < extensionPointsData.getWidgetNames().length; i++) {
 			Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 			button.setAlignment(SWT.CENTER);
 			button.setText(extensionPointsData.getWidgetNames()[i]);
-			// addDragListener(button, tabLabel.ordinal());
-
+			addDragListener(button, tabLabel.ordinal(),true);
 		}
 
-	}
-
-	private void addDragListener(final Button button, final int objectTypeOrdinal) {
-		DragSource ds = new DragSource(button, DND.DROP_MOVE);
-		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-
-		ds.addDragListener(new DragSourceAdapter() {
-			public void dragSetData(DragSourceEvent event) {
-				event.data = objectTypeOrdinal + "\t" + button.getText();
-			}
-		});
 	}
 
 	/*
@@ -348,6 +362,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				MenuItem setWindowName = new MenuItem(popupMenu, SWT.NONE);
 				setWindowName.setText(GuiLabels.DialogMenuLabel.SET_WINDW_TITLE.str());
 				setWindowName.addSelectionListener(new SelectionAdapter() {
+
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
@@ -359,6 +374,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							setMessage(CHANGED_TITLE_MSG, inputText);
 						}
 					}
+
 				});
 
 				popupMenu.setVisible(true);

@@ -16,6 +16,6 @@ public class TestClass implements ExtensionTestInterface,WidgetInterface{
 	@Override
 	public String[] getWidgetNames() {
 		// TODO Auto-generated method stub
-		return new String[]{"widget1","widget2","widget3"};
+		return new String[]{"widget1","widget2"};
 	}
 }

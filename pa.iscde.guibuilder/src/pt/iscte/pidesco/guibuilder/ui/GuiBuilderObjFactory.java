@@ -128,144 +128,180 @@ public class GuiBuilderObjFactory {
 		}
 
 		if (isInsideCanvas(position)) {
-			switch (component) {
-			case BTN:
-				FontMetrics fmButton = new GC(canvas).getFontMetrics();
-				Point buttonSize = new Point(
-						(fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
-						fmButton.getHeight() + LABELS_MARGIN.height);
+			if (component != null) {
+				switch (component) {
+				case BTN:
+					FontMetrics fmButton = new GC(canvas).getFontMetrics();
+					Point buttonSize = new Point(
+							(fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
+							fmButton.getHeight() + LABELS_MARGIN.height);
 
-				RectangleFigure backgroundButton = new RectangleFigure();
-				backgroundButton.setBounds(new Rectangle(position.x, position.y, buttonSize.x + BACKGND_MARGIN.width,
-						buttonSize.y + BACKGND_MARGIN.height));
-				backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
-				contents.add(backgroundButton);
+					RectangleFigure backgroundButton = new RectangleFigure();
+					backgroundButton.setBounds(new Rectangle(position.x, position.y,
+							buttonSize.x + BACKGND_MARGIN.width, buttonSize.y + BACKGND_MARGIN.height));
+					backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+					contents.add(backgroundButton);
 
-				Button button = new Button(canvas, SWT.BORDER);
-				button.setText(DEFAULT_BTN_TXT);
-				button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-				button.setSize(buttonSize);
-				button.setEnabled(false);
+					Button button = new Button(canvas, SWT.BORDER);
+					button.setText(DEFAULT_BTN_TXT);
+					button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+					button.setSize(buttonSize);
+					button.setEnabled(false);
 
-				FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button, canvas,
-						true, FigureMoverResizer.Handle.values());
-				fmrButton.setControlMargin(BACKGND_MARGIN);
+					FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button,
+							canvas, true, FigureMoverResizer.Handle.values());
+					fmrButton.setControlMargin(BACKGND_MARGIN);
 
-				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton);
+					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton,
+							fmrButton);
 
-			case LABEL:
-				FontMetrics fmLabel = new GC(canvas).getFontMetrics();
-				Point labelSize = new Point(
-						(fmLabel.getAverageCharWidth() * DEFAULT_LABEL_TXT.length()) + LABELS_MARGIN.width,
-						fmLabel.getHeight() + LABELS_MARGIN.height);
+				case LABEL:
+					FontMetrics fmLabel = new GC(canvas).getFontMetrics();
+					Point labelSize = new Point(
+							(fmLabel.getAverageCharWidth() * DEFAULT_LABEL_TXT.length()) + LABELS_MARGIN.width,
+							fmLabel.getHeight() + LABELS_MARGIN.height);
 
-				RectangleFigure backgroundLabel = new RectangleFigure();
-				backgroundLabel.setBounds(new Rectangle(position.x, position.y, labelSize.x + BACKGND_MARGIN.width,
-						labelSize.y + BACKGND_MARGIN.height));
-				backgroundLabel.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
-				contents.add(backgroundLabel);
+					RectangleFigure backgroundLabel = new RectangleFigure();
+					backgroundLabel.setBounds(new Rectangle(position.x, position.y, labelSize.x + BACKGND_MARGIN.width,
+							labelSize.y + BACKGND_MARGIN.height));
+					backgroundLabel.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+					contents.add(backgroundLabel);
 
-				Label label = new Label(canvas, SWT.BORDER);
-				label.setText(DEFAULT_LABEL_TXT);
-				label.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-				label.setSize(labelSize);
-				label.setEnabled(false);
+					Label label = new Label(canvas, SWT.BORDER);
+					label.setText(DEFAULT_LABEL_TXT);
+					label.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+					label.setSize(labelSize);
+					label.setEnabled(false);
 
-				FigureMoverResizer fmrLabel = new FigureMoverResizer(backgroundLabel, guiBuilderView, label, canvas,
-						true, FigureMoverResizer.Handle.values());
-				fmrLabel.setControlMargin(BACKGND_MARGIN);
+					FigureMoverResizer fmrLabel = new FigureMoverResizer(backgroundLabel, guiBuilderView, label, canvas,
+							true, FigureMoverResizer.Handle.values());
+					fmrLabel.setControlMargin(BACKGND_MARGIN);
 
-				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundLabel, fmrLabel);
+					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundLabel,
+							fmrLabel);
 
-			case TEXTFIELD:
-				FontMetrics fmTxtField = new GC(canvas).getFontMetrics();
-				Point txtFieldSize = new Point(
-						(fmTxtField.getAverageCharWidth() * DEFAULT_TXTFIELD_TXT.length()) + LABELS_MARGIN.width,
-						fmTxtField.getHeight() + LABELS_MARGIN.height);
+				case TEXTFIELD:
+					FontMetrics fmTxtField = new GC(canvas).getFontMetrics();
+					Point txtFieldSize = new Point(
+							(fmTxtField.getAverageCharWidth() * DEFAULT_TXTFIELD_TXT.length()) + LABELS_MARGIN.width,
+							fmTxtField.getHeight() + LABELS_MARGIN.height);
 
-				RectangleFigure backgroundTxtField = new RectangleFigure();
-				backgroundTxtField.setBounds(new Rectangle(position.x, position.y,
-						txtFieldSize.x + BACKGND_MARGIN.width, txtFieldSize.y + BACKGND_MARGIN.height));
-				backgroundTxtField.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
-				contents.add(backgroundTxtField);
+					RectangleFigure backgroundTxtField = new RectangleFigure();
+					backgroundTxtField.setBounds(new Rectangle(position.x, position.y,
+							txtFieldSize.x + BACKGND_MARGIN.width, txtFieldSize.y + BACKGND_MARGIN.height));
+					backgroundTxtField.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+					contents.add(backgroundTxtField);
 
-				Text txtField = new Text(canvas, SWT.BORDER);
-				txtField.setText(DEFAULT_TXTFIELD_TXT);
-				txtField.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-				txtField.setSize(txtFieldSize);
-				txtField.setEditable(false);
-				txtField.setEnabled(false);
+					Text txtField = new Text(canvas, SWT.BORDER);
+					txtField.setText(DEFAULT_TXTFIELD_TXT);
+					txtField.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+					txtField.setSize(txtFieldSize);
+					txtField.setEditable(false);
+					txtField.setEnabled(false);
 
-				FigureMoverResizer fmrTxtField = new FigureMoverResizer(backgroundTxtField, guiBuilderView, txtField,
-						canvas, true, FigureMoverResizer.Handle.values());
-				fmrTxtField.setControlMargin(BACKGND_MARGIN);
+					FigureMoverResizer fmrTxtField = new FigureMoverResizer(backgroundTxtField, guiBuilderView,
+							txtField, canvas, true, FigureMoverResizer.Handle.values());
+					fmrTxtField.setControlMargin(BACKGND_MARGIN);
 
-				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundTxtField,
-						fmrTxtField);
+					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundTxtField,
+							fmrTxtField);
 
-			// case RADIO_BTN:
-			// FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
-			// Point radioBtnSize = new Point(
-			// (fmRadioBtn.getAverageCharWidth() *
-			// DEFAULT_RADIOBTN_TXT.length()) + LABELS_MARGIN.width + 10,
-			// fmRadioBtn.getHeight() + LABELS_MARGIN.height);
-			//
-			// RectangleFigure backgroundRadioBtn = new RectangleFigure();
-			// backgroundRadioBtn.setBounds(new Rectangle(position.x,
-			// position.y,
-			// radioBtnSize.x + BACKGND_MARGIN.width, radioBtnSize.y +
-			// BACKGND_MARGIN.height));
-			// backgroundRadioBtn.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
-			// contents.add(backgroundRadioBtn);
-			//
-			// Button radioBtn = new Button(canvas, SWT.RADIO);
-			// radioBtn.setText(DEFAULT_RADIOBTN_TXT);
-			// radioBtn.setLocation(position.x + BACKGND_MARGIN.width / 2,
-			// position.y + BACKGND_MARGIN.height / 2);
-			// radioBtn.setSelection(true);
-			// radioBtn.setSize(radioBtnSize);
-			// radioBtn.setEnabled(false);
-			//
-			// FigureMoverResizer fmrRadioBtn = new
-			// FigureMoverResizer(backgroundRadioBtn, guiBuilderView, radioBtn,
-			// canvas, true, FigureMoverResizer.Handle.values());
-			// fmrRadioBtn.setControlMargin(BACKGND_MARGIN);
-			//
-			// return new ObjectInComposite(cmpName + "\t" +
-			// System.currentTimeMillis(), backgroundRadioBtn,
-			// fmrRadioBtn);
+				// case RADIO_BTN:
+				// FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
+				// Point radioBtnSize = new Point(
+				// (fmRadioBtn.getAverageCharWidth() *
+				// DEFAULT_RADIOBTN_TXT.length()) + LABELS_MARGIN.width + 10,
+				// fmRadioBtn.getHeight() + LABELS_MARGIN.height);
+				//
+				// RectangleFigure backgroundRadioBtn = new RectangleFigure();
+				// backgroundRadioBtn.setBounds(new Rectangle(position.x,
+				// position.y,
+				// radioBtnSize.x + BACKGND_MARGIN.width, radioBtnSize.y +
+				// BACKGND_MARGIN.height));
+				// backgroundRadioBtn.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+				// contents.add(backgroundRadioBtn);
+				//
+				// Button radioBtn = new Button(canvas, SWT.RADIO);
+				// radioBtn.setText(DEFAULT_RADIOBTN_TXT);
+				// radioBtn.setLocation(position.x + BACKGND_MARGIN.width / 2,
+				// position.y + BACKGND_MARGIN.height / 2);
+				// radioBtn.setSelection(true);
+				// radioBtn.setSize(radioBtnSize);
+				// radioBtn.setEnabled(false);
+				//
+				// FigureMoverResizer fmrRadioBtn = new
+				// FigureMoverResizer(backgroundRadioBtn, guiBuilderView,
+				// radioBtn,
+				// canvas, true, FigureMoverResizer.Handle.values());
+				// fmrRadioBtn.setControlMargin(BACKGND_MARGIN);
+				//
+				// return new ObjectInComposite(cmpName + "\t" +
+				// System.currentTimeMillis(), backgroundRadioBtn,
+				// fmrRadioBtn);
 
-			case CHK_BOX:
-				FontMetrics fmChckBox = new GC(canvas).getFontMetrics();
-				Point chckBoxSize = new Point(
-						(fmChckBox.getAverageCharWidth() * DEFAULT_CHCKBOX_TXT.length()) + LABELS_MARGIN.width + 18,
-						fmChckBox.getHeight() + LABELS_MARGIN.height);
+				case CHK_BOX:
+					FontMetrics fmChckBox = new GC(canvas).getFontMetrics();
+					Point chckBoxSize = new Point(
+							(fmChckBox.getAverageCharWidth() * DEFAULT_CHCKBOX_TXT.length()) + LABELS_MARGIN.width + 18,
+							fmChckBox.getHeight() + LABELS_MARGIN.height);
 
-				RectangleFigure backgroundChckBox = new RectangleFigure();
-				backgroundChckBox.setBounds(new Rectangle(position.x, position.y, chckBoxSize.x + BACKGND_MARGIN.width,
-						chckBoxSize.y + BACKGND_MARGIN.height));
-				backgroundChckBox.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
-				contents.add(backgroundChckBox);
+					RectangleFigure backgroundChckBox = new RectangleFigure();
+					backgroundChckBox.setBounds(new Rectangle(position.x, position.y,
+							chckBoxSize.x + BACKGND_MARGIN.width, chckBoxSize.y + BACKGND_MARGIN.height));
+					backgroundChckBox.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_TRANSPARENT));
+					contents.add(backgroundChckBox);
 
-				Button chckBox = new Button(canvas, SWT.CHECK);
-				chckBox.setText(DEFAULT_CHCKBOX_TXT);
-				chckBox.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
-				chckBox.setSize(chckBoxSize);
-				chckBox.setEnabled(false);
+					Button chckBox = new Button(canvas, SWT.CHECK);
+					chckBox.setText(DEFAULT_CHCKBOX_TXT);
+					chckBox.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+					chckBox.setSize(chckBoxSize);
+					chckBox.setEnabled(false);
 
-				FigureMoverResizer fmrChckBox = new FigureMoverResizer(backgroundChckBox, guiBuilderView, chckBox,
-						canvas, true, FigureMoverResizer.Handle.values());
-				fmrChckBox.setControlMargin(BACKGND_MARGIN);
+					FigureMoverResizer fmrChckBox = new FigureMoverResizer(backgroundChckBox, guiBuilderView, chckBox,
+							canvas, true, FigureMoverResizer.Handle.values());
+					fmrChckBox.setControlMargin(BACKGND_MARGIN);
 
-				return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundChckBox,
-						fmrChckBox);
+					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundChckBox,
+							fmrChckBox);
 
-			default:
-				throw new IllegalAccessError("Switch case not defined!");
+				default:
+
+					throw new IllegalAccessError("Switch case not defined!");
+				}
 			}
+
 		} else {
 			return null;
 		}
+		return null;
+
+	}
+
+	public ObjectInComposite createComponentWidgetObject(Point position, String cmpName, Canvas canvas,
+			Figure contents) {
+
+		FontMetrics fmButton = new GC(canvas).getFontMetrics();
+		Point buttonSize = new Point((fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
+				fmButton.getHeight() + LABELS_MARGIN.height);
+
+		RectangleFigure backgroundButton = new RectangleFigure();
+		backgroundButton.setBounds(new Rectangle(position.x, position.y, buttonSize.x + BACKGND_MARGIN.width,
+				buttonSize.y + BACKGND_MARGIN.height));
+		backgroundButton.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+		contents.add(backgroundButton);
+
+		Button button = new Button(canvas, SWT.BORDER);
+		button.setText(DEFAULT_BTN_TXT);
+		button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
+		button.setSize(buttonSize);
+		button.setEnabled(false);
+
+		FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button, canvas, true,
+				FigureMoverResizer.Handle.values());
+		fmrButton.setControlMargin(BACKGND_MARGIN);
+
+		return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton);
+
 	}
 
 	public ObjectInComposite createLayoutFamilyObject(Point position, String cmpName, Canvas canvas, Figure contents) {
