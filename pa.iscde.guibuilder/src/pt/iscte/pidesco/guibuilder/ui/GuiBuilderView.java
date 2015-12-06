@@ -371,6 +371,35 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				}
 			});
 
+			// Delete Item
+			MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
+			deleteItem.setText(GuiLabels.DialogMenuLabel.DELETE_OBJECT.str());
+			deleteItem.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					ObjectInComposite object = null;
+					for (ObjectInComposite o : components) {
+						if (o.getFigure().equals(((FigureMoverResizer) fmr).getFigure())) {
+							object = o;
+						}
+					}
+
+					if (object != null) {
+						try {
+							object.getFmr().getControl().dispose();
+						} catch (NullPointerException exception) {
+						}
+
+						((FigureMoverResizer) fmr).getFigure().setVisible(false);
+						components.remove(object);
+						
+						topCanvas.update();
+						topCanvas.redraw();
+						topCanvas.layout();
+					}
+				}
+			});
+
 			popupMenu.setVisible(true);
 		} else if (fmr instanceof ImageResizer) {
 			if (!isInsideObjectOnCanvas(new Point(x, y))) {

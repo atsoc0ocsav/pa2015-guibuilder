@@ -21,7 +21,7 @@ public class GuiLabels {
 
 	public enum DialogMenuLabel {
 		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GO_TO_CODE("Go to Code"), SET_WINDW_TITLE(
-				"Set window title");
+				"Set window title"),DELETE_OBJECT("Delete Object");
 
 		private String str;
 

@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;

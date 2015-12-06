@@ -153,7 +153,8 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				layoutMgr.layout(figure.getParent());
 
 				if (control != null) {
-					control.setSize(newPos.getSize().width, newPos.getSize().height);
+					control.setSize(newPos.getSize().width - controlMargin.width,
+							newPos.getSize().height - controlMargin.height);
 				}
 			}
 		} else { // move
@@ -170,7 +171,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 					control.setLocation(figure.getBounds().x + controlMargin.width / 2,
 							figure.getBounds().y + controlMargin.height / 2);
 				}
-			}else if(!guiBuilderView.isInsideCanvas(pos.x, pos.y)){
+			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y)) {
 				guiBuilderView.setMessage(GuiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
 			}
 		}
