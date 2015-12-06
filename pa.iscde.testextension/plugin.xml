@@ -14,7 +14,7 @@
    <extension
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
-            class="pt.iscte.pidesco.guibuilder.extensions.WidgetInterface"
+            class="pa.iscde.testextension.TestClass"
             name="WidgetExtension">
       </item>
    </extension>
