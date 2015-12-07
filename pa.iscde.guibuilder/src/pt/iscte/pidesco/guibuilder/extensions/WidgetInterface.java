@@ -10,4 +10,6 @@ public interface WidgetInterface {
 	public void createWidgets(Canvas canvas);
 
 	public Control[] getWidgets();
+	
+	
 }

@@ -29,7 +29,7 @@ public class GuiBuilderObjFactory {
 	public static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
 	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
 	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
-	private static final Dimension BACKGND_MARGIN = new Dimension(6, 6);
+	private static final Dimension BACKGND_MARGIN = new Dimension(10, 10);
 
 	// Default text
 	private static final String DEFAULT_FRAME_TITLE_TXT = "New Frame";
@@ -149,7 +149,7 @@ public class GuiBuilderObjFactory {
 					button.setText(DEFAULT_BTN_TXT);
 					button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					button.setSize(buttonSize);
-					button.setEnabled(false);
+					//button.setEnabled(false);
 
 					FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button,
 							canvas, true, FigureMoverResizer.Handle.values());
@@ -174,7 +174,7 @@ public class GuiBuilderObjFactory {
 					label.setText(DEFAULT_LABEL_TXT);
 					label.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					label.setSize(labelSize);
-					label.setEnabled(false);
+					//label.setEnabled(false);
 
 					FigureMoverResizer fmrLabel = new FigureMoverResizer(backgroundLabel, guiBuilderView, label, canvas,
 							true, FigureMoverResizer.Handle.values());
@@ -200,7 +200,7 @@ public class GuiBuilderObjFactory {
 					txtField.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					txtField.setSize(txtFieldSize);
 					txtField.setEditable(false);
-					txtField.setEnabled(false);
+					//txtField.setEnabled(false);
 
 					FigureMoverResizer fmrTxtField = new FigureMoverResizer(backgroundTxtField, guiBuilderView,
 							txtField, canvas, true, FigureMoverResizer.Handle.values());
@@ -258,7 +258,7 @@ public class GuiBuilderObjFactory {
 					chckBox.setText(DEFAULT_CHCKBOX_TXT);
 					chckBox.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					chckBox.setSize(chckBoxSize);
-					chckBox.setEnabled(false);
+					//chckBox.setEnabled(false);
 
 					FigureMoverResizer fmrChckBox = new FigureMoverResizer(backgroundChckBox, guiBuilderView, chckBox,
 							canvas, true, FigureMoverResizer.Handle.values());

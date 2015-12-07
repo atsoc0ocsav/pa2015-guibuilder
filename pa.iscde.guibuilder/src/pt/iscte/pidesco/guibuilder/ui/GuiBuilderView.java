@@ -427,12 +427,15 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						dialog.setLabelProvider(new LabelProvider());
 						dialog.setInput(new String[] { "SWING", "SWT" });
 						dialog.setTitle("Select target");
-						dialog.open();
+						//dialog.open();
 
-						Object[] result = dialog.getResult();
+						
 
 						if (dialog.open() == Window.OK) {
+							Object[] result = dialog.getResult();
+							
 							if (result[0].toString().equals("SWING")) {
+							
 								System.out.println("Generating swing...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWING,
 										((ImageResizer) fmr).getTitleFrame(), components);
@@ -445,6 +448,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							}
 
 						}
+						
 					}
 				});
 
