@@ -7,6 +7,9 @@ import java.util.Map;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
@@ -36,6 +39,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ListDialog;
 
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
@@ -79,7 +83,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private GuiBuilderObjFactory objectFactory;
 	public static Canvas topCanvas;
 	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
-	private int idWidget = 0;
 
 	/*
 	 * Constructors and main methods
@@ -181,7 +184,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							}
 
 						}
-						// need refactoring
+						System.err.println("I need refactoring!!!!!!!!!!");
+
 						if (newObject != null) {
 							components.add(newObject);
 							if (objectName.contains("widget")) {
@@ -360,17 +364,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr));
 			}
 
-			// Item Go to code
-			MenuItem goToCodeItem = new MenuItem(popupMenu, SWT.NONE);
-			goToCodeItem.setText(GuiLabels.DialogMenuLabel.GO_TO_CODE.str());
-			goToCodeItem.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					// create dialog to select target
-					new GeneratorCode(GeneratorCode.selectTarget.SWING, "");
-				}
-			});
-
 			// Delete Item
 			MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
 			deleteItem.setText(GuiLabels.DialogMenuLabel.DELETE_OBJECT.str());
@@ -392,7 +385,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 						((FigureMoverResizer) fmr).getFigure().setVisible(false);
 						components.remove(object);
-						
+
 						topCanvas.update();
 						topCanvas.redraw();
 						topCanvas.layout();
@@ -420,6 +413,39 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						}
 					}
 
+				});
+
+				// Generate code
+				MenuItem generateCode = new MenuItem(popupMenu, SWT.NONE);
+				generateCode.setText(GuiLabels.DialogMenuLabel.GENERATE_CODE.str());
+				generateCode.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						ListDialog dialog = new ListDialog(topCanvas.getShell());
+						dialog.setAddCancelButton(true);
+						dialog.setContentProvider(new ArrayContentProvider());
+						dialog.setLabelProvider(new LabelProvider());
+						dialog.setInput(new String[] { "SWING", "SWT" });
+						dialog.setTitle("Select target");
+						dialog.open();
+
+						Object[] result = dialog.getResult();
+
+						if (dialog.open() == Window.OK) {
+							if (result[0].toString().equals("SWING")) {
+								System.out.println("Generating swing...");
+								new GeneratorCode(GeneratorCode.selectTarget.SWING,
+										((ImageResizer) fmr).getTitleFrame(), components);
+
+							}
+							if (result[0].toString().equals("SWT")) {
+								System.out.println("Generating swt...");
+								new GeneratorCode(GeneratorCode.selectTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
+										components);
+							}
+
+						}
+					}
 				});
 
 				popupMenu.setVisible(true);

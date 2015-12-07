@@ -170,7 +170,7 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		label.setLocation(position.x, position.y);
-		label.setSize((fm.getAverageCharWidth() * str.length()) + 2, fm.getHeight() + 2);
+		label.setSize((fm.getAverageCharWidth() * str.length()) + 8, fm.getHeight() + 2);
 
 		int color = canvasTopbarImageData.getPixel(position.x, position.y);
 		RGB rgb = new RGB(color & 0xFF, (color & 0xFF00)>> 8, (color & 0xFF0000)>>16);
@@ -178,7 +178,12 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 		label.setBackground(new Color(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getDevice(), rgb));
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
-
+	public String getTitleFrame(){
+		if(label!=null){
+			return label.getText();
+		}
+		return null;
+	}
 	/*
 	 * Not used
 	 */

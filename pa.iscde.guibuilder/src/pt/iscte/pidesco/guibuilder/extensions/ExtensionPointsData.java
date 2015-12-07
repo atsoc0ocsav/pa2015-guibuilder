@@ -34,8 +34,8 @@ public class ExtensionPointsData {
 				try {
 					o = (WidgetInterface) c.createExecutableExtension("class");
 					widgetNames = o.getWidgetNames();
-					 o.createWidgets(GuiBuilderView.topCanvas);
-					 widgets= o.getWidgets();
+					o.createWidgets(GuiBuilderView.topCanvas);
+					widgets = o.getWidgets();
 					// System.out.println("Name: " + o.getWidgetNames());
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block

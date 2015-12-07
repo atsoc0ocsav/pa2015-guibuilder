@@ -26,12 +26,13 @@ import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 public class GuiBuilderObjFactory {
 	// Dimensions
 	private static final Point DEFAULT_CANVAS_POS_OFFSET = new Point(5, 5);
-	private static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
+	public static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
 	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
 	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
 	private static final Dimension BACKGND_MARGIN = new Dimension(6, 6);
 
 	// Default text
+	private static final String DEFAULT_FRAME_TITLE_TXT = "New Frame";
 	private static final String DEFAULT_BTN_TXT = "New Button";
 	private static final String DEFAULT_LABEL_TXT = "New Label";
 	private static final String DEFAULT_TXTFIELD_TXT = "New Textfield";
@@ -85,9 +86,10 @@ public class GuiBuilderObjFactory {
 			backgroundCanvas.add(canvasBackgnd);
 			backgroundCanvas.add(canvasTopbar);
 
-			new ImageResizer(guiBuilderView, canvasBackgnd, canvasTopbar, imgCanvas.getImageData(),
-					imgCanvasTopbar.getImageData(), DEFAULT_CANVAS_TOPBAR_INIT_DIM.height, backgroundCanvas, canvas,
-					false, ImageResizer.Handle.BOT_RIGHT);
+			ImageResizer imageResizer = new ImageResizer(guiBuilderView, canvasBackgnd, canvasTopbar,
+					imgCanvas.getImageData(), imgCanvasTopbar.getImageData(), DEFAULT_CANVAS_TOPBAR_INIT_DIM.height,
+					backgroundCanvas, canvas, false, ImageResizer.Handle.BOT_RIGHT);
+			imageResizer.setText(DEFAULT_FRAME_TITLE_TXT);
 
 			imgCanvas.dispose();
 			imgCanvasTopbar.dispose();
@@ -154,7 +156,7 @@ public class GuiBuilderObjFactory {
 					fmrButton.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton,
-							fmrButton);
+							fmrButton, button);
 
 				case LABEL:
 					FontMetrics fmLabel = new GC(canvas).getFontMetrics();
@@ -178,8 +180,8 @@ public class GuiBuilderObjFactory {
 							true, FigureMoverResizer.Handle.values());
 					fmrLabel.setControlMargin(BACKGND_MARGIN);
 
-					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundLabel,
-							fmrLabel);
+					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundLabel, fmrLabel,
+							label);
 
 				case TEXTFIELD:
 					FontMetrics fmTxtField = new GC(canvas).getFontMetrics();
@@ -205,7 +207,7 @@ public class GuiBuilderObjFactory {
 					fmrTxtField.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundTxtField,
-							fmrTxtField);
+							fmrTxtField, txtField);
 
 				// case RADIO_BTN:
 				// FontMetrics fmRadioBtn = new GC(canvas).getFontMetrics();
@@ -263,7 +265,7 @@ public class GuiBuilderObjFactory {
 					fmrChckBox.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundChckBox,
-							fmrChckBox);
+							fmrChckBox, chckBox);
 
 				default:
 
@@ -295,12 +297,14 @@ public class GuiBuilderObjFactory {
 
 			widget.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 			widget.setSize(widgetSize);
+			// widget.setEnabled(false);
 			FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, widget, canvas,
 					true, FigureMoverResizer.Handle.values());
 
 			fmrButton.setControlMargin(BACKGND_MARGIN);
 
-			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton);
+			return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton, fmrButton,
+					widget);
 		}
 		return null;
 
