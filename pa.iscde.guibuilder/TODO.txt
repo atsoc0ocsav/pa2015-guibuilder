@@ -1,7 +1,8 @@
 TODO List:
-V - Solve component sobre-position
 R - Generate color code
 - Implement parent on objectOnComposite
 	- Also add the concept of children
 V - Create class on workspace
 R - Insert includes on generated code
+- Refactor drag and drop 
+	(drop, in this case. Check syserr)

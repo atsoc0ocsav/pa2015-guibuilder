@@ -1,12 +1,13 @@
 package pt.iscte.pidesco.guibuilder.ui;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -67,11 +68,12 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 	// Messages
 	private final String INITIAL_MSG = "Welcome to GUIBuilder!";
-	private static final String ADDED_OBJECT_MSG = "Added %s to canvas";
-	public static final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas";
-	public static final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
-	private static final String SET_LAYOUT = "Set %s on canvas";
-	public static final String OVER_OBJECT_MSG = "Object %s droped over other object";
+	private final String ADDED_OBJECT_MSG = "Added %s to canvas";
+	public final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas";
+	public final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
+	private final String SET_LAYOUT = "Set %s on canvas";
+	public final String OVER_OBJECT_MSG = "Tried to drop %s over other object";
+	public final String TOO_BIG_OBJECT ="Object %s is too big for canvas";
 
 	/*
 	 * Variables
@@ -521,18 +523,72 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		components.add(newObject);
 	}
 
+	public Dimension getCanvasSize() {
+		return objectFactory.getCanvasSize();
+	}
+
 	public boolean isInsideCanvas(int x, int y, int width, int height) {
 		return objectFactory.isInsideCanvas(x, y, width, height);
 	}
 
-	public boolean isOverObject(int x, int y, int width, int height) {
+	public boolean isOverObject(int x, int y, int width, int height, IFigure figure) {
 		for (ObjectInComposite o : components) {
-			Figure fig = o.getFigure();
+			if (figure == o.getFigure())
+				continue;
 
-			if (x >= fig.getLocation().x && y >= fig.getLocation().y
-					&& (x + width) < (fig.getLocation().x + fig.getSize().width)
-					&& (y + height) < (fig.getLocation().y + fig.getSize().height)) {
-				return true;
+			Point figPos = new Point(o.getFigure().getLocation().x, o.getFigure().getLocation().y);
+			Dimension figDim = o.getFigure().getSize();
+
+			// Not the most efficient way to do it, but is more organized and
+			// understandable like this, so lets go with the if conditions
+			// Is figure inside component?
+			if (x >= figPos.x && x < (figPos.x + figDim.width)) {
+				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_LEFT
+					//System.out.println("Figure TOP_LEFT inside");
+					return true;
+				}
+
+				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_LEFT
+					//System.out.println("Figure BOTTOM_LEFT inside");
+					return true;
+				}
+			}
+
+			if ((x + width) >= figPos.x && (x + width) < (figPos.x + figDim.width)) {
+				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_RIGHT
+					//System.out.println("Figure TOP_RIGHT inside");
+					return true;
+				}
+
+				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_RIGHT
+					//System.out.println("Figure BOTTOM_RIGHT inside");
+					return true;
+				}
+			}
+
+			// Is component inside figure?
+			if (figPos.x >= x && figPos.x < (x + width)) {
+				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_LEFT
+					//System.out.println("Figure TOP_LEFT inside");
+					return true;
+				}
+
+				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_LEFT
+					//System.out.println("Figure BOTTOM_LEFT inside");
+					return true;
+				}
+			}
+
+			if ((figPos.x + figDim.width) >= x && (figPos.x + figDim.width) < (x + width)) {
+				if (figPos.y >= y && figPos.y < (y + height)) { // TOP_RIGHT
+					//System.out.println("Figure TOP_RIGHT inside");
+					return true;
+				}
+
+				if ((figPos.y + figDim.height) >= y && (figPos.y + figDim.height) < (y + height)) { // BOTTOM_RIGHT
+					//System.out.println("Figure BOTTOM_RIGHT inside");
+					return true;
+				}
 			}
 		}
 		return false;

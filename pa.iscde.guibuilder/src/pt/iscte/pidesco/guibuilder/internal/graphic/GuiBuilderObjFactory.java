@@ -26,7 +26,7 @@ import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 public class GuiBuilderObjFactory {
 	// Dimensions
 	private static final Point DEFAULT_CANVAS_POS_OFFSET = new Point(5, 5);
-	public static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
+	private static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
 	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
 	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
 	private static final Dimension BACKGND_MARGIN = new Dimension(14, 14);
@@ -343,7 +343,7 @@ public class GuiBuilderObjFactory {
 		Dimension canvasDim = canvasBackgnd.getSize();
 
 		return (x + width) < (canvasDim.width + DEFAULT_CANVAS_POS_OFFSET.x)
-				&& (y + width) < (canvasDim.height + DEFAULT_CANVAS_POS_OFFSET.y
+				&& (y + height) < (canvasDim.height + DEFAULT_CANVAS_POS_OFFSET.y
 						+ DEFAULT_CANVAS_TOPBAR_INIT_DIM.height)
 				&& x >= DEFAULT_CANVAS_POS_OFFSET.x && y >= DEFAULT_CANVAS_TOPBAR_INIT_DIM.height;
 	}

@@ -153,7 +153,9 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 		if (handle != null) { // resize
 			Rectangle newPos = handle.getNewPosition(bounds, offset);
 
-			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width) {
+			if (newPos.getSize().height >= MIN_DIM.height && newPos.getSize().width >= MIN_DIM.width
+					&& guiBuilderView.isInsideCanvas(newPos.getLocation().x, newPos.getLocation().y,
+							newPos.getSize().width, newPos.getSize().height)) {
 				layoutMgr.setConstraint(figure, newPos);
 				updateMgr.addDirtyRegion(figure.getParent(), newPos);
 				layoutMgr.layout(figure.getParent());
@@ -167,13 +169,21 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 								figure.getBounds().y + controlMargin.height / 2);
 					}
 				}
+			} else if (!guiBuilderView.isInsideCanvas(newPos.getLocation().x, newPos.getLocation().y,
+					newPos.getSize().width, newPos.getSize().height)) {
+				if (control != null) {
+					guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, control);
+				} else {
+					guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, figure);
+				}
 			}
 		} else { // move
 			Point pos = new Point(bounds.getCopy().translate(offset.width, offset.height).x,
 					bounds.getCopy().translate(offset.width, offset.height).y);
 
 			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)
-					&& !guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
+					&& !guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
+							figure)) {
 				bounds = bounds.getCopy().translate(offset.width, offset.height);
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
@@ -184,9 +194,18 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 							figure.getBounds().y + controlMargin.height / 2);
 				}
 			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
-				guiBuilderView.setMessage(GuiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
-			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
-				guiBuilderView.setMessage(GuiBuilderView.OVER_OBJECT_MSG, control);
+				if (control != null) {
+					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
+				} else {
+					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, figure);
+				}
+			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
+					figure)) {
+				if (control != null) {
+					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, control);
+				} else {
+					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, figure);
+				}
 			}
 		}
 
