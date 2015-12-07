@@ -7,7 +7,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderObjFactory;
+import pt.iscte.pidesco.guibuilder.internal.codeGenerator.GenerateObjectsInterface;
+import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 
 public class GeneratorCode {
 

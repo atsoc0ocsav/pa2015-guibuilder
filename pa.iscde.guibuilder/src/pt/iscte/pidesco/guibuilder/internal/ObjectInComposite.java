@@ -3,6 +3,8 @@ package pt.iscte.pidesco.guibuilder.internal;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.swt.widgets.Control;
 
+import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
+
 public class ObjectInComposite {
 
 	private String id;

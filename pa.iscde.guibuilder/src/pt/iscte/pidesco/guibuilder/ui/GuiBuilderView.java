@@ -44,11 +44,12 @@ import org.eclipse.ui.dialogs.ListDialog;
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
-import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
-import pt.iscte.pidesco.guibuilder.internal.ObjectMoverResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
+import pt.iscte.pidesco.guibuilder.internal.graphic.ImageResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderLayout;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 

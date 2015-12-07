@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal;
+package pt.iscte.pidesco.guibuilder.internal.graphic;
 
 import java.util.ArrayList;
 import java.util.Arrays;

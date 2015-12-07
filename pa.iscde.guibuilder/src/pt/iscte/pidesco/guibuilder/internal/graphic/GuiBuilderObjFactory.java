@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.ui;
+package pt.iscte.pidesco.guibuilder.internal.graphic;
 
 import java.util.Map;
 
@@ -19,9 +19,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.internal.FigureMoverResizer;
-import pt.iscte.pidesco.guibuilder.internal.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 public class GuiBuilderObjFactory {
 	// Dimensions

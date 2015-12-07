@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal;
+package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
 public interface GenerateObjectsInterface {
 
