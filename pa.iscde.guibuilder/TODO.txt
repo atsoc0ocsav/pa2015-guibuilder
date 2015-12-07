@@ -1,1 +1,12 @@
 TODO List:
+V - Correct resize of the components
+V - Implement components rename
+V - Get canvas size (factory)
+V - Solve component sobre-position
+V - Components almost out of canvas
+V - Set color on components (not disabled anymore)
+R - Generate color code
+- Implement parent on objectOnComposite
+	- Also add the concept of children
+V - Create class on workspace
+R - Insert includes on generated code
