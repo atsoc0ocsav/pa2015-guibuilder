@@ -1,6 +1,7 @@
 package pt.iscte.pidesco.guibuilder.internal;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -32,33 +33,46 @@ public class GeneratorCode {
 
 			code.append(swingObjects.generateStartClass()).append(swingObjects.generateStartConstructorClass());
 
-			code.append(swingObjects.generateFrame(
-					new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
+			code.append(swingObjects
+					.generateFrame(new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
 							String.valueOf(guiBuilderView.getCanvasSize().height) }));
 		} else if (target.equals(selectTarget.SWT)) {
 			code.append(swtObjects.generateImports());
 
 			code.append(swtObjects.generateStartClass()).append(swtObjects.generateStartConstructorClass());
 
-			code.append(swtObjects.generateFrame(
-					new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
+			code.append(swtObjects
+					.generateFrame(new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
 							String.valueOf(guiBuilderView.getCanvasSize().height) }));
 		}
-		
+
 		///////////////////////////////////// ADD
 		///////////////////////////////////// COMPONENTS/////////////////////////////////////////////////////
+		int appendNameComponent = 0;
 		for (ObjectInComposite objectInComposite : components) {
-
+			
+			
 			if (objectInComposite.getId().toLowerCase().contains("widget")) {
+			//System.out.println("->Color: "+objectInComposite.getFigure().getBackgroundColor().);	
 
 				ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
 
 				for (int i = 1; i < extensionPointsData.getCodeWidget().length; i++) {
-					code.append("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n");
+					if(extensionPointsData.getCodeWidget()[i].contains(extensionPointsData.getCodeWidget()[0])){
+						String temp = ("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n").replaceAll(extensionPointsData.getCodeWidget()[0],
+								extensionPointsData.getCodeWidget()[0] + appendNameComponent);
+						code.append(temp);
+					}else{
+						code.append("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n");
+					}
+					
 				}
 				if (target.equals(selectTarget.SWING)) {
-					code.append("\t \t frame.add(" + extensionPointsData.getCodeWidget()[0] + "); \n");
+					code.append("\t \t frame.add(" + extensionPointsData.getCodeWidget()[0]+appendNameComponent + "); \n \n");
 				}
+				appendNameComponent++;
+				
+
 			}
 
 			else if (objectInComposite.getId().toLowerCase().contains("button")) {
