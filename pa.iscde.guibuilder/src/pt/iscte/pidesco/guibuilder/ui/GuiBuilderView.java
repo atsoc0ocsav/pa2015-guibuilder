@@ -46,7 +46,7 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
-import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.FigureHandler;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ImageResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
@@ -71,6 +71,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public static final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas";
 	public static final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
 	private static final String SET_LAYOUT = "Set %s on canvas";
+	public static final String OVER_OBJECT_MSG = "Object %s droped over other object";
 
 	/*
 	 * Variables
@@ -254,13 +255,16 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			case COMPONENTS:
 				tabItem.setImage(imageMap.get(COMPONENTS_TAB_ICON_FILENAME));
 				for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
-					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
-					button.setAlignment(SWT.CENTER);
-					button.setText(c.str());
-					addDragListener(button, tabLabel.ordinal(), false);
+					if (c != GuiLabels.GUIBuilderComponent.OTHER) {
+						Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+						button.setAlignment(SWT.CENTER);
+						button.setText(c.str());
+						addDragListener(button, tabLabel.ordinal(), false);
+					} else {
+						// add widget
+						addNewWidget(compositeButtons, tabLabel);
+					}
 				}
-				// add widget
-				addNewWidget(compositeButtons, tabLabel);
 
 				compositeButtons.setSize(
 						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderComponent.values().length,
@@ -336,7 +340,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public void openDialogMenu(final ObjectMoverResizer fmr, final int x, final int y) {
 		Menu popupMenu = new Menu(topCanvas);
 
-		if (fmr instanceof FigureMoverResizer) {
+		if (fmr instanceof FigureHandler) {
 			// Item Rename
 			MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
 			renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
@@ -348,7 +352,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR).open();
 
 					if (inputText != null) {
-						((FigureMoverResizer) fmr).setText(inputText);
+						((FigureHandler) fmr).setText(inputText);
+
+						((FigureHandler) fmr).renameControl(inputText);
 					}
 				}
 			});
@@ -362,7 +368,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			for (GuiLabels.Color c : GuiLabels.Color.values()) {
 				MenuItem item = new MenuItem(chooseColorItemMenu, SWT.NONE);
 				item.setText(c.name());
-				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr));
+				addColorDialogMenuListener(item, topCanvas, ((FigureHandler) fmr));
 			}
 
 			// Delete Item
@@ -373,7 +379,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				public void widgetSelected(SelectionEvent e) {
 					ObjectInComposite object = null;
 					for (ObjectInComposite o : components) {
-						if (o.getFigure().equals(((FigureMoverResizer) fmr).getFigure())) {
+						if (o.getFigure().equals(((FigureHandler) fmr).getFigure())) {
 							object = o;
 						}
 					}
@@ -384,7 +390,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						} catch (NullPointerException exception) {
 						}
 
-						((FigureMoverResizer) fmr).getFigure().setVisible(false);
+						((FigureHandler) fmr).getFigure().setVisible(false);
 						components.remove(object);
 
 						topCanvas.update();
@@ -396,7 +402,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 			popupMenu.setVisible(true);
 		} else if (fmr instanceof ImageResizer) {
-			if (!isInsideObjectOnCanvas(new Point(x, y))) {
+			if (!isOverObject(new Point(x, y))) {
 				// Item Window Name
 				MenuItem setWindowName = new MenuItem(popupMenu, SWT.NONE);
 				setWindowName.setText(GuiLabels.DialogMenuLabel.SET_WINDW_TITLE.str());
@@ -428,15 +434,13 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						dialog.setLabelProvider(new LabelProvider());
 						dialog.setInput(new String[] { "SWING", "SWT" });
 						dialog.setTitle("Select target");
-						//dialog.open();
-
-						
+						// dialog.open();
 
 						if (dialog.open() == Window.OK) {
 							Object[] result = dialog.getResult();
-							
+
 							if (result[0].toString().equals("SWING")) {
-							
+
 								System.out.println("Generating swing...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWING,
 										((ImageResizer) fmr).getTitleFrame(), components);
@@ -449,7 +453,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							}
 
 						}
-						
+
 					}
 				});
 
@@ -458,7 +462,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		}
 	}
 
-	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureMoverResizer fmr) {
+	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureHandler fmr) {
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -495,7 +499,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		messageArea.setText(String.format(message, args));
 	}
 
-	private boolean isInsideObjectOnCanvas(Point location) {
+	private boolean isOverObject(Point location) {
 		for (ObjectInComposite o : components) {
 			Figure fig = o.getFigure();
 
@@ -516,8 +520,21 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		components.add(newObject);
 	}
 
-	public boolean isInsideCanvas(int x, int y) {
-		return objectFactory.isInsideCanvas(x, y);
+	public boolean isInsideCanvas(int x, int y, int width, int height) {
+		return objectFactory.isInsideCanvas(x, y, width, height);
+	}
+
+	public boolean isOverObject(int x, int y, int width, int height) {
+		for (ObjectInComposite o : components) {
+			Figure fig = o.getFigure();
+
+			if (x >= fig.getLocation().x && y >= fig.getLocation().y
+					&& (x + width) < (fig.getLocation().x + fig.getSize().width)
+					&& (y + height) < (fig.getLocation().y + fig.getSize().height)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public GuiLabels.GUIBuilderLayout getActiveLayout() {

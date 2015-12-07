@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Text;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
-import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 public class GuiBuilderObjFactory {
 	// Dimensions
@@ -30,7 +29,7 @@ public class GuiBuilderObjFactory {
 	public static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
 	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
 	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
-	private static final Dimension BACKGND_MARGIN = new Dimension(10, 10);
+	private static final Dimension BACKGND_MARGIN = new Dimension(14, 14);
 
 	// Default text
 	private static final String DEFAULT_FRAME_TITLE_TXT = "New Frame";
@@ -101,7 +100,7 @@ public class GuiBuilderObjFactory {
 			fig.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 			fig.setBounds(new Rectangle(DEFAULT_CANVAS_POS_OFFSET.x, DEFAULT_CANVAS_POS_OFFSET.y,
 					DEFAULT_CANVAS_INIT_DIM.width, DEFAULT_CANVAS_INIT_DIM.height));
-			new FigureMoverResizer(fig, guiBuilderView, null, "", false, FigureMoverResizer.Handle.BOT_RIGHT);
+			new FigureHandler(fig, guiBuilderView, null, "", false, FigureHandler.Handle.BOT_RIGHT);
 			return fig;
 		}
 	}
@@ -150,10 +149,10 @@ public class GuiBuilderObjFactory {
 					button.setText(DEFAULT_BTN_TXT);
 					button.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					button.setSize(buttonSize);
-					//button.setEnabled(false);
+					// button.setEnabled(false);
 
-					FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, button,
-							canvas, true, FigureMoverResizer.Handle.values());
+					FigureHandler fmrButton = new FigureHandler(backgroundButton, guiBuilderView, button,
+							GuiLabels.GUIBuilderComponent.BTN, canvas, true, FigureHandler.Handle.values());
 					fmrButton.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundButton,
@@ -175,10 +174,10 @@ public class GuiBuilderObjFactory {
 					label.setText(DEFAULT_LABEL_TXT);
 					label.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					label.setSize(labelSize);
-					//label.setEnabled(false);
+					// label.setEnabled(false);
 
-					FigureMoverResizer fmrLabel = new FigureMoverResizer(backgroundLabel, guiBuilderView, label, canvas,
-							true, FigureMoverResizer.Handle.values());
+					FigureHandler fmrLabel = new FigureHandler(backgroundLabel, guiBuilderView, label,
+							GuiLabels.GUIBuilderComponent.LABEL, canvas, true, FigureHandler.Handle.values());
 					fmrLabel.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundLabel, fmrLabel,
@@ -201,10 +200,10 @@ public class GuiBuilderObjFactory {
 					txtField.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					txtField.setSize(txtFieldSize);
 					txtField.setEditable(false);
-					//txtField.setEnabled(false);
+					// txtField.setEnabled(false);
 
-					FigureMoverResizer fmrTxtField = new FigureMoverResizer(backgroundTxtField, guiBuilderView,
-							txtField, canvas, true, FigureMoverResizer.Handle.values());
+					FigureHandler fmrTxtField = new FigureHandler(backgroundTxtField, guiBuilderView, txtField,
+							GuiLabels.GUIBuilderComponent.TEXTFIELD, canvas, true, FigureHandler.Handle.values());
 					fmrTxtField.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundTxtField,
@@ -231,12 +230,12 @@ public class GuiBuilderObjFactory {
 				// position.y + BACKGND_MARGIN.height / 2);
 				// radioBtn.setSelection(true);
 				// radioBtn.setSize(radioBtnSize);
-				// radioBtn.setEnabled(false);
+				// //radioBtn.setEnabled(false);
 				//
 				// FigureMoverResizer fmrRadioBtn = new
 				// FigureMoverResizer(backgroundRadioBtn, guiBuilderView,
-				// radioBtn,
-				// canvas, true, FigureMoverResizer.Handle.values());
+				// radioBtn,GuiLabels.GUIBuilderComponent.RADIO_BTN,
+				// canvas, true, FigureHandler.Handle.values());
 				// fmrRadioBtn.setControlMargin(BACKGND_MARGIN);
 				//
 				// return new ObjectInComposite(cmpName + "\t" +
@@ -259,10 +258,10 @@ public class GuiBuilderObjFactory {
 					chckBox.setText(DEFAULT_CHCKBOX_TXT);
 					chckBox.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 					chckBox.setSize(chckBoxSize);
-					//chckBox.setEnabled(false);
+					// chckBox.setEnabled(false);
 
-					FigureMoverResizer fmrChckBox = new FigureMoverResizer(backgroundChckBox, guiBuilderView, chckBox,
-							canvas, true, FigureMoverResizer.Handle.values());
+					FigureHandler fmrChckBox = new FigureHandler(backgroundChckBox, guiBuilderView, chckBox,
+							GuiLabels.GUIBuilderComponent.CHK_BOX, canvas, true, FigureHandler.Handle.values());
 					fmrChckBox.setControlMargin(BACKGND_MARGIN);
 
 					return new ObjectInComposite(cmpName + "\t" + System.currentTimeMillis(), backgroundChckBox,
@@ -299,8 +298,8 @@ public class GuiBuilderObjFactory {
 			widget.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);
 			widget.setSize(widgetSize);
 			// widget.setEnabled(false);
-			FigureMoverResizer fmrButton = new FigureMoverResizer(backgroundButton, guiBuilderView, widget, canvas,
-					true, FigureMoverResizer.Handle.values());
+			FigureHandler fmrButton = new FigureHandler(backgroundButton, guiBuilderView, widget,
+					GuiLabels.GUIBuilderComponent.OTHER, canvas, true, FigureHandler.Handle.values());
 
 			fmrButton.setControlMargin(BACKGND_MARGIN);
 
@@ -334,5 +333,22 @@ public class GuiBuilderObjFactory {
 		return x < (canvasDim.width + DEFAULT_CANVAS_POS_OFFSET.x)
 				&& y < (canvasDim.height + DEFAULT_CANVAS_POS_OFFSET.y + DEFAULT_CANVAS_TOPBAR_INIT_DIM.height)
 				&& x >= DEFAULT_CANVAS_POS_OFFSET.x && y >= DEFAULT_CANVAS_TOPBAR_INIT_DIM.height;
+	}
+
+	public boolean isInsideCanvas(Point pos, Dimension dim) {
+		return isInsideCanvas(pos.x, pos.y, dim.width, dim.height);
+	}
+
+	public boolean isInsideCanvas(int x, int y, int width, int height) {
+		Dimension canvasDim = canvasBackgnd.getSize();
+
+		return (x + width) < (canvasDim.width + DEFAULT_CANVAS_POS_OFFSET.x)
+				&& (y + width) < (canvasDim.height + DEFAULT_CANVAS_POS_OFFSET.y
+						+ DEFAULT_CANVAS_TOPBAR_INIT_DIM.height)
+				&& x >= DEFAULT_CANVAS_POS_OFFSET.x && y >= DEFAULT_CANVAS_TOPBAR_INIT_DIM.height;
+	}
+
+	public Dimension getCanvasSize() {
+		return canvasBackgnd.getSize();
 	}
 }

@@ -18,21 +18,26 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
-public class FigureMoverResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
+public class FigureHandler extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
 	private final IFigure figure;
 	private String text;
 	private boolean enableText = true;
 	private Dimension controlMargin = new Dimension(0, 0);
+	private GuiLabels.GUIBuilderComponent type;
 
-	public FigureMoverResizer(IFigure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text,
-			boolean moveable, Handle... handlers) {
+	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text, boolean moveable,
+			Handle... handlers) {
 		if (figure == null)
 			throw new NullPointerException();
 
@@ -50,15 +55,16 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			setText(text);
 	}
 
-	public FigureMoverResizer(IFigure figure, GuiBuilderView guiBuilderView, Control control, Canvas canvas,
-			String text, boolean moveable, Handle... handlers) {
+	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Control control,
+			GuiLabels.GUIBuilderComponent type, Canvas canvas, String text, boolean moveable, Handle... handlers) {
 		this(figure, guiBuilderView, canvas, text, moveable, handlers);
 		this.control = control;
+		this.type = type;
 	}
 
-	public FigureMoverResizer(IFigure figure, GuiBuilderView guiBuilderView, Control control, Canvas canvas,
-			boolean moveable, Handle... handlers) {
-		this(figure, guiBuilderView, control, canvas, null, moveable, handlers);
+	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Control control,
+			GuiLabels.GUIBuilderComponent type, Canvas canvas, boolean moveable, Handle... handlers) {
+		this(figure, guiBuilderView, control, type, canvas, null, moveable, handlers);
 		enableText = false;
 	}
 
@@ -155,13 +161,19 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				if (control != null) {
 					control.setSize(newPos.getSize().width - controlMargin.width,
 							newPos.getSize().height - controlMargin.height);
+
+					if (handle != Handle.BOT_RIGHT) {
+						control.setLocation(figure.getBounds().x + controlMargin.width / 2,
+								figure.getBounds().y + controlMargin.height / 2);
+					}
 				}
 			}
 		} else { // move
 			Point pos = new Point(bounds.getCopy().translate(offset.width, offset.height).x,
 					bounds.getCopy().translate(offset.width, offset.height).y);
 
-			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y)) {
+			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)
+					&& !guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
 				bounds = bounds.getCopy().translate(offset.width, offset.height);
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
@@ -171,8 +183,10 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 					control.setLocation(figure.getBounds().x + controlMargin.width / 2,
 							figure.getBounds().y + controlMargin.height / 2);
 				}
-			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y)) {
+			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
 				guiBuilderView.setMessage(GuiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
+			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
+				guiBuilderView.setMessage(GuiBuilderView.OVER_OBJECT_MSG, control);
 			}
 		}
 
@@ -212,6 +226,11 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 	public void setBackgroundColor(Color color) {
 		figure.setBackgroundColor(color);
 
+		if (control != null) {
+			control.setBackground(color);
+			control.redraw();
+		}
+
 		if (enableText)
 			updateText();
 	}
@@ -219,12 +238,40 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 	public void setForegroundColor(Color color) {
 		figure.setForegroundColor(color);
 
+		if (control != null) {
+			control.setForeground(color);
+			control.redraw();
+		}
+
 		if (enableText)
 			updateText();
 	}
 
 	public void setControlMargin(Dimension controlMargin) {
 		this.controlMargin = controlMargin;
+	}
+
+	public void renameControl(String str) {
+		if (control != null) {
+			switch (type) {
+			case BTN:
+				((Button) control).setText(str);
+				break;
+			case CHK_BOX:
+				((Button) control).setText(str);
+				break;
+			case LABEL:
+				((Label) control).setText(str);
+				break;
+			case TEXTFIELD:
+				((Text) control).setText(str);
+				break;
+			case OTHER:
+				// ((WidgetInterface) control).setWidgetName(str);
+				System.out.println("uncoment me!");
+				break;
+			}
+		}
 	}
 
 	/*
