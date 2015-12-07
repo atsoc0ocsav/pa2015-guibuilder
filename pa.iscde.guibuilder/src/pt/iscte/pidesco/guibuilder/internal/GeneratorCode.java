@@ -33,16 +33,16 @@ public class GeneratorCode {
 			code.append(swingObjects.generateStartClass()).append(swingObjects.generateStartConstructorClass());
 
 			code.append(swingObjects.generateFrame(
-					new String[] { titleFrame, String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.width),
-							String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.height) }));
+					new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
+							String.valueOf(guiBuilderView.getCanvasSize().height) }));
 		} else if (target.equals(selectTarget.SWT)) {
 			code.append(swtObjects.generateImports());
 
 			code.append(swtObjects.generateStartClass()).append(swtObjects.generateStartConstructorClass());
 
 			code.append(swtObjects.generateFrame(
-					new String[] { titleFrame, String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.width),
-							String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.height) }));
+					new String[] { titleFrame, String.valueOf(guiBuilderView.getCanvasSize().width),
+							String.valueOf(guiBuilderView.getCanvasSize().height) }));
 		}
 		
 		///////////////////////////////////// ADD
