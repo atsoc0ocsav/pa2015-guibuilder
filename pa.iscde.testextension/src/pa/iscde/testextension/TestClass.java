@@ -60,7 +60,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 					"JSpinner spinner = new JSpinner(spinnerModel);" };
 			break;
 		case SWT:
-			code = new String[] { "spinner", "Spinner spinner = new Spinner(canvas, SWT.BORDER);",
+			code = new String[] { "spinner", "Spinner spinner = new Spinner(%s, SWT.BORDER);",
 					"spinner.setMinimum(0);", "spinner.setMaximum(1000);", "spinner.setSelection(500);",
 					"spinner.setIncrement(1);" };
 			break;

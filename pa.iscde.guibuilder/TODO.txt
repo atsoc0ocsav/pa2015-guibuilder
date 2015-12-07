@@ -3,6 +3,7 @@ R - Generate color code
 - Implement parent on objectOnComposite
 	- Also add the concept of children
 V - Create class on workspace
-R - Insert includes on generated code
 - Refactor drag and drop 
 	(drop, in this case. Check syserr)
+R - Saber o tamanho da janela certo na geracao do codigo
+R - Ver quando tem mais do que um widget na janela-> parte da geracao do codigo

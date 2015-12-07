@@ -44,7 +44,7 @@ public class GeneratorCode {
 					new String[] { titleFrame, String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.width),
 							String.valueOf(GuiBuilderObjFactory.DEFAULT_CANVAS_INIT_DIM.height) }));
 		}
-
+		
 		///////////////////////////////////// ADD
 		///////////////////////////////////// COMPONENTS/////////////////////////////////////////////////////
 		for (ObjectInComposite objectInComposite : components) {
@@ -54,10 +54,10 @@ public class GeneratorCode {
 				ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
 
 				for (int i = 1; i < extensionPointsData.getCodeWidget().length; i++) {
-					code.append("\t \t" + extensionPointsData.getCodeWidget()[i] + "\n");
+					code.append("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n");
 				}
 				if (target.equals(selectTarget.SWING)) {
-					code.append("\t \t frame.add("+extensionPointsData.getCodeWidget()[0]+");");
+					code.append("\t \t frame.add(" + extensionPointsData.getCodeWidget()[0] + "); \n");
 				}
 			}
 
