@@ -83,8 +83,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private ArrayList<ObjectInComposite> components = new ArrayList<ObjectInComposite>();
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
-	public static Canvas topCanvas;
+	private  Canvas topCanvas;
 	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
+	private  GeneratorCode.selectTarget target;
 
 	/*
 	 * Constructors and main methods
@@ -175,15 +176,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 						if (objectName.contains("widget")) {
 
-							ExtensionPointsData extensionPointsData = new ExtensionPointsData();
-							for (int i = 0; i < extensionPointsData.getWidgets().length; i++) {
-								if (objectName.contains(extensionPointsData.getWidgetNames()[i])) {
+							ExtensionPointsData extensionPointsData = new ExtensionPointsData(GuiBuilderView.this);
+							
 									newObject = objectFactory.createComponentWidgetObject(
-											extensionPointsData.getWidgets()[i],
-											extensionPointsData.getWidgetNames()[i], position, objectName, topCanvas,
+											extensionPointsData.getWidget(),
+											extensionPointsData.getWidgetName(), position, objectName, topCanvas,
 											contents);
-								}
-							}
+								
+							
 
 						}
 						System.err.println("I need refactoring!!!!!!!!!!");
@@ -323,14 +323,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	}
 
 	private void addNewWidget(Composite compositeButtons, GUIBuilderObjectFamily tabLabel) {
-		ExtensionPointsData extensionPointsData = new ExtensionPointsData();
+		ExtensionPointsData extensionPointsData = new ExtensionPointsData(this);
 
-		for (int i = 0; i < extensionPointsData.getWidgetNames().length; i++) {
+		
 			Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 			button.setAlignment(SWT.CENTER);
-			button.setText(extensionPointsData.getWidgetNames()[i]);
+			button.setText(extensionPointsData.getWidgetName());
 			addDragListener(button, tabLabel.ordinal(), true);
-		}
+		
 
 	}
 
@@ -440,16 +440,17 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							Object[] result = dialog.getResult();
 
 							if (result[0].toString().equals("SWING")) {
-
+								target = GeneratorCode.selectTarget.SWING;
 								System.out.println("Generating swing...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWING,
-										((ImageResizer) fmr).getTitleFrame(), components);
+										((ImageResizer) fmr).getTitleFrame(), components,GuiBuilderView.this);
 
 							}
 							if (result[0].toString().equals("SWT")) {
+								target = GeneratorCode.selectTarget.SWT;
 								System.out.println("Generating swt...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
-										components);
+										components,GuiBuilderView.this);
 							}
 
 						}
@@ -545,4 +546,13 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public String getHelloWorld() {
 		return "Hello World from GuiBuilderView";
 	}
+
+	public Canvas getTopCanvas() {
+		return topCanvas;
+	}
+
+	public GeneratorCode.selectTarget getTarget() {
+		return target;
+	}
+	
 }

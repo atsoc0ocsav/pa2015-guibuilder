@@ -3,13 +3,18 @@ package pt.iscte.pidesco.guibuilder.extensions;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 
+import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
+
 public interface WidgetInterface {
 
-	public String[] getWidgetNames();
+	public String getWidgetName();
 
-	public void createWidgets(Canvas canvas);
+	public void setWidgetName(String name);
 
-	public Control[] getWidgets();
-	
-	
+	public void createWidget(Canvas canvas);
+
+	public Control getWidget();
+
+	public String[] generateCodeWidget(GeneratorCode.selectTarget target);
+
 }

@@ -2,6 +2,8 @@ package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
 public interface GenerateObjectsInterface {
 
+	public String generateImports();
+
 	public String generateStartClass();
 
 	public String generateEndClass();
@@ -19,8 +21,6 @@ public interface GenerateObjectsInterface {
 	public String generateTextField(String[] parameters);
 
 	public String generateCheckBox(String[] parameters);
-
-	public String generateWidget(String[] parameters);
 
 	public String generateAction(String[] parameters);
 }

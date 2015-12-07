@@ -12,10 +12,13 @@ import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class ExtensionPointsData {
 
-	private String[] widgetNames = null;
-	private Control[] widgets = null;
+	private String widgetName = "";
+	private Control widget = null;
+	private WidgetInterface widgetInterface;
+	private GuiBuilderView guiBuilderView;
 
-	public ExtensionPointsData() {
+	public ExtensionPointsData(GuiBuilderView guiBuilderView) {
+		this.guiBuilderView = guiBuilderView;
 
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 
@@ -30,12 +33,11 @@ public class ExtensionPointsData {
 			for (IConfigurationElement c : confElements) {
 				String s = c.getAttribute("name");
 
-				WidgetInterface o;
 				try {
-					o = (WidgetInterface) c.createExecutableExtension("class");
-					widgetNames = o.getWidgetNames();
-					o.createWidgets(GuiBuilderView.topCanvas);
-					widgets = o.getWidgets();
+					widgetInterface = (WidgetInterface) c.createExecutableExtension("class");
+					widgetName = widgetInterface.getWidgetName();
+					widgetInterface.createWidget(guiBuilderView.getTopCanvas());
+					widget = widgetInterface.getWidget();
 					// System.out.println("Name: " + o.getWidgetNames());
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block
@@ -45,11 +47,17 @@ public class ExtensionPointsData {
 		}
 	}
 
-	public Control[] getWidgets() {
-		return widgets;
+	public String getWidgetName() {
+		return widgetName;
 	}
 
-	public String[] getWidgetNames() {
-		return widgetNames;
+	public Control getWidget() {
+		return widget;
 	}
+
+	public String[] getCodeWidget() {
+
+		return widgetInterface.generateCodeWidget(guiBuilderView.getTarget());
+	}
+
 }
