@@ -1,7 +1,8 @@
 TODO List:
-R - Generate color code
 - Implement parent on objectOnComposite
 	- Also add the concept of children
 V - Create class on workspace
 - Refactor drag and drop 
 	(drop, in this case. Check syserr)
+-Botao nao muda a cor.. os outros mudam.
+-Decidir como fazer update das cores dos widgets

@@ -245,7 +245,7 @@ public class GuiBuilderObjFactory {
 				case CHK_BOX:
 					FontMetrics fmChckBox = new GC(canvas).getFontMetrics();
 					Point chckBoxSize = new Point(
-							(fmChckBox.getAverageCharWidth() * DEFAULT_CHCKBOX_TXT.length()) + LABELS_MARGIN.width + 18,
+							(fmChckBox.getAverageCharWidth() * DEFAULT_CHCKBOX_TXT.length()) + LABELS_MARGIN.width + 23,
 							fmChckBox.getHeight() + LABELS_MARGIN.height);
 
 					RectangleFigure backgroundChckBox = new RectangleFigure();

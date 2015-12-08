@@ -1,16 +1,13 @@
 package pt.iscte.pidesco.guibuilder.internal;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.codeGenerator.GenerateObjectsInterface;
-import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class GeneratorCode {
@@ -50,29 +47,30 @@ public class GeneratorCode {
 		///////////////////////////////////// COMPONENTS/////////////////////////////////////////////////////
 		int appendNameComponent = 0;
 		for (ObjectInComposite objectInComposite : components) {
-			
-			
+
 			if (objectInComposite.getId().toLowerCase().contains("widget")) {
-			//System.out.println("->Color: "+objectInComposite.getFigure().getBackgroundColor().);	
 
 				ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
 
 				for (int i = 1; i < extensionPointsData.getCodeWidget().length; i++) {
-					if(extensionPointsData.getCodeWidget()[i].contains(extensionPointsData.getCodeWidget()[0])){
-						String temp = ("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n").replaceAll(extensionPointsData.getCodeWidget()[0],
-								extensionPointsData.getCodeWidget()[0] + appendNameComponent);
+					if (extensionPointsData.getCodeWidget()[i].contains(extensionPointsData.getCodeWidget()[0])) {
+						String temp = ("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n")
+								.replaceAll(extensionPointsData.getCodeWidget()[0],
+										extensionPointsData.getCodeWidget()[0] + appendNameComponent);
 						code.append(temp);
-					}else{
+					} 
+					else {
 						code.append("\t \t " + String.format(extensionPointsData.getCodeWidget()[i], "shell") + "\n");
 					}
 					
 				}
 				if (target.equals(selectTarget.SWING)) {
-					code.append("\t \t frame.add(" + extensionPointsData.getCodeWidget()[0]+appendNameComponent + "); \n \n");
+					code.append("\t \t frame.add(" + extensionPointsData.getCodeWidget()[0] + appendNameComponent
+							+ "); \n \n");
+				} else {
+					code.append("\n");
 				}
 				appendNameComponent++;
-				
-
 			}
 
 			else if (objectInComposite.getId().toLowerCase().contains("button")) {
@@ -82,12 +80,18 @@ public class GeneratorCode {
 					code.append(swingObjects
 							.generateButton(new String[] { btn.getText(), String.valueOf(btn.getLocation().x),
 									String.valueOf(btn.getLocation().y), String.valueOf(btn.getSize().x),
-									String.valueOf(btn.getSize().y), String.valueOf(btn.isEnabled()) }));
+									String.valueOf(btn.getSize().y), String.valueOf(btn.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				} else if (target.equals(selectTarget.SWT)) {
 					code.append(
 							swtObjects.generateButton(new String[] { btn.getText(), String.valueOf(btn.getLocation().x),
 									String.valueOf(btn.getLocation().y), String.valueOf(btn.getSize().x),
-									String.valueOf(btn.getSize().y), String.valueOf(btn.isEnabled()) }));
+									String.valueOf(btn.getSize().y), String.valueOf(btn.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				}
 			} else if (objectInComposite.getId().toLowerCase().contains("label")) {
 				Label label = (Label) objectInComposite.getObject();
@@ -96,12 +100,18 @@ public class GeneratorCode {
 					code.append(swingObjects
 							.generateLabel(new String[] { label.getText(), String.valueOf(label.getLocation().x),
 									String.valueOf(label.getLocation().y), String.valueOf(label.getSize().x),
-									String.valueOf(label.getSize().y), String.valueOf(label.isEnabled()) }));
+									String.valueOf(label.getSize().y), String.valueOf(label.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				} else if (target.equals(selectTarget.SWT)) {
 					code.append(swtObjects
 							.generateLabel(new String[] { label.getText(), String.valueOf(label.getLocation().x),
 									String.valueOf(label.getLocation().y), String.valueOf(label.getSize().x),
-									String.valueOf(label.getSize().y), String.valueOf(label.isEnabled()) }));
+									String.valueOf(label.getSize().y), String.valueOf(label.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				}
 			} else if (objectInComposite.getId().toLowerCase().contains("text field")) {
 				Text textField = (Text) objectInComposite.getObject();
@@ -110,12 +120,18 @@ public class GeneratorCode {
 					code.append(swingObjects.generateTextField(new String[] { textField.getText(),
 							String.valueOf(textField.getLocation().x), String.valueOf(textField.getLocation().y),
 							String.valueOf(textField.getSize().x), String.valueOf(textField.getSize().y),
-							String.valueOf(textField.isEnabled()), String.valueOf(textField.getEditable()) }));
+							String.valueOf(textField.isEnabled()), String.valueOf(textField.getEditable()),
+							String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+							String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+							String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				} else if (target.equals(selectTarget.SWT)) {
 					code.append(swtObjects.generateTextField(new String[] { textField.getText(),
 							String.valueOf(textField.getLocation().x), String.valueOf(textField.getLocation().y),
 							String.valueOf(textField.getSize().x), String.valueOf(textField.getSize().y),
-							String.valueOf(textField.isEnabled()), String.valueOf(textField.getEditable()) }));
+							String.valueOf(textField.isEnabled()), String.valueOf(textField.getEditable()),
+							String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+							String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+							String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				}
 			} else if (objectInComposite.getId().toLowerCase().contains("check box")) {
 				Button checkBox = (Button) objectInComposite.getObject();
@@ -124,12 +140,18 @@ public class GeneratorCode {
 					code.append(swingObjects.generateCheckBox(
 							new String[] { checkBox.getText(), String.valueOf(checkBox.getLocation().x),
 									String.valueOf(checkBox.getLocation().y), String.valueOf(checkBox.getSize().x),
-									String.valueOf(checkBox.getSize().y), String.valueOf(checkBox.isEnabled()) }));
+									String.valueOf(checkBox.getSize().y), String.valueOf(checkBox.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				} else if (target.equals(selectTarget.SWT)) {
 					code.append(swtObjects.generateCheckBox(
 							new String[] { checkBox.getText(), String.valueOf(checkBox.getLocation().x),
 									String.valueOf(checkBox.getLocation().y), String.valueOf(checkBox.getSize().x),
-									String.valueOf(checkBox.getSize().y), String.valueOf(checkBox.isEnabled()) }));
+									String.valueOf(checkBox.getSize().y), String.valueOf(checkBox.isEnabled()),
+									String.valueOf(objectInComposite.getObject().getBackground().getRed()),
+									String.valueOf(objectInComposite.getObject().getBackground().getGreen()),
+									String.valueOf(objectInComposite.getObject().getBackground().getBlue()) }));
 				}
 			}
 
@@ -178,7 +200,9 @@ public class GeneratorCode {
 					+ "\"); \n" + "\t \t jbutton" + appendNameComponent + ".setLocation(" + parameters[1] + ","
 					+ parameters[2] + "); \n" + "\t \t jbutton" + appendNameComponent + ".setSize(" + parameters[3]
 					+ "," + parameters[4] + "); \n" + "\t \t jbutton" + appendNameComponent + ".setEnable("
-					+ parameters[5] + "); \n" + "\t \t frame.add(jbutton" + appendNameComponent + "); \n \n");
+					+ parameters[5] + "); \n" + "\t \t jbutton" + appendNameComponent + ".setBackground(new Color("
+					+ parameters[6] + "," + parameters[7] + "," + parameters[8] + ")); \n" + "\t \t frame.add(jbutton"
+					+ appendNameComponent + "); \n \n");
 		}
 
 		@Override
@@ -188,7 +212,9 @@ public class GeneratorCode {
 					+ "\"); \n" + "\t \t jlabel" + appendNameComponent + ".setLocation(" + parameters[1] + ","
 					+ parameters[2] + "); \n" + "\t \t jlabel" + appendNameComponent + ".setSize(" + parameters[3] + ","
 					+ parameters[4] + "); \n" + "\t \t jlabel" + appendNameComponent + ".setEnable(" + parameters[5]
-					+ "); \n" + "\t \t frame.add(jlabel" + appendNameComponent + "); \n \n");
+					+ "); \n" + "\t \t jlabel" + appendNameComponent + ".setBackground(new Color(" + parameters[6] + ","
+					+ parameters[7] + "," + parameters[8] + ")); \n" + "\t \t frame.add(jlabel" + appendNameComponent
+					+ "); \n \n");
 		}
 
 		@Override
@@ -199,8 +225,9 @@ public class GeneratorCode {
 					+ parameters[1] + "," + parameters[2] + "); \n" + "\t \t jTextField" + appendNameComponent
 					+ ".setSize(" + parameters[3] + "," + parameters[4] + "); \n" + "\t \t jTextField"
 					+ appendNameComponent + ".setEnable(" + parameters[5] + "); \n" + "\t \t jTextField"
-					+ appendNameComponent + ".setEditable(" + parameters[6] + "); \n" + "\t \t frame.add(jTextField"
-					+ appendNameComponent + "); \n \n");
+					+ appendNameComponent + ".setEditable(" + parameters[6] + "); \n" + "\t \t jTextField"
+					+ appendNameComponent + ".setBackground(new Color(" + parameters[7] + "," + parameters[8] + ","
+					+ parameters[9] + ")); \n" + "\t \t frame.add(jTextField" + appendNameComponent + "); \n \n");
 		}
 
 		@Override
@@ -210,8 +237,9 @@ public class GeneratorCode {
 					+ parameters[0] + "\"); \n" + "\t \t jcheckBox" + appendNameComponent + ".setLocation("
 					+ parameters[1] + "," + parameters[2] + "); \n" + "\t \t jcheckBox" + appendNameComponent
 					+ ".setSize(" + parameters[3] + "," + parameters[4] + "); \n" + "\t \t jcheckBox"
-					+ appendNameComponent + ".setEnable(" + parameters[5] + "); \n" + "\t \t frame.add(jcheckBox"
-					+ appendNameComponent + "); \n \n");
+					+ appendNameComponent + ".setEnable(" + parameters[5] + "); \n" + "\t \t jcheckBox"
+					+ appendNameComponent + ".setBackground(new Color(" + parameters[6] + "," + parameters[7] + ","
+					+ parameters[8] + ")); \n" + "\t \t frame.add(jcheckBox" + appendNameComponent + "); \n \n");
 		}
 
 		@Override
@@ -242,7 +270,8 @@ public class GeneratorCode {
 
 		@Override
 		public String generateImports() {
-			return new String("import javax.swing.*; \n \n");
+			return new String("import javax.swing.*; \n"
+					+ "import java.awt.Color; \n \n");
 		}
 
 	}
@@ -269,7 +298,9 @@ public class GeneratorCode {
 					+ "\t \t button" + appendNameComponent + ".setText(\"" + parameters[0] + "\"); \n" + "\t \t button"
 					+ appendNameComponent + ".setLocation(" + parameters[1] + "," + parameters[2] + "); \n"
 					+ "\t \t button" + appendNameComponent + ".setSize(" + parameters[3] + "," + parameters[4] + "); \n"
-					+ "\t \t button" + appendNameComponent + ".setEnable(" + parameters[5] + "); \n \n");
+					+ "\t \t button" + appendNameComponent + ".setEnable(" + parameters[5] + "); \n" + "\t \t button"
+					+ appendNameComponent + ".setBackground(new Color(Display.getCurrent()," + parameters[6] + ","
+					+ parameters[7] + "," + parameters[8] + "));" + " \n \n");
 		}
 
 		@Override
@@ -279,7 +310,9 @@ public class GeneratorCode {
 					+ "\t \t label" + appendNameComponent + ".setText(\"" + parameters[0] + "\"); \n" + "\t \t label"
 					+ appendNameComponent + ".setLocation(" + parameters[1] + "," + parameters[2] + "); \n"
 					+ "\t \t label" + appendNameComponent + ".setSize(" + parameters[3] + "," + parameters[4] + "); \n"
-					+ "\t \t label" + appendNameComponent + ".setEnable(" + parameters[5] + "); \n \n");
+					+ "\t \t label" + appendNameComponent + ".setEnable(" + parameters[5] + "); \n" + "\t \t label"
+					+ appendNameComponent + ".setBackground(new Color(Display.getCurrent()," + parameters[6] + ","
+					+ parameters[7] + "," + parameters[8] + "));" + " \n \n");
 		}
 
 		@Override
@@ -290,7 +323,11 @@ public class GeneratorCode {
 					+ "\t \t textfield" + appendNameComponent + ".setLocation(" + parameters[1] + "," + parameters[2]
 					+ "); \n" + "\t \t textfield" + appendNameComponent + ".setSize(" + parameters[3] + ","
 					+ parameters[4] + "); \n" + "\t \t textfield" + appendNameComponent + ".setEnable(" + parameters[5]
-					+ "); \n" + "\t \t textfield" + appendNameComponent + ".setEditable(" + parameters[6] + "); \n \n");
+					+ "); \n" + "\t \t textfield" + appendNameComponent + ".setEditable(" + parameters[6] + "); \n"
+					+ "\t \t textfield" + appendNameComponent + ".setBackground(new Color(Display.getCurrent(),"
+					+ parameters[7] + "," + parameters[8] + "," + parameters[9] + "));"
+
+					+ " \n \n");
 		}
 
 		@Override
@@ -301,7 +338,9 @@ public class GeneratorCode {
 					+ "\t \t checkBox" + appendNameComponent + ".setLocation(" + parameters[1] + "," + parameters[2]
 					+ "); \n" + "\t \t checkBox" + appendNameComponent + ".setSize(" + parameters[3] + ","
 					+ parameters[4] + "); \n" + "\t \t checkBox" + appendNameComponent + ".setEnable(" + parameters[5]
-					+ "); \n \n");
+					+ "); \n" + "\t \t checkBox" + appendNameComponent
+					+ ".setBackground(new Color(Display.getCurrent()," + parameters[6] + "," + parameters[7] + ","
+					+ parameters[8] + "));" + "\n \n");
 		}
 
 		@Override
@@ -330,7 +369,7 @@ public class GeneratorCode {
 			return "\t }";
 		}
 
-		@Override
+		@Override 
 		public String generateImports() {
 			return new String("import org.eclipse.swt.*; \n \n");
 		}

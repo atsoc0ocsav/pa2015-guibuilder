@@ -73,7 +73,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
 	private final String SET_LAYOUT = "Set %s on canvas";
 	public final String OVER_OBJECT_MSG = "Tried to drop %s over other object";
-	public final String TOO_BIG_OBJECT ="Object %s is too big for canvas";
+	public final String TOO_BIG_OBJECT = "Object %s is too big for canvas";
 
 	/*
 	 * Variables
@@ -85,9 +85,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private ArrayList<ObjectInComposite> components = new ArrayList<ObjectInComposite>();
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
-	private  Canvas topCanvas;
+	private Canvas topCanvas;
 	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
-	private  GeneratorCode.selectTarget target;
+	private GeneratorCode.selectTarget target;
 
 	/*
 	 * Constructors and main methods
@@ -179,13 +179,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						if (objectName.contains("widget")) {
 
 							ExtensionPointsData extensionPointsData = new ExtensionPointsData(GuiBuilderView.this);
-							
-									newObject = objectFactory.createComponentWidgetObject(
-											extensionPointsData.getWidget(),
-											extensionPointsData.getWidgetName(), position, objectName, topCanvas,
-											contents);
-								
-							
+
+							newObject = objectFactory.createComponentWidgetObject(extensionPointsData.getWidget(),
+									extensionPointsData.getWidgetName(), position, objectName, topCanvas, contents);
 
 						}
 						System.err.println("I need refactoring!!!!!!!!!!");
@@ -327,12 +323,10 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private void addNewWidget(Composite compositeButtons, GUIBuilderObjectFamily tabLabel) {
 		ExtensionPointsData extensionPointsData = new ExtensionPointsData(this);
 
-		
-			Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
-			button.setAlignment(SWT.CENTER);
-			button.setText(extensionPointsData.getWidgetName());
-			addDragListener(button, tabLabel.ordinal(), true);
-		
+		Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+		button.setAlignment(SWT.CENTER);
+		button.setText(extensionPointsData.getWidgetName());
+		addDragListener(button, tabLabel.ordinal(), true);
 
 	}
 
@@ -445,14 +439,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 								target = GeneratorCode.selectTarget.SWING;
 								System.out.println("Generating swing...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWING,
-										((ImageResizer) fmr).getTitleFrame(), components,GuiBuilderView.this);
+										((ImageResizer) fmr).getTitleFrame(), components, GuiBuilderView.this);
 
 							}
 							if (result[0].toString().equals("SWT")) {
 								target = GeneratorCode.selectTarget.SWT;
 								System.out.println("Generating swt...");
 								new GeneratorCode(GeneratorCode.selectTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
-										components,GuiBuilderView.this);
+										components, GuiBuilderView.this);
 							}
 
 						}
@@ -479,9 +473,23 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 							// Change the title bar text
 							dlg.setText("Choose a Color");
-							fmr.getFigure().setBackgroundColor(new Color(canvas.getDisplay(), dlg.open()));
+							
+							for (ObjectInComposite objectInComposite : components) {
+								if (objectInComposite.getFmr().equals(fmr)) {
+									objectInComposite.getObject()
+											.setBackground(new Color(canvas.getDisplay(), dlg.open()));
+								}
+							}
+							// fmr.getFigure().setBackgroundColor(new
+							// Color(canvas.getDisplay(), dlg.open()));
 						} else {
-							fmr.getFigure().setBackgroundColor(canvas.getDisplay().getSystemColor(c.swt_value()));
+							for (ObjectInComposite objectInComposite : components) {
+								if (objectInComposite.getFmr().equals(fmr)) {
+									objectInComposite.getObject()
+											.setBackground(canvas.getDisplay().getSystemColor(c.swt_value()));
+								}
+							}
+							// fmr.getFigure().setBackgroundColor(canvas.getDisplay().getSystemColor(c.swt_value()));
 						}
 						break;
 					}
@@ -544,24 +552,24 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			// Is figure inside component?
 			if (x >= figPos.x && x < (figPos.x + figDim.width)) {
 				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_LEFT
-					//System.out.println("Figure TOP_LEFT inside");
+					// System.out.println("Figure TOP_LEFT inside");
 					return true;
 				}
 
 				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_LEFT
-					//System.out.println("Figure BOTTOM_LEFT inside");
+					// System.out.println("Figure BOTTOM_LEFT inside");
 					return true;
 				}
 			}
 
 			if ((x + width) >= figPos.x && (x + width) < (figPos.x + figDim.width)) {
 				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_RIGHT
-					//System.out.println("Figure TOP_RIGHT inside");
+					// System.out.println("Figure TOP_RIGHT inside");
 					return true;
 				}
 
 				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_RIGHT
-					//System.out.println("Figure BOTTOM_RIGHT inside");
+					// System.out.println("Figure BOTTOM_RIGHT inside");
 					return true;
 				}
 			}
@@ -569,24 +577,24 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			// Is component inside figure?
 			if (figPos.x >= x && figPos.x < (x + width)) {
 				if (y >= figPos.y && y < (figPos.y + figDim.height)) { // TOP_LEFT
-					//System.out.println("Figure TOP_LEFT inside");
+					// System.out.println("Figure TOP_LEFT inside");
 					return true;
 				}
 
 				if ((y + height) >= figPos.y && (y + height) < (figPos.y + figDim.height)) { // BOTTOM_LEFT
-					//System.out.println("Figure BOTTOM_LEFT inside");
+					// System.out.println("Figure BOTTOM_LEFT inside");
 					return true;
 				}
 			}
 
 			if ((figPos.x + figDim.width) >= x && (figPos.x + figDim.width) < (x + width)) {
 				if (figPos.y >= y && figPos.y < (y + height)) { // TOP_RIGHT
-					//System.out.println("Figure TOP_RIGHT inside");
+					// System.out.println("Figure TOP_RIGHT inside");
 					return true;
 				}
 
 				if ((figPos.y + figDim.height) >= y && (figPos.y + figDim.height) < (y + height)) { // BOTTOM_RIGHT
-					//System.out.println("Figure BOTTOM_RIGHT inside");
+					// System.out.println("Figure BOTTOM_RIGHT inside");
 					return true;
 				}
 			}
@@ -610,5 +618,5 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public GeneratorCode.selectTarget getTarget() {
 		return target;
 	}
-	
+
 }
