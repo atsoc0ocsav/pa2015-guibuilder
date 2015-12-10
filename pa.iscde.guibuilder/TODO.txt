@@ -4,6 +4,7 @@ TODO List:
 - Refactor drag and drop 
 	(drop, in this case. Check syserr)
 - Drop inside other objects is allowed.... why?
-- Botão nao muda a cor.. os outros mudam.
 - System on close action no swing está implementado?
 - Decidir como fazer update das cores dos widgets
+- Background da label do canvas 
+	aparece com cor esquisita (MAC....)

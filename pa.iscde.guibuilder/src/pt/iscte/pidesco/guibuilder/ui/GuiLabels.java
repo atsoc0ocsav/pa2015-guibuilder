@@ -54,7 +54,7 @@ public class GuiLabels {
 		// BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"),
 		// RADIO_BTN("Radio Button"), CHK_BOX("Check Box"), OTHER(
 		// "");
-		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box"), OTHER("widget");
+		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box"), OTHER("Widget");
 
 		private String str;
 

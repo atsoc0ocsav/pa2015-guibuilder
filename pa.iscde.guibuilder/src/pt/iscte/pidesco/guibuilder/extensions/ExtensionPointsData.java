@@ -16,24 +16,15 @@ public class ExtensionPointsData {
 	private String widgetName = "";
 	private Control widget = null;
 	private WidgetInterface widgetInterface;
-	private GuiBuilderView guiBuilderView;
 
 	public ExtensionPointsData(GuiBuilderView guiBuilderView) {
-		this.guiBuilderView = guiBuilderView;
-
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
-
 		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint("pt.iscte.pidesco.guibuilder.widget");
-
 		IExtension[] extensions = extensionPoint.getExtensions();
-
-		StringBuffer str = new StringBuffer();
 
 		for (IExtension e : extensions) {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for (IConfigurationElement c : confElements) {
-				String s = c.getAttribute("name");
-
 				try {
 					widgetInterface = (WidgetInterface) c.createExecutableExtension("class");
 					widgetName = widgetInterface.getWidgetName();
