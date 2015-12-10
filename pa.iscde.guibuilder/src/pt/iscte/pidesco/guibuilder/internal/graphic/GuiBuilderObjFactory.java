@@ -136,7 +136,7 @@ public class GuiBuilderObjFactory {
 				case BTN:
 					FontMetrics fmButton = new GC(canvas).getFontMetrics();
 					Point buttonSize = new Point(
-							(fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width,
+							(fmButton.getAverageCharWidth() * DEFAULT_BTN_TXT.length()) + LABELS_MARGIN.width + 23,
 							fmButton.getHeight() + LABELS_MARGIN.height);
 
 					RectangleFigure backgroundButton = new RectangleFigure();
