@@ -1,6 +1,6 @@
 package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
-public interface GenerateObjectsInterface {
+public interface CodeGeneratorInterface {
 
 	public String generateImports();
 

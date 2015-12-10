@@ -45,8 +45,8 @@ import org.eclipse.ui.dialogs.ListDialog;
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.GeneratorCode;
 import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator;
 import pt.iscte.pidesco.guibuilder.internal.graphic.FigureHandler;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ImageResizer;
@@ -87,7 +87,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private GuiBuilderObjFactory objectFactory;
 	private Canvas topCanvas;
 	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
-	private GeneratorCode.selectTarget target;
 
 	/*
 	 * Constructors and main methods
@@ -436,17 +435,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							Object[] result = dialog.getResult();
 
 							if (result[0].toString().equals("SWING")) {
-								target = GeneratorCode.selectTarget.SWING;
 								System.out.println("Generating swing...");
-								new GeneratorCode(GeneratorCode.selectTarget.SWING,
-										((ImageResizer) fmr).getTitleFrame(), components, GuiBuilderView.this);
-
+								new CodeGenerator(CodeGenerator.CodeTarget.SWING, ((ImageResizer) fmr).getTitleFrame(),
+										components, GuiBuilderView.this).generateCode();;
 							}
 							if (result[0].toString().equals("SWT")) {
-								target = GeneratorCode.selectTarget.SWT;
 								System.out.println("Generating swt...");
-								new GeneratorCode(GeneratorCode.selectTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
-										components, GuiBuilderView.this);
+								new CodeGenerator(CodeGenerator.CodeTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
+										components, GuiBuilderView.this).generateCode();;
 							}
 
 						}
@@ -473,7 +469,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 							// Change the title bar text
 							dlg.setText("Choose a Color");
-							
+
 							for (ObjectInComposite objectInComposite : components) {
 								if (objectInComposite.getFmr().equals(fmr)) {
 									objectInComposite.getObject()
@@ -614,9 +610,4 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public Canvas getTopCanvas() {
 		return topCanvas;
 	}
-
-	public GeneratorCode.selectTarget getTarget() {
-		return target;
-	}
-
 }

@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Spinner;
 
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetInterface;
-import pt.iscte.pidesco.guibuilder.internal.GeneratorCode.selectTarget;
+import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator.CodeTarget;
 
 public class TestClass implements ExtensionTestInterface, WidgetInterface {
 
@@ -54,8 +54,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	}
 
 	@Override
-	public String[] generateCodeWidget(selectTarget target) {
-		
+	public String[] generateWidgetCode(CodeTarget target) {
 		String[] code = null;
 		switch (target) {
 		case SWING:
@@ -72,5 +71,4 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		}
 		return code;
 	}
-
 }

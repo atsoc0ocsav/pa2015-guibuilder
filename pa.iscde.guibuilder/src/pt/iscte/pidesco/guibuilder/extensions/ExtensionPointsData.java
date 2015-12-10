@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Control;
 
+import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class ExtensionPointsData {
@@ -55,9 +56,8 @@ public class ExtensionPointsData {
 		return widget;
 	}
 
-	public String[] getCodeWidget() {
-
-		return widgetInterface.generateCodeWidget(guiBuilderView.getTarget());
+	public String[] getWidgetCode(CodeGenerator.CodeTarget target) {
+		return widgetInterface.generateWidgetCode(target);
 	}
 
 }
