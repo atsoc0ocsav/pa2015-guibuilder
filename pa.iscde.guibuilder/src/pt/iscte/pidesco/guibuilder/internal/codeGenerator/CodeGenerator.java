@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
-public class ImageResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
+public class CanvasResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final int CORNER = 50;
 	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
 	private static final int TITLE_LEFTSPACE = 30;
@@ -40,7 +40,7 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 	private RectangleFigure backgroundRectangle;
 	private Label label = null;
 
-	public ImageResizer(GuiBuilderView guiBuilderView, ImageFigure canvasBackgroundFigure,
+	public CanvasResizer(GuiBuilderView guiBuilderView, ImageFigure canvasBackgroundFigure,
 			ImageFigure canvasTopBarFigure, ImageData canvasBackgroundImageData, ImageData canvasTopbarImageData,
 			int topbarHeight, RectangleFigure backgroundRectangle, Canvas canvas, boolean moveable,
 			Handle... handlers) {
@@ -178,12 +178,14 @@ public class ImageResizer extends ObjectMoverResizer implements MouseListener, M
 		label.setBackground(new Color(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getDevice(), rgb));
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
-	public String getTitleFrame(){
+	
+	public String getFrameTitle(){
 		if(label!=null){
 			return label.getText();
 		}
 		return null;
 	}
+	
 	/*
 	 * Not used
 	 */

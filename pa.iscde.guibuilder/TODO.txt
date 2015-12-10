@@ -1,10 +1,7 @@
 TODO List:
 - Implement parent on objectOnComposite
 	- Also add the concept of children
-- Refactor drag and drop 
-	(drop, in this case. Check syserr)
-- Drop inside other objects is allowed.... why?
-- System on close action no swing está implementado?
 - Decidir como fazer update das cores dos widgets
 - Background da label do canvas 
-	aparece com cor esquisita (MAC....)
+	aparece com cor esquisita (MAC....) 
+	- "Não sei qual é o problema - Vasco"

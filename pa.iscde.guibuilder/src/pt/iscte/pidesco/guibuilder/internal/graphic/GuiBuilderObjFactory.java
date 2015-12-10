@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
@@ -86,9 +86,9 @@ public class GuiBuilderObjFactory {
 			backgroundCanvas.add(canvasBackgnd);
 			backgroundCanvas.add(canvasTopbar);
 
-			ImageResizer imageResizer = new ImageResizer(guiBuilderView, canvasBackgnd, canvasTopbar,
+			CanvasResizer imageResizer = new CanvasResizer(guiBuilderView, canvasBackgnd, canvasTopbar,
 					imgCanvas.getImageData(), imgCanvasTopbar.getImageData(), DEFAULT_CANVAS_TOPBAR_INIT_DIM.height,
-					backgroundCanvas, canvas, false, ImageResizer.Handle.BOT_RIGHT);
+					backgroundCanvas, canvas, false, CanvasResizer.Handle.BOT_RIGHT);
 			imageResizer.setText(DEFAULT_FRAME_TITLE_TXT);
 
 			imgCanvas.dispose();

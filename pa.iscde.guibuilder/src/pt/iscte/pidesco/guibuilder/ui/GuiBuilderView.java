@@ -45,12 +45,12 @@ import org.eclipse.ui.dialogs.ListDialog;
 import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator;
 import pt.iscte.pidesco.guibuilder.internal.graphic.FigureHandler;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
-import pt.iscte.pidesco.guibuilder.internal.graphic.ImageResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderLayout;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
@@ -171,62 +171,67 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					throw new IllegalArgumentException("Invalid reference for draggable object");
 				} else {
 					int index = Integer.parseInt(data[0]);
-					GuiLabels.GUIBuilderObjectFamily of = GuiLabels.GUIBuilderObjectFamily.values()[index];
-					String objectName = data[1];
-					ObjectInComposite newObject = null;
 					Point position = event.display.map(null, topComposite, new Point(event.x, event.y));
+					String objectName = data[1];
 
-					switch (of) {
-					case COMPONENTS:
-						if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
-							newObject = objectFactory.createComponentWidgetObject(extensionPointsData.getWidget(),
-									extensionPointsData.getWidgetName(), position, objectName, topCanvas, contents);
-						} else {
-							newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
-									contents);
-						}
+					if (!isOverObject(position)) {
+						GuiLabels.GUIBuilderObjectFamily of = GuiLabels.GUIBuilderObjectFamily.values()[index];
+						ObjectInComposite newObject = null;
 
-						if (newObject != null) {
-							components.add(newObject);
+						switch (of) {
+						case COMPONENTS:
 							if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
-								setMessage(ADDED_OBJECT_MSG,
-										objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+								newObject = objectFactory.createComponentWidgetObject(extensionPointsData.getWidget(),
+										extensionPointsData.getWidgetName(), position, objectName, topCanvas, contents);
 							} else {
-								setMessage(ADDED_OBJECT_MSG, objectName);
+								newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
+										contents);
 							}
-						} else {
-							if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
-								setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
-										objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+
+							if (newObject != null) {
+								components.add(newObject);
+								if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
+									setMessage(ADDED_OBJECT_MSG,
+											objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+								} else {
+									setMessage(ADDED_OBJECT_MSG, objectName);
+								}
 							} else {
-								setMessage(OUT_OF_BOUNDS_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED),
-										objectName);
+								if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
+									setMessage(OUT_OF_BOUNDS_OBJECT_MSG,
+											Display.getCurrent().getSystemColor(SWT.COLOR_RED),
+											objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+								} else {
+									setMessage(OUT_OF_BOUNDS_OBJECT_MSG,
+											Display.getCurrent().getSystemColor(SWT.COLOR_RED), objectName);
+								}
 							}
-						}
-						break;
-					case LAYOUTS:
+							break;
+						case LAYOUTS:
+							// newObject =
+							// objectFactory.createLayoutFamilyObject(position,
+							// objectName, topCanvas, contents);
+
+							for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
+								if (l.str().equals(objectName)) {
+									activeLayout = l;
+									setMessage(SET_LAYOUT, objectName);
+								}
+							}
+							break;
+						// case CONTAINERS:
 						// newObject =
-						// objectFactory.createLayoutFamilyObject(position,
-						// objectName, topCanvas, contents);
+						// objectFactory.createContainerFamilyObject(position,
+						// objectName, topCanvas,
+						// contents);
+						// break;
 
-						for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
-							if (l.str().equals(objectName)) {
-								activeLayout = l;
-								setMessage(SET_LAYOUT, objectName);
-							}
+						default:
+							throw new IllegalAccessError("Switch case not defined!");
 						}
-						break;
-					// case CONTAINERS:
-					// newObject =
-					// objectFactory.createContainerFamilyObject(position,
-					// objectName, topCanvas,
-					// contents);
-					// break;
-
-					default:
-						throw new IllegalAccessError("Switch case not defined!");
+					} else {
+						setMessage(OVER_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED), objectName);
 					}
-
 				}
 			}
 		});
@@ -395,7 +400,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			});
 
 			popupMenu.setVisible(true);
-		} else if (fmr instanceof ImageResizer) {
+		} else if (fmr instanceof CanvasResizer) {
 			if (!isOverObject(new Point(x, y))) {
 				// Item Window Name
 				MenuItem setWindowName = new MenuItem(popupMenu, SWT.NONE);
@@ -409,7 +414,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 								.open();
 
 						if (inputText != null) {
-							((ImageResizer) fmr).setText(inputText);
+							((CanvasResizer) fmr).setText(inputText);
 							setMessage(CHANGED_TITLE_MSG, inputText);
 						}
 					}
@@ -445,7 +450,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 								}
 							}
 
-							new CodeGenerator(target, ((ImageResizer) fmr).getTitleFrame(), components,
+							new CodeGenerator(target, ((CanvasResizer) fmr).getFrameTitle(), components,
 									GuiBuilderView.this).generateCode();
 
 						}

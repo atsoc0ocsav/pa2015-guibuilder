@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal;
+package pt.iscte.pidesco.guibuilder.internal.model;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.swt.widgets.Control;
@@ -11,12 +11,22 @@ public class ObjectInComposite {
 	private Figure figure;
 	private ObjectMoverResizer mr;
 	private Control object;
+	private boolean isRoot;
+	private ObjectInComposite parent;
 
 	public ObjectInComposite(String id, Figure figure, ObjectMoverResizer fmr, Control object) {
 		this.id = id;
 		this.figure = figure;
 		this.mr = fmr;
 		this.object = object;
+	}
+	
+	public ObjectInComposite(String id, Figure figure, ObjectMoverResizer fmr, Control object, ObjectInComposite parent) {
+		this.id = id;
+		this.figure = figure;
+		this.mr = fmr;
+		this.object = object;
+		this.parent= parent;
 	}
 
 	public String getId() {
@@ -47,4 +57,15 @@ public class ObjectInComposite {
 		return object;
 	}
 
+	public void setRoot(boolean isRoot){
+		this.isRoot=isRoot;
+	}
+	
+	public boolean isRoot(){
+		return isRoot;
+	}
+	
+	public ObjectInComposite getParent(){
+		return parent;
+	}
 }
