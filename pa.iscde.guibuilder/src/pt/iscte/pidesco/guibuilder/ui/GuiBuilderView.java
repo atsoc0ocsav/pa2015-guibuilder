@@ -400,7 +400,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			if (!isOverObject(new Point(x, y))) {
 				// Item Window Name
 				MenuItem setWindowName = new MenuItem(popupMenu, SWT.NONE);
-				setWindowName.setText(GuiLabels.DialogMenuLabel.SET_WINDW_TITLE.str());
+				setWindowName.setText(GuiLabels.DialogMenuLabel.SET_WINDOW_TITLE.str());
 				setWindowName.addSelectionListener(new SelectionAdapter() {
 
 					@Override
@@ -427,23 +427,27 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						dialog.setAddCancelButton(true);
 						dialog.setContentProvider(new ArrayContentProvider());
 						dialog.setLabelProvider(new LabelProvider());
-						dialog.setInput(new String[] { "SWING", "SWT" });
+
+						ArrayList<String> targets = new ArrayList<String>();
+						for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+							targets.add(t.getTarget());
+						}
+
+						dialog.setInput(targets.toArray());
 						dialog.setTitle("Select target");
-						// dialog.open();
 
 						if (dialog.open() == Window.OK) {
 							Object[] result = dialog.getResult();
 
-							if (result[0].toString().equals("SWING")) {
-								new CodeGenerator(CodeGenerator.CodeTarget.SWING, ((ImageResizer) fmr).getTitleFrame(),
-										components, GuiBuilderView.this).generateCode();
-								;
+							CodeGenerator.CodeTarget target = null;
+							for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+								if (t.getTarget().equals(result[0])) {
+									target = t;
+								}
 							}
-							if (result[0].toString().equals("SWT")) {
-								new CodeGenerator(CodeGenerator.CodeTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
-										components, GuiBuilderView.this).generateCode();
-								;
-							}
+
+							new CodeGenerator(target, ((ImageResizer) fmr).getTitleFrame(), components,
+									GuiBuilderView.this).generateCode();
 
 						}
 

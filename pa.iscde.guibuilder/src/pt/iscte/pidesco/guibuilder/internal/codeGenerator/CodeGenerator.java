@@ -15,7 +15,7 @@ import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
 public class CodeGenerator {
 	public static enum CodeTarget {
-		SWING("swing"), SWT("swt");
+		SWING("Swing"), SWT("SWT");
 
 		private String target;
 
