@@ -183,7 +183,7 @@ public class SWTCodeGenerator implements CodeGeneratorInterface {
 				+ "\t\t" + elementName + ".setText(\"" + text + "\");\n" 
 				+ "\t\t" + elementName + ".setLocation(" + location.x + "," + location.y + ");\n"
 				+ "\t\t" + elementName + ".setSize(" + size.x + "," + size.y + ");\n"
-				+ "\t\t" + elementName + ".setEnable(" + isEnabled + "); \n" 
+				+ "\t\t" + elementName + ".setEnabled(" + isEnabled + "); \n" 
 				+ "\t\t" + elementName + ".setBackground(new Color(Display.getCurrent()," + backgroundColor.getRed() + "," + backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));\n"
 				+ "\t\t" + elementName + ".setForeground(new Color(Display.getCurrent()," + foregroundColor.getRed() + "," + foregroundColor.getGreen() + "," + foregroundColor.getBlue() + "));\n");
 	}

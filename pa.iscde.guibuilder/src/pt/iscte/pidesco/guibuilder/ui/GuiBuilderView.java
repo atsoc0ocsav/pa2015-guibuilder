@@ -435,14 +435,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							Object[] result = dialog.getResult();
 
 							if (result[0].toString().equals("SWING")) {
-								System.out.println("Generating swing...");
 								new CodeGenerator(CodeGenerator.CodeTarget.SWING, ((ImageResizer) fmr).getTitleFrame(),
-										components, GuiBuilderView.this).generateCode();;
+										components, GuiBuilderView.this).generateCode();
+								;
 							}
 							if (result[0].toString().equals("SWT")) {
-								System.out.println("Generating swt...");
 								new CodeGenerator(CodeGenerator.CodeTarget.SWT, ((ImageResizer) fmr).getTitleFrame(),
-										components, GuiBuilderView.this).generateCode();;
+										components, GuiBuilderView.this).generateCode();
+								;
 							}
 
 						}
