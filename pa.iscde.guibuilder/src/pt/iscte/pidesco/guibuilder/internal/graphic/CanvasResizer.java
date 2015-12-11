@@ -168,14 +168,13 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 		Point position = new Point(canvasTopbarFigure.getLocation().x + TITLE_LEFTSPACE,
 				canvasTopbarFigure.getLocation().y + ((canvasTopbarFigure.getSize().height - fm.getHeight()) / 2));
 
-		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		label.setLocation(position.x, position.y);
 		label.setSize((fm.getAverageCharWidth() * str.length()) + 8, fm.getHeight() + 2);
 
 		int color = canvasTopbarImageData.getPixel(position.x, position.y);
 		RGB rgb = new RGB(color & 0xFF, (color & 0xFF00)>> 8, (color & 0xFF0000)>>16);
 
-		label.setBackground(new Color(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getDevice(), rgb));
+		label.setBackground(new Color(Display.getDefault(), rgb));
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
 	
