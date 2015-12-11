@@ -3,7 +3,7 @@ package pt.iscte.pidesco.guibuilder.internal.model;
 import java.util.ArrayList;
 
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
 
 public class ObjectInCompositeContainer {
 	private String id;
@@ -22,8 +22,8 @@ public class ObjectInCompositeContainer {
 
 		if (object instanceof CanvasInComposite) {
 			((CanvasInComposite) object).getCanvasResizer().setObjectInComposite(this);
-		} else if (object instanceof ComponentInComposite) {
-			((ComponentInComposite) object).getObjectMoverResizer().setObjectInComposite(this);
+		} else if (object instanceof ComponentInCompositeImpl) {
+			((ComponentInCompositeImpl) object).getObjectMoverResizer().setObjectInComposite(this);
 		}
 	}
 

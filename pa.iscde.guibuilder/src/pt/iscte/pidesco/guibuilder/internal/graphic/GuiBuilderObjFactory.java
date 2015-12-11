@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
@@ -124,7 +124,7 @@ public class GuiBuilderObjFactory {
 		return scaled;
 	}
 
-	public ComponentInComposite createComponentFamilyObject(Point position, GuiLabels.GUIBuilderComponent componentType,
+	public ComponentInCompositeImpl createComponentFamilyObject(Point position, GuiLabels.GUIBuilderComponent componentType,
 			Canvas canvas, Object... args) {
 		String componentLabel;
 		if (args.length == 0) {
@@ -219,7 +219,7 @@ public class GuiBuilderObjFactory {
 					canvas, true, FigureMoverResizer.Handle.values());
 			fmr.setControlMargin(BACKGND_MARGIN);
 
-			return new ComponentInComposite(componentType, widget, componentBackground, fmr)
+			return new ComponentInCompositeImpl(componentType, widget, componentBackground, fmr)
 					.setTextAndReturnObject(componentLabel);
 		} else {
 			return null;

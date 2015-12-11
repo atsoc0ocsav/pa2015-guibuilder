@@ -53,7 +53,7 @@ import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
@@ -192,7 +192,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 								}
 							}
 
-							ComponentInComposite newComponent;
+							ComponentInCompositeImpl newComponent;
 							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
 								newComponent = objectFactory.createComponentFamilyObject(position, componentType,
 										topCanvas, extensionPointsData.getWidgetName(),
@@ -377,7 +377,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 						((FigureMoverResizer) fmr).renameControl(inputText);
 
-						((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+						((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
 								.setText(inputText);
 					}
 				}
@@ -426,7 +426,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					ObjectInCompositeContainer objectParent = object.getParent();
 
 					if (object.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.COMPONENTS) {
-						((ComponentInComposite) object.getObjectInComposite()).getControl().dispose();
+						((ComponentInCompositeImpl) object.getObjectInComposite()).getControl().dispose();
 					}
 					object.getObjectInComposite().getFigure().setVisible(false);
 
@@ -521,22 +521,22 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							Color color = new Color(canvas.getDisplay(), dlg.open());
 
 							if (background) { // Set background color
-								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
 										.setBackgroundColor(color);
 								fmr.setBackgroundColor(color);
 							} else {
-								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
 										.setForegroundColor(color);
 								fmr.setForegroundColor(color);
 							}
 						} else {
 							Color color = canvas.getDisplay().getSystemColor(c.swt_value());
 							if (background) { // Set background color
-								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
 										.setBackgroundColor(color);
 								fmr.setBackgroundColor(color);
 							} else {
-								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
 										.setForegroundColor(color);
 								fmr.setForegroundColor(color);
 							}
