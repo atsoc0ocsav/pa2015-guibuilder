@@ -20,8 +20,10 @@ public class GuiLabels {
 	}
 
 	public enum DialogMenuLabel {
-		RENAME("Rename"), CHOOSE_COLOR("Choose Background Color"), GENERATE_CODE("Generate Code"), SET_WINDOW_TITLE(
-				"Set window title"), DELETE_OBJECT("Delete Object");
+		RENAME("Rename"), CHOOSE_BACKGROUND_COLOR("Choose Background Color"), CHOOSE_FOREGROUND_COLOR(
+				"Choose Foreground Color"), GENERATE_CODE("Generate Code"), SET_WINDOW_TITLE(
+						"Set window title"), DELETE_OBJECT("Delete Object"), DELETE_OBJECT_CONFIRM_MSG(
+								"This object has other objects inside. Do you want to continue?");
 
 		private String str;
 
@@ -35,9 +37,7 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderObjectFamily {
-		COMPONENTS("Components"), LAYOUTS("Layouts");
-		// COMPONENTS("Components"), LAYOUTS("Layouts"),
-		// CONTAINERS("Containers");
+		COMPONENTS("Components"), LAYOUTS("Layouts"), CONTAINERS("Containers"), CANVAS("Canvas");
 
 		private String str;
 
@@ -51,10 +51,8 @@ public class GuiLabels {
 	}
 
 	public enum GUIBuilderComponent {
-		// BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"),
-		// RADIO_BTN("Radio Button"), CHK_BOX("Check Box"), OTHER(
-		// "");
-		BTN("Button"), LABEL("Label"), TEXTFIELD("Text Field"), CHK_BOX("Check Box"), OTHER("Widget");
+		BTN("Button"), LABEL("Label"), TXTFIELD("Text Field"), RADIO_BTN("Radio Button"), CHK_BOX("Check Box"), WIDGET(
+				"Widget");
 
 		private String str;
 

@@ -2,12 +2,14 @@ package pt.iscte.pidesco.guibuilder.internal.graphic;
 
 import java.util.ArrayList;
 
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public abstract class ObjectMoverResizer {
@@ -106,6 +108,7 @@ public abstract class ObjectMoverResizer {
 	protected Point location;
 	protected Handle handle;
 	protected GuiBuilderView guiBuilderView;
+	protected ObjectInCompositeContainer objectInCompositeContainer;
 
 	protected Control control;
 	protected Canvas canvas;
@@ -120,5 +123,15 @@ public abstract class ObjectMoverResizer {
 
 	public Point getLocation() {
 		return location;
+	}
+	
+	public abstract Figure getFigure();
+
+	public void setObjectInComposite(ObjectInCompositeContainer objectInCompositeContainer) {
+		this.objectInCompositeContainer=objectInCompositeContainer;
+	}
+	
+	public ObjectInCompositeContainer getObjectInCompositeContainer(){
+		return objectInCompositeContainer;
 	}
 }

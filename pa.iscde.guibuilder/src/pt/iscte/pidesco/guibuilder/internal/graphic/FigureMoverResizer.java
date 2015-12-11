@@ -3,7 +3,7 @@ package pt.iscte.pidesco.guibuilder.internal.graphic;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
@@ -28,15 +28,15 @@ import org.eclipse.swt.widgets.Text;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
-public class FigureHandler extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
+public class FigureMoverResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
-	private final IFigure figure;
+	private final Figure figure;
 	private String text;
 	private boolean enableText = true;
 	private Dimension controlMargin = new Dimension(0, 0);
 	private GuiLabels.GUIBuilderComponent type;
 
-	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text, boolean moveable,
+	public FigureMoverResizer(Figure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text, boolean moveable,
 			Handle... handlers) {
 		if (figure == null)
 			throw new NullPointerException();
@@ -55,14 +55,14 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 			setText(text);
 	}
 
-	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Control control,
+	public FigureMoverResizer(Figure figure, GuiBuilderView guiBuilderView, Control control,
 			GuiLabels.GUIBuilderComponent type, Canvas canvas, String text, boolean moveable, Handle... handlers) {
 		this(figure, guiBuilderView, canvas, text, moveable, handlers);
 		this.control = control;
 		this.type = type;
 	}
 
-	public FigureHandler(IFigure figure, GuiBuilderView guiBuilderView, Control control,
+	public FigureMoverResizer(Figure figure, GuiBuilderView guiBuilderView, Control control,
 			GuiLabels.GUIBuilderComponent type, Canvas canvas, boolean moveable, Handle... handlers) {
 		this(figure, guiBuilderView, control, type, canvas, null, moveable, handlers);
 		enableText = false;
@@ -78,7 +78,7 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 		}
 	}
 
-	public void updateText(final IFigure figure, final Canvas canvas, final String text) {
+	public void updateText(final Figure figure, final Canvas canvas, final String text) {
 		if (canvas != null && text != null) {
 			canvas.addPaintListener(new PaintListener() {
 
@@ -183,7 +183,7 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 
 			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)
 					&& !guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
-							figure)) {
+							objectInCompositeContainer.getObjectInComposite())) {
 				bounds = bounds.getCopy().translate(offset.width, offset.height);
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
@@ -200,7 +200,7 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, figure);
 				}
 			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
-					figure)) {
+					objectInCompositeContainer.getObjectInComposite())) {
 				if (control != null) {
 					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, control);
 				} else {
@@ -227,7 +227,8 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 			updateText();
 	}
 
-	public IFigure getFigure() {
+	@Override
+	public Figure getFigure() {
 		return figure;
 	}
 
@@ -282,10 +283,10 @@ public class FigureHandler extends ObjectMoverResizer implements MouseListener, 
 			case LABEL:
 				((Label) control).setText(str);
 				break;
-			case TEXTFIELD:
+			case TXTFIELD:
 				((Text) control).setText(str);
 				break;
-			case OTHER:
+			case WIDGET:
 				// ((WidgetInterface) control).setWidgetName(str);
 				System.out.println("uncoment me!");
 				break;

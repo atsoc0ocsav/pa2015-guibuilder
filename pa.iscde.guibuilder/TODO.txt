@@ -2,6 +2,6 @@ TODO List:
 - Implement parent on objectOnComposite
 	- Also add the concept of children
 - Decidir como fazer update das cores dos widgets
-- Background da label do canvas 
+? Background da label do canvas 
 	aparece com cor esquisita (MAC....) 
 	- "Não sei qual é o problema - Vasco"

@@ -3,6 +3,7 @@ package pt.iscte.pidesco.guibuilder.internal.graphic;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
@@ -178,14 +179,6 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 
 			label.setBackground(new Color(Display.getDefault(), rgb));
 		}
-		// } else if (os.indexOf("mac") >= 0) { // OS is mac
-		//
-		// } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 ||
-		// os.indexOf("aix") > 0) { // OS
-		// // is
-		// // linux
-		// } else if (os.indexOf("sunos") >= 0) { // OS is solaris
-		// }
 
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
@@ -197,6 +190,11 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 		return null;
 	}
 
+	@Override
+	public Figure getFigure() {
+		return backgroundRectangle;
+	}
+	
 	/*
 	 * Not used
 	 */

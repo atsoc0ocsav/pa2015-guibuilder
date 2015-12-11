@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -46,13 +46,15 @@ import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator;
-import pt.iscte.pidesco.guibuilder.internal.graphic.FigureHandler;
-import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
+import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
-import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderLayout;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
@@ -64,7 +66,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private final int BOTTOM_COMPOSITE_MINIMUM_HEIGHT = BOTTOM_COMPOSITE_BUTTONS_DIM.height + 78;
 	private final String COMPONENTS_TAB_ICON_FILENAME = "icon_tab_components.png";
 	private final String LAYOUTS_TAB_ICON_FILENAME = "icon_tab_layouts.png";
-	@SuppressWarnings("unused")
 	private final String CONTAINERS_TAB_ICON_FILENAME = "icon_tab_containers.png";
 
 	// Messages
@@ -83,20 +84,19 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private Map<String, Image> imageMap;
 	private Composite topComposite;
 	private Composite bottomComposite;
-	private ArrayList<ObjectInComposite> components = new ArrayList<ObjectInComposite>();
+	private ObjectInCompositeContainer rootComponent;
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
 	private Canvas topCanvas;
-	private GuiLabels.GUIBuilderLayout activeLayout = GUIBuilderLayout.ABSOLUTE;
+
+	/*
+	 * Extension points stuff
+	 */
 	private ExtensionPointsData extensionPointsData;
 
 	/*
 	 * Constructors and main methods
 	 */
-	public GuiBuilderView() {
-
-	}
-
 	@Override
 	public void createContents(final Composite viewArea, final Map<String, Image> imageMap) {
 		this.viewArea = viewArea;
@@ -158,7 +158,11 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		contents.setLayoutManager(contentsLayout);
 		lws.setContents(contents);
 
-		contents.add(objectFactory.createGuiBuilderCanvas(topCanvas, imageMap));
+		CanvasInComposite canvas = objectFactory.createGuiBuilderCanvas(topCanvas, imageMap);
+		rootComponent = new ObjectInCompositeContainer("canvas", canvas, null);
+		rootComponent.setRoot(true);
+
+		contents.add(canvas.getFigure());
 
 		// Create the drop target on the composite
 		DropTarget dt = new DropTarget(topComposite, DND.DROP_MOVE);
@@ -176,31 +180,45 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 					if (!isOverObject(position)) {
 						GuiLabels.GUIBuilderObjectFamily of = GuiLabels.GUIBuilderObjectFamily.values()[index];
-						ObjectInComposite newObject = null;
 
 						switch (of) {
 						case COMPONENTS:
-							if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
-								newObject = objectFactory.createComponentWidgetObject(extensionPointsData.getWidget(),
-										extensionPointsData.getWidgetName(), position, objectName, topCanvas, contents);
-							} else {
-								newObject = objectFactory.createComponentFamilyObject(position, objectName, topCanvas,
-										contents);
+							ObjectInCompositeContainer newObjectInCompositeContainer = null;
+							GuiLabels.GUIBuilderComponent componentType = null;
+							for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
+								if (c.str().equals(objectName)) {
+									componentType = c;
+									break;
+								}
 							}
 
-							if (newObject != null) {
-								components.add(newObject);
-								if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
+							ComponentInComposite newComponent;
+							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
+								newComponent = objectFactory.createComponentFamilyObject(position, componentType,
+										topCanvas, extensionPointsData.getWidgetName(),
+										extensionPointsData.getWidget());
+							} else {
+								newComponent = objectFactory.createComponentFamilyObject(position, componentType,
+										topCanvas);
+							}
+
+							if (newComponent != null) {
+								contents.add(newComponent.getFigure());
+								newObjectInCompositeContainer = new ObjectInCompositeContainer(
+										objectName + "\t" + System.currentTimeMillis(), newComponent, rootComponent);
+								rootComponent.addChild(newObjectInCompositeContainer);
+
+								if (componentType == GUIBuilderComponent.WIDGET) {
 									setMessage(ADDED_OBJECT_MSG,
-											objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+											objectName.replaceAll(GUIBuilderComponent.WIDGET.str(), ""));
 								} else {
 									setMessage(ADDED_OBJECT_MSG, objectName);
 								}
 							} else {
-								if (objectName.contains(GUIBuilderComponent.OTHER.str())) {
+								if (componentType == GUIBuilderComponent.WIDGET) {
 									setMessage(OUT_OF_BOUNDS_OBJECT_MSG,
 											Display.getCurrent().getSystemColor(SWT.COLOR_RED),
-											objectName.replaceAll(GUIBuilderComponent.OTHER.str(), ""));
+											objectName.replaceAll(GUIBuilderComponent.WIDGET.str(), ""));
 								} else {
 									setMessage(OUT_OF_BOUNDS_OBJECT_MSG,
 											Display.getCurrent().getSystemColor(SWT.COLOR_RED), objectName);
@@ -214,7 +232,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 							for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
 								if (l.str().equals(objectName)) {
-									activeLayout = l;
+									((CanvasInComposite) rootComponent.getObjectInComposite()).setActiveLayout(l);
 									setMessage(SET_LAYOUT, objectName);
 								}
 							}
@@ -227,7 +245,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						// break;
 
 						default:
-							throw new IllegalAccessError("Switch case not defined!");
+							throw new IllegalArgumentException("Switch case not defined!");
 						}
 					} else {
 						setMessage(OVER_OBJECT_MSG, Display.getCurrent().getSystemColor(SWT.COLOR_RED), objectName);
@@ -245,6 +263,9 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		TabFolder tabFolder = new TabFolder(bottomComposite, SWT.TOP);
 
 		for (GuiLabels.GUIBuilderObjectFamily tabLabel : GuiLabels.GUIBuilderObjectFamily.values()) {
+			if (tabLabel == GUIBuilderObjectFamily.CANVAS || tabLabel == GUIBuilderObjectFamily.CONTAINERS)
+				continue;
+
 			TabItem tabItem = new TabItem(tabFolder, SWT.NULL);
 
 			ScrolledComposite sci = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL);
@@ -259,7 +280,10 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			case COMPONENTS:
 				tabItem.setImage(imageMap.get(COMPONENTS_TAB_ICON_FILENAME));
 				for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
-					if (c != GuiLabels.GUIBuilderComponent.OTHER) {
+					if (c != GuiLabels.GUIBuilderComponent.WIDGET) {
+						if (c == GUIBuilderComponent.RADIO_BTN)
+							continue;
+
 						Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 						button.setAlignment(SWT.CENTER);
 						button.setText(c.str());
@@ -288,22 +312,20 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
 				break;
 
-			// case CONTAINERS:
-			// tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
-			// for (GuiLabels.GUIBuilderContainer c :
-			// GuiLabels.GUIBuilderContainer.values()) {
-			// Button button = new Button(compositeButtons, SWT.CENTER |
-			// SWT.WRAP | SWT.PUSH);
-			// button.setAlignment(SWT.CENTER);
-			// button.setText(c.str());
-			// addDragListener(button, tabLabel.ordinal());
-			// }
-			// compositeButtons.setSize(
-			// BOTTOM_COMPOSITE_BUTTONS_DIM.width *
-			// GuiLabels.GUIBuilderContainer.values().length,
-			// BOTTOM_COMPOSITE_BUTTONS_DIM.height);
-			// break;
-
+			case CONTAINERS:
+				tabItem.setImage(imageMap.get(CONTAINERS_TAB_ICON_FILENAME));
+				for (GuiLabels.GUIBuilderContainer c : GuiLabels.GUIBuilderContainer.values()) {
+					Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+					button.setAlignment(SWT.CENTER);
+					button.setText(c.str());
+					addDragListener(button, tabLabel.ordinal(), false);
+				}
+				compositeButtons.setSize(
+						BOTTOM_COMPOSITE_BUTTONS_DIM.width * GuiLabels.GUIBuilderContainer.values().length,
+						BOTTOM_COMPOSITE_BUTTONS_DIM.height);
+				break;
+			case CANVAS:
+				break;
 			default:
 				throw new IllegalAccessError("Switch case not defined!");
 			}
@@ -319,7 +341,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				if (!isWidget) {
 					event.data = objectTypeOrdinal + "\t" + button.getText();
 				} else {
-					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.OTHER.str() + button.getText();
+					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.WIDGET.str() + button.getText();
 				}
 
 			}
@@ -339,7 +361,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	public void openDialogMenu(final ObjectMoverResizer fmr, final int x, final int y) {
 		Menu popupMenu = new Menu(topCanvas);
 
-		if (fmr instanceof FigureHandler) {
+		if (fmr instanceof FigureMoverResizer) {
 			// Item Rename
 			MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
 			renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
@@ -351,23 +373,38 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 					String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR).open();
 
 					if (inputText != null) {
-						((FigureHandler) fmr).setText(inputText);
+						((FigureMoverResizer) fmr).setText(inputText);
 
-						((FigureHandler) fmr).renameControl(inputText);
+						((FigureMoverResizer) fmr).renameControl(inputText);
+
+						((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+								.setText(inputText);
 					}
 				}
 			});
 
 			// Item Change Background color and sub-menu
-			MenuItem colorItem = new MenuItem(popupMenu, SWT.CASCADE);
-			colorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_COLOR.str());
-			Menu chooseColorItemMenu = new Menu(colorItem);
-			colorItem.setMenu(chooseColorItemMenu);
+			MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+			backgroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_BACKGROUND_COLOR.str());
+			Menu chooseBackgroundColorItemMenu = new Menu(backgroundColorItem);
+			backgroundColorItem.setMenu(chooseBackgroundColorItemMenu);
 
 			for (GuiLabels.Color c : GuiLabels.Color.values()) {
-				MenuItem item = new MenuItem(chooseColorItemMenu, SWT.NONE);
+				MenuItem item = new MenuItem(chooseBackgroundColorItemMenu, SWT.NONE);
 				item.setText(c.name());
-				addColorDialogMenuListener(item, topCanvas, ((FigureHandler) fmr));
+				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), true);
+			}
+
+			// Item Change Foreground color and sub-menu
+			MenuItem foregroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+			foregroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_FOREGROUND_COLOR.str());
+			Menu chooseForegroundColorItemMenu = new Menu(foregroundColorItem);
+			foregroundColorItem.setMenu(chooseForegroundColorItemMenu);
+
+			for (GuiLabels.Color c : GuiLabels.Color.values()) {
+				MenuItem item = new MenuItem(chooseForegroundColorItemMenu, SWT.NONE);
+				item.setText(c.name());
+				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), false);
 			}
 
 			// Delete Item
@@ -376,26 +413,28 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			deleteItem.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ObjectInComposite object = null;
-					for (ObjectInComposite o : components) {
-						if (o.getFigure().equals(((FigureHandler) fmr).getFigure())) {
-							object = o;
+					ObjectInCompositeContainer object = fmr.getObjectInCompositeContainer();
+
+					if (object.hasChilds()) {
+						if (!MessageDialog.openConfirm(topCanvas.getShell(),
+								GuiLabels.DialogMenuLabel.DELETE_OBJECT.str(),
+								GuiLabels.DialogMenuLabel.DELETE_OBJECT_CONFIRM_MSG.str())) {
+							return;
 						}
 					}
 
-					if (object != null) {
-						try {
-							object.getFmr().getControl().dispose();
-						} catch (NullPointerException exception) {
-						}
+					ObjectInCompositeContainer objectParent = object.getParent();
 
-						((FigureHandler) fmr).getFigure().setVisible(false);
-						components.remove(object);
-
-						topCanvas.update();
-						topCanvas.redraw();
-						topCanvas.layout();
+					if (object.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.COMPONENTS) {
+						((ComponentInComposite) object.getObjectInComposite()).getControl().dispose();
 					}
+					object.getObjectInComposite().getFigure().setVisible(false);
+
+					objectParent.removeChild(object);
+
+					topCanvas.update();
+					topCanvas.redraw();
+					topCanvas.layout();
 				}
 			});
 
@@ -450,7 +489,7 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 								}
 							}
 
-							new CodeGenerator(target, ((CanvasResizer) fmr).getFrameTitle(), components,
+							new CodeGenerator(target, ((CanvasResizer) fmr).getFrameTitle(), rootComponent,
 									GuiBuilderView.this).generateCode();
 
 						}
@@ -461,9 +500,11 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				popupMenu.setVisible(true);
 			}
 		}
+
 	}
 
-	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureHandler fmr) {
+	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureMoverResizer fmr,
+			final boolean background) {
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -477,23 +518,28 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 
 							// Change the title bar text
 							dlg.setText("Choose a Color");
+							Color color = new Color(canvas.getDisplay(), dlg.open());
 
-							for (ObjectInComposite objectInComposite : components) {
-								if (objectInComposite.getFmr().equals(fmr)) {
-									objectInComposite.getObject()
-											.setBackground(new Color(canvas.getDisplay(), dlg.open()));
-								}
+							if (background) { // Set background color
+								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+										.setBackgroundColor(color);
+								fmr.setBackgroundColor(color);
+							} else {
+								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+										.setForegroundColor(color);
+								fmr.setForegroundColor(color);
 							}
-							// fmr.getFigure().setBackgroundColor(new
-							// Color(canvas.getDisplay(), dlg.open()));
 						} else {
-							for (ObjectInComposite objectInComposite : components) {
-								if (objectInComposite.getFmr().equals(fmr)) {
-									objectInComposite.getObject()
-											.setBackground(canvas.getDisplay().getSystemColor(c.swt_value()));
-								}
+							Color color = canvas.getDisplay().getSystemColor(c.swt_value());
+							if (background) { // Set background color
+								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+										.setBackgroundColor(color);
+								fmr.setBackgroundColor(color);
+							} else {
+								((ComponentInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
+										.setForegroundColor(color);
+								fmr.setForegroundColor(color);
 							}
-							// fmr.getFigure().setBackgroundColor(canvas.getDisplay().getSystemColor(c.swt_value()));
 						}
 						break;
 					}
@@ -515,8 +561,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	}
 
 	private boolean isOverObject(Point location) {
-		for (ObjectInComposite o : components) {
-			Figure fig = o.getFigure();
+		for (ObjectInCompositeContainer o : rootComponent.getAllSubChilds()) {
+			Figure fig = o.getObjectInComposite().getFigure();
 
 			if (location.x >= fig.getLocation().x && location.y >= fig.getLocation().y
 					&& location.x < (fig.getLocation().x + fig.getSize().width)
@@ -531,10 +577,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		return topComposite;
 	}
 
-	public void addComponentTopComposite(ObjectInComposite newObject) {
-		components.add(newObject);
-	}
-
 	public Dimension getCanvasSize() {
 		return objectFactory.getCanvasSize();
 	}
@@ -543,13 +585,14 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		return objectFactory.isInsideCanvas(x, y, width, height);
 	}
 
-	public boolean isOverObject(int x, int y, int width, int height, IFigure figure) {
-		for (ObjectInComposite o : components) {
-			if (figure == o.getFigure())
+	public boolean isOverObject(int x, int y, int width, int height, ObjectInComposite object) {
+		for (ObjectInCompositeContainer o : rootComponent.getAllSubChilds()) {
+			if (object == o.getObjectInComposite())
 				continue;
 
-			Point figPos = new Point(o.getFigure().getLocation().x, o.getFigure().getLocation().y);
-			Dimension figDim = o.getFigure().getSize();
+			Point figPos = new Point(o.getObjectInComposite().getFigure().getLocation().x,
+					o.getObjectInComposite().getFigure().getLocation().y);
+			Dimension figDim = o.getObjectInComposite().getFigure().getSize();
 
 			// Not the most efficient way to do it, but is more organized and
 			// understandable like this, so lets go with the if conditions
@@ -604,10 +647,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			}
 		}
 		return false;
-	}
-
-	public GuiLabels.GUIBuilderLayout getActiveLayout() {
-		return activeLayout;
 	}
 
 	@Override

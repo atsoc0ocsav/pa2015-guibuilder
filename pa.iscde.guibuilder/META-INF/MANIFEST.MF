@@ -16,7 +16,8 @@ Bundle-ActivationPolicy: lazy
 Export-Package: pt.iscte.pidesco.guibuilder.extensions,
  pt.iscte.pidesco.guibuilder.internal.codeGenerator,
  pt.iscte.pidesco.guibuilder.ui
-Import-Package: org.eclipse.jface.viewers,
+Import-Package: org.eclipse.jface.dialogs,
+ org.eclipse.jface.viewers,
  org.eclipse.jface.window,
  org.eclipse.ui.dialogs
 Bundle-Activator: pt.iscte.pidesco.guibuilder.internal.GuiBuilderActivator

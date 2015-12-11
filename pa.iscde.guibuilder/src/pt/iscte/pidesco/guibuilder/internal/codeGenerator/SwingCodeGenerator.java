@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class SwingCodeGenerator implements CodeGeneratorInterface {
 	public enum Element {
-		BUTTON("JButton", "jButton"), LABEL("JLabel", "jLabel"), TEXT_FIELD("JTextField",
+		BUTTON("JButton", "jButton"), LABEL("JLabel", "jLabel"), TXT_FIELD("JTextField",
 				"jTextField"), CHECK_BOX("JCheckBox", "jCheckBox");
 
 		public String code;
@@ -85,7 +85,7 @@ public class SwingCodeGenerator implements CodeGeneratorInterface {
 		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[9]),
 				Integer.parseInt(parameters[10]), Integer.parseInt(parameters[11]));
 
-		return generateElementCode(Element.TEXT_FIELD, parameters[0], location, dimension,
+		return generateElementCode(Element.TXT_FIELD, parameters[0], location, dimension,
 				Boolean.parseBoolean(parameters[5]), backgroundColor, foregroundColor);
 	}
 
@@ -155,7 +155,7 @@ public class SwingCodeGenerator implements CodeGeneratorInterface {
 
 	public String generateTextField(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
 			Color foregroundColor) {
-		return generateElementCode(Element.TEXT_FIELD, text, location, size, isEnabled, backgroundColor,
+		return generateElementCode(Element.TXT_FIELD, text, location, size, isEnabled, backgroundColor,
 				foregroundColor);
 	}
 

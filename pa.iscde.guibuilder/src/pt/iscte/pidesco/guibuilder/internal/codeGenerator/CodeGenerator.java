@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
@@ -32,12 +32,13 @@ public class CodeGenerator {
 	private CodeGeneratorInterface codeGenerator;
 	private GuiBuilderView guiBuilderView;
 	private CodeTarget target;
-	private ArrayList<ObjectInComposite> components;
+	private ArrayList<ObjectInCompositeContainer> components;
 	private String frameTitle;
 
-	public CodeGenerator(CodeGenerator.CodeTarget target, String frameTitle, ArrayList<ObjectInComposite> components,
+	public CodeGenerator(CodeGenerator.CodeTarget target, String frameTitle, ObjectInCompositeContainer rootContainer,
 			GuiBuilderView guiBuilderView) {
-		this.target = target;
+	// TODO
+		xsadthis.target = target;
 		this.frameTitle = frameTitle;
 		this.components = components;
 		this.guiBuilderView = guiBuilderView;
@@ -91,10 +92,10 @@ public class CodeGenerator {
 			SwingCodeGenerator generator = ((SwingCodeGenerator) codeGenerator);
 			StringBuffer buffer = new StringBuffer();
 
-			for (ObjectInComposite objectInComposite : components) {
+			for (ObjectInCompositeContainer objectInComposite : components) {
 				String objectName = objectInComposite.getId().toLowerCase();
 
-				if (objectName.contains(GuiLabels.GUIBuilderComponent.OTHER.str().toLowerCase())) {
+				if (objectName.contains(GuiLabels.GUIBuilderComponent.WIDGET.str().toLowerCase())) {
 					ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
 					String[] widgetCode = extensionPointsData.getWidgetCode(target);
 
@@ -128,10 +129,10 @@ public class CodeGenerator {
 						text = ((Label) objectInComposite.getObject()).getText();
 						generateCode = true;
 						element = SwingCodeGenerator.Element.LABEL;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TEXTFIELD.str().toLowerCase())) {
+					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TXTFIELD.str().toLowerCase())) {
 						text = ((Text) objectInComposite.getObject()).getText();
 						generateCode = true;
-						element = SwingCodeGenerator.Element.TEXT_FIELD;
+						element = SwingCodeGenerator.Element.TXT_FIELD;
 					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.CHK_BOX.str().toLowerCase())) {
 						text = ((Button) objectInComposite.getObject()).getText();
 						generateCode = true;
@@ -158,10 +159,10 @@ public class CodeGenerator {
 			SWTCodeGenerator generator = ((SWTCodeGenerator) codeGenerator);
 			StringBuffer buffer = new StringBuffer();
 
-			for (ObjectInComposite objectInComposite : components) {
+			for (ObjectInCompositeContainer objectInComposite : components) {
 				String objectName = objectInComposite.getId().toLowerCase();
 
-				if (objectName.contains(GuiLabels.GUIBuilderComponent.OTHER.str().toLowerCase())) {
+				if (objectName.contains(GuiLabels.GUIBuilderComponent.WIDGET.str().toLowerCase())) {
 					ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
 					String[] widgetCode = extensionPointsData.getWidgetCode(target);
 
@@ -193,7 +194,7 @@ public class CodeGenerator {
 						text = ((Label) objectInComposite.getObject()).getText();
 						generateCode = true;
 						element = SWTCodeGenerator.Element.LABEL;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TEXTFIELD.str().toLowerCase())) {
+					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TXTFIELD.str().toLowerCase())) {
 						text = ((Text) objectInComposite.getObject()).getText();
 						generateCode = true;
 						element = SWTCodeGenerator.Element.TEXT_FIELD;
