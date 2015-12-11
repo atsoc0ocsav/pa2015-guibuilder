@@ -171,20 +171,32 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 		label.setLocation(position.x, position.y);
 		label.setSize((fm.getAverageCharWidth() * str.length()) + 8, fm.getHeight() + 2);
 
-		int color = canvasTopbarImageData.getPixel(position.x, position.y);
-		RGB rgb = new RGB(color & 0xFF, (color & 0xFF00)>> 8, (color & 0xFF0000)>>16);
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.indexOf("win") >= 0) { // OS is windows
+			int color = canvasTopbarImageData.getPixel(position.x, position.y);
+			RGB rgb = new RGB(color & 0xFF, (color & 0xFF00) >> 8, (color & 0xFF0000) >> 16);
 
-		label.setBackground(new Color(Display.getDefault(), rgb));
+			label.setBackground(new Color(Display.getDefault(), rgb));
+		}
+		// } else if (os.indexOf("mac") >= 0) { // OS is mac
+		//
+		// } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 ||
+		// os.indexOf("aix") > 0) { // OS
+		// // is
+		// // linux
+		// } else if (os.indexOf("sunos") >= 0) { // OS is solaris
+		// }
+
 		label.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
-	
-	public String getFrameTitle(){
-		if(label!=null){
+
+	public String getFrameTitle() {
+		if (label != null) {
 			return label.getText();
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Not used
 	 */
