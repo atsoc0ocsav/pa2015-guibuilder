@@ -54,7 +54,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	}
 
 	@Override
-	public String[] generateWidgetCode(CodeTarget target) {
+	public String[] generateWidgetCode(CodeTarget target,String containerName) {
 		String[] code = null;
 		switch (target) {
 		case SWING:
@@ -71,4 +71,5 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		}
 		return code;
 	}
+
 }
