@@ -15,6 +15,7 @@ public interface WidgetInterface {
 
 	public Control getWidget();
 
-	public String[] generateWidgetCode(CodeGenerator.CodeTarget target);
+	// The first line of generated code has to have the name of the widget variable!!!!!!!!!
+	public String[] generateWidgetCode(CodeGenerator.CodeTarget target, String containerName);
 
 }

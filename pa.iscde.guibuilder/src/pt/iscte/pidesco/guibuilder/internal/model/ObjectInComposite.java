@@ -16,12 +16,32 @@ public abstract class ObjectInComposite {
 		return location;
 	}
 	
+	public void setLocation(Point location) {
+		this.location = location;
+	}
+	
+	public void setLocation(int x, int y) {
+		this.location = new Point(x, y);
+	}
+	
 	public Point getSize() {
 		return size;
 	}
 	
+	public void setSize(Point size) {
+		this.size = size;
+	}
+	
+	public void setSize(int x, int y) {
+		this.size=new Point(x, y);
+	}
+	
 	public Figure getFigure() {
 		return figure;
+	}
+	
+	public void setFigure(Figure figure) {
+		this.figure = figure;
 	}
 	
 	public GUIBuilderObjectFamily getObjectFamily(){

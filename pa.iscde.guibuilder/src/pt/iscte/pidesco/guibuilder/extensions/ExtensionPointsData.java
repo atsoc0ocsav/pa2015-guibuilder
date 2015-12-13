@@ -47,8 +47,8 @@ public class ExtensionPointsData {
 		return widget;
 	}
 
-	public String[] getWidgetCode(CodeGenerator.CodeTarget target) {
-		return widgetInterface.generateWidgetCode(target);
+	public String[] getWidgetCode(CodeGenerator.CodeTarget target, String containerName) {
+		return widgetInterface.generateWidgetCode(target, containerName);
 	}
 
 }

@@ -2,14 +2,15 @@ package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
@@ -28,19 +29,16 @@ public class CodeGenerator {
 		}
 	}
 
-	private StringBuffer code = new StringBuffer("");
 	private CodeGeneratorInterface codeGenerator;
-	private GuiBuilderView guiBuilderView;
 	private CodeTarget target;
-	private ArrayList<ObjectInCompositeContainer> components;
-	private String frameTitle;
+	private ObjectInCompositeContainer rootContainer;
+	private GuiBuilderView guiBuilderView;
+	private int depth;
 
-	public CodeGenerator(CodeGenerator.CodeTarget target, String frameTitle, ObjectInCompositeContainer rootContainer,
+	public CodeGenerator(CodeGenerator.CodeTarget target, ObjectInCompositeContainer rootContainer,
 			GuiBuilderView guiBuilderView) {
-	// TODO
-		xsadthis.target = target;
-		this.frameTitle = frameTitle;
-		this.components = components;
+		this.target = target;
+		this.rootContainer = rootContainer;
 		this.guiBuilderView = guiBuilderView;
 
 		switch (target) {
@@ -51,171 +49,300 @@ public class CodeGenerator {
 			codeGenerator = new SWTCodeGenerator();
 			break;
 		}
+
+		depth = 0;
 	}
 
 	public void generateCode() {
+		List<String> code = new ArrayList<String>();
+		CanvasInComposite canvas = (CanvasInComposite) rootContainer.getObjectInComposite();
+
 		// add default code (imports, class start, definition of frame,....)
-		code.append(codeGenerator.generateImports());
-		code.append("\n");
-
-		code.append(codeGenerator.generateStartClass()).append(codeGenerator.generateStartConstructorClass());
-		code.append(codeGenerator
-				.generateFrame(new String[] { frameTitle, String.valueOf(guiBuilderView.getCanvasSize().width),
-						String.valueOf(guiBuilderView.getCanvasSize().height) }));
-
-		File classFile = null;
-
-		switch (target) {
-		case SWING:
-			code.append(generateSwingComponents());
-			code.append(codeGenerator.generateEndConstructorClass()).append(codeGenerator.generateEndClass());
-
-			classFile = ClassFileGenerator.createFile(((SwingCodeGenerator) codeGenerator).CLASS_NAME);
-			break;
-		case SWT:
-			code.append(generateSwtComponents());
-			code.append(codeGenerator.generateEndConstructorClass()).append(codeGenerator.generateEndClass());
-
-			classFile = ClassFileGenerator.createFile(((SWTCodeGenerator) codeGenerator).CLASS_NAME);
-			break;
+		for (String s : codeGenerator.generateImports()) {
+			code.add(generateDepthSpace() + s);
 		}
 
-		ClassFileGenerator.writeToFile(classFile, code.toString());
-		//ClassFileGenerator.openFileInEditor(classFile);
-		
-		// System.out.printf("Generated Code:\n%s\n", code.toString());
+		code.add("");
+
+		List<String> stringsClassBegin = codeGenerator.generateClassBegin();
+		for (int i = 1; i < stringsClassBegin.size(); i++) {
+			code.add(generateDepthSpace() + stringsClassBegin.get(i));
+		}
+
+		depth++;
+
+		for (String s : codeGenerator.generateConstructorBegin()) {
+			code.add(generateDepthSpace() + s);
+		}
+
+		depth++;
+
+		List<String> stringsInitialization = codeGenerator.generateInitialization(new String[] { canvas.getLabel(),
+				String.valueOf(canvas.getSize().x), String.valueOf(canvas.getSize().y) });
+		for (int i = 1; i < stringsInitialization.size(); i++) {
+			code.add(generateDepthSpace() + stringsInitialization.get(i));
+		}
+
+		List<String> objectsCode = generateObjects(rootContainer, stringsInitialization.get(0), target);
+		if (objectsCode != null)
+			code.addAll(objectsCode);
+
+		depth--;
+		for (String s : codeGenerator.generateConstructorEnd()) {
+			code.add(generateDepthSpace() + s);
+		}
+
+		depth--;
+		for (String s : codeGenerator.generateClassEnd()) {
+			code.add(generateDepthSpace() + s);
+		}
+
+		// TODO
+		File classFile = ClassFileGenerator.createFile(stringsClassBegin.get(0));
+		ClassFileGenerator.writeToFile(classFile, code);
+		// ClassFileGenerator.openFileInEditor(classFile);
+
+		guiBuilderView.setMessage(guiBuilderView.GENERATED_CODE_FOR_TARGET, target.getTarget());
 	}
 
-	private String generateSwingComponents() {
-		if (codeGenerator instanceof SwingCodeGenerator) {
-			int appendNameComponent = 0;
-			SwingCodeGenerator generator = ((SwingCodeGenerator) codeGenerator);
-			StringBuffer buffer = new StringBuffer();
+	private String generateDepthSpace() {
+		String s = "";
 
-			for (ObjectInCompositeContainer objectInComposite : components) {
-				String objectName = objectInComposite.getId().toLowerCase();
-
-				if (objectName.contains(GuiLabels.GUIBuilderComponent.WIDGET.str().toLowerCase())) {
-					ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
-					String[] widgetCode = extensionPointsData.getWidgetCode(target);
-
-					buffer.append("\n");
-
-					for (int i = 1; i < widgetCode.length; i++) {
-						if (widgetCode[i].contains(widgetCode[0])) {
-							String temp = ("\t\t" + String.format(widgetCode[i], "shell") + "\n")
-									.replaceAll(widgetCode[0], widgetCode[0] + appendNameComponent);
-							buffer.append(temp);
-						} else {
-							buffer.append("\t\t" + String.format(widgetCode[i], "shell") + "\n");
-						}
-
-					}
-
-					buffer.append(
-							"\t\t" + generator.JFRAME_NAME + ".add(" + widgetCode[0] + appendNameComponent + ");\n");
-					appendNameComponent++;
-				} else {
-					boolean generateCode = false;
-					String text = null;
-					Control control = objectInComposite.getObject();
-					SwingCodeGenerator.Element element = null;
-
-					if (objectName.contains(GuiLabels.GUIBuilderComponent.BTN.str().toLowerCase())) {
-						text = ((Button) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SwingCodeGenerator.Element.BUTTON;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.LABEL.str().toLowerCase())) {
-						text = ((Label) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SwingCodeGenerator.Element.LABEL;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TXTFIELD.str().toLowerCase())) {
-						text = ((Text) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SwingCodeGenerator.Element.TXT_FIELD;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.CHK_BOX.str().toLowerCase())) {
-						text = ((Button) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SwingCodeGenerator.Element.CHECK_BOX;
-					}
-
-					if (generateCode) {
-						buffer.append("\n");
-						buffer.append(
-								generator.generateElementCode(element, text, control.getLocation(), control.getSize(),
-										control.isEnabled(), control.getBackground(), control.getForeground()));
-					}
-				}
-			}
-			return buffer.toString();
-		} else {
-			return null;
+		for (int i = 0; i < depth; i++) {
+			s += "\t";
 		}
+
+		return s;
 	}
 
-	private String generateSwtComponents() {
-		if (codeGenerator instanceof SWTCodeGenerator) {
-			int appendNameComponent = 0;
-			SWTCodeGenerator generator = ((SWTCodeGenerator) codeGenerator);
-			StringBuffer buffer = new StringBuffer();
+	private List<String> generateObjects(ObjectInCompositeContainer object, String containerName, CodeTarget target) {
+		ArrayList<String> buffer = new ArrayList<String>();
 
-			for (ObjectInCompositeContainer objectInComposite : components) {
-				String objectName = objectInComposite.getId().toLowerCase();
+		for (ObjectInCompositeContainer o : object.getChilds()) {
+			switch (o.getObjectInComposite().getObjectFamily()) {
+			case CANVAS:
+				throw new IllegalArgumentException("Double canvas definition in object tree!");
+			case COMPONENTS:
+				List<String> strings1;
 
-				if (objectName.contains(GuiLabels.GUIBuilderComponent.WIDGET.str().toLowerCase())) {
-					ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
-					String[] widgetCode = extensionPointsData.getWidgetCode(target);
-
-					buffer.append("\n");
-
-					for (int i = 1; i < widgetCode.length; i++) {
-						if (widgetCode[i].contains(widgetCode[0])) {
-							String temp = ("\t\t" + String.format(widgetCode[i], "shell") + "\n")
-									.replaceAll(widgetCode[0], widgetCode[0] + appendNameComponent);
-							buffer.append(temp);
-						} else {
-							buffer.append("\t\t" + String.format(widgetCode[i], "shell") + "\n");
-						}
-
-					}
-
-					appendNameComponent++;
-				} else {
-					boolean generateCode = false;
-					String text = null;
-					Control control = objectInComposite.getObject();
-					SWTCodeGenerator.Element element = null;
-
-					if (objectName.contains(GuiLabels.GUIBuilderComponent.BTN.str().toLowerCase())) {
-						text = ((Button) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SWTCodeGenerator.Element.BUTTON;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.LABEL.str().toLowerCase())) {
-						text = ((Label) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SWTCodeGenerator.Element.LABEL;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.TXTFIELD.str().toLowerCase())) {
-						text = ((Text) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SWTCodeGenerator.Element.TEXT_FIELD;
-					} else if (objectName.contains(GuiLabels.GUIBuilderComponent.CHK_BOX.str().toLowerCase())) {
-						text = ((Button) objectInComposite.getObject()).getText();
-						generateCode = true;
-						element = SWTCodeGenerator.Element.CHECK_BOX;
-					}
-
-					if (generateCode) {
-						buffer.append("\n");
-						buffer.append(
-								generator.generateElementCode(element, text, control.getLocation(), control.getSize(),
-										control.isEnabled(), control.getBackground(), control.getForeground()));
-					}
-
+				switch (target) {
+				case SWING:
+					strings1 = generateSwingComponent(o, containerName);
+					break;
+				case SWT:
+					strings1 = generateSWTComponent(o, containerName);
+					break;
+				default:
+					throw new IllegalArgumentException("Switch case not defined!");
 				}
+
+				if (strings1.size() > 0) {
+					for (int i = 1; i < strings1.size(); i++) {
+						buffer.add(strings1.get(i));
+					}
+				}
+				break;
+			case CONTAINERS:
+				List<String> strings2;
+
+				switch (target) {
+				case SWING:
+					strings2 = generateSwingContainer(o, containerName);
+					break;
+				case SWT:
+					strings2 = generateSWTContainer(o, containerName);
+					break;
+				default:
+					throw new IllegalArgumentException("Switch case not defined!");
+				}
+
+				if (strings2.size() > 0) {
+					for (int i = 1; i < strings2.size(); i++) {
+						buffer.add(strings2.get(i));
+					}
+				}
+				break;
+			case LAYOUTS:
+				throw new IllegalArgumentException("Layout should be set on canvas object!");
+			default:
+				throw new IllegalArgumentException("Switch case not defined!");
 			}
-			return buffer.toString();
-		} else {
-			return null;
 		}
+
+		return buffer;
+	}
+
+	/*
+	 * Swing Stuff
+	 */
+	private List<String> generateSwingComponent(ObjectInCompositeContainer object, String containerName) {
+		SwingCodeGenerator generator = ((SwingCodeGenerator) codeGenerator);
+		List<String> buffer = new ArrayList<String>();
+		ComponentInCompositeImpl component = (ComponentInCompositeImpl) object.getObjectInComposite();
+
+		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
+			ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
+			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName);
+
+			buffer.add(widgetCode[0]);
+			buffer.add("");
+
+			for (int i = 1; i < widgetCode.length; i++) {
+				buffer.add(generateDepthSpace() + (String.format(widgetCode[i], "shell")));
+			}
+
+			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode[0] + ");");
+			generator.increaseComponentCount();
+		} else {
+			String labelText = component.getText();
+			Control control = component.getControl();
+			SwingCodeGenerator.Element element = null;
+
+			switch (component.getComponentType()) {
+			case BTN:
+				element = SwingCodeGenerator.Element.BTN;
+				break;
+			case LABEL:
+				element = SwingCodeGenerator.Element.LABEL;
+				break;
+			case TXTFIELD:
+				element = SwingCodeGenerator.Element.TXT_FIELD;
+				break;
+			case RADIO_BTN:
+				element = SwingCodeGenerator.Element.RADIO_BTN;
+				break;
+			case CHK_BOX:
+				element = SwingCodeGenerator.Element.CHECK_BOX;
+				break;
+			default:
+				throw new IllegalArgumentException("Switch case not defined!");
+			}
+
+			List<String> strings = generator.generateComponentCode(element, labelText, control.getLocation(),
+					control.getSize(), control.isEnabled(), control.getBackground(), control.getForeground());
+			buffer.add(strings.get(0));
+			buffer.add("");
+
+			for (int i = 1; i < strings.size(); i++) {
+				buffer.add(generateDepthSpace() + strings.get(i));
+			}
+
+			buffer.add(generateDepthSpace() + containerName + ".add(" + strings.get(0) + ");");
+		}
+		return buffer;
+	}
+
+	private List<String> generateSwingContainer(ObjectInCompositeContainer object, String containerName) {
+		SwingCodeGenerator generator = ((SwingCodeGenerator) codeGenerator);
+		List<String> buffer = new ArrayList<String>();
+		ContainerInComposite component = (ContainerInComposite) object.getObjectInComposite();
+
+		List<String> containerCode = generator.generateContainer(component.getLocation(), component.getSize());
+		buffer.add(containerCode.get(0));
+		buffer.add("");
+		for (int i = 1; i < containerCode.size(); i++) {
+			buffer.add(generateDepthSpace() + containerCode.get(i));
+		}
+
+		buffer.add(generateDepthSpace() + containerName + ".add(" + containerCode.get(0) + ");");
+
+		if (object.hasChilds()) {
+			List<String> code = generateObjects(object, containerCode.get(0), CodeTarget.SWING);
+			buffer.add("");
+			for (int i = 1; i < code.size(); i++) {
+				buffer.add(code.get(i));
+			}
+		}
+
+		return buffer;
+	}
+
+	/*
+	 * SWT Stuff
+	 */
+	private List<String> generateSWTComponent(ObjectInCompositeContainer object, String containerName) {
+		SWTCodeGenerator generator = ((SWTCodeGenerator) codeGenerator);
+		List<String> buffer = new ArrayList<String>();
+		ComponentInCompositeImpl component = (ComponentInCompositeImpl) object.getObjectInComposite();
+
+		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
+			ExtensionPointsData extensionPointsData = new ExtensionPointsData(guiBuilderView);
+			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName);
+
+			buffer.add(widgetCode[0]);
+			buffer.add("");
+
+			for (int i = 1; i < widgetCode.length; i++) {
+				if (widgetCode[i].contains(widgetCode[0])) {
+					buffer.add(generateDepthSpace() + String.format(widgetCode[i], "shell"));
+				} else {
+					buffer.add(generateDepthSpace() + String.format(widgetCode[i], "shell"));
+				}
+
+			}
+
+			generator.increaseComponentCount();
+		} else {
+			String labelText = component.getText();
+			Control control = component.getControl();
+			SWTCodeGenerator.Element element = null;
+
+			switch (component.getComponentType()) {
+			case BTN:
+				element = SWTCodeGenerator.Element.BTN;
+				break;
+			case LABEL:
+				element = SWTCodeGenerator.Element.LABEL;
+				break;
+			case TXTFIELD:
+				element = SWTCodeGenerator.Element.TXT_FIELD;
+				break;
+			case RADIO_BTN:
+				element = SWTCodeGenerator.Element.RADIO_BTN;
+				break;
+			case CHK_BOX:
+				element = SWTCodeGenerator.Element.CHECK_BOX;
+				break;
+			default:
+				throw new IllegalArgumentException("Switch case not defined!");
+			}
+
+			List<String> strings = generator.generateComponentCode(element, containerName, labelText,
+					control.getLocation(), control.getSize(), control.isEnabled(), control.getBackground(),
+					control.getForeground());
+			buffer.add(strings.get(0));
+			buffer.add("");
+
+			for (int i = 1; i < strings.size(); i++) {
+				buffer.add(generateDepthSpace() + strings.get(i));
+			}
+		}
+		return buffer;
+	}
+
+	private List<String> generateSWTContainer(ObjectInCompositeContainer object, String containerName) {
+		SWTCodeGenerator generator = ((SWTCodeGenerator) codeGenerator);
+		List<String> buffer = new ArrayList<String>();
+		ContainerInComposite component = (ContainerInComposite) object.getObjectInComposite();
+
+		List<String> containerCode = generator.generateContainer(containerName, component.getLocation(),
+				component.getSize());
+		buffer.add(containerCode.get(0));
+		buffer.add("");
+		for (int i = 1; i < containerCode.size(); i++) {
+			buffer.add(generateDepthSpace() + containerCode.get(i));
+		}
+
+		buffer.add(generateDepthSpace() + containerName + ".add(" + containerCode.get(0) + ");");
+
+		if (object.hasChilds()) {
+			List<String> code = generateObjects(object, containerCode.get(0), CodeTarget.SWT);
+			buffer.add("");
+			for (int i = 1; i < code.size(); i++) {
+				buffer.add(code.get(i));
+			}
+		}
+
+		return buffer;
 	}
 }

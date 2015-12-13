@@ -1,6 +1,7 @@
 package pt.iscte.pidesco.guibuilder.internal.model.compositeContents;
 
 import org.eclipse.draw2d.Figure;
+import org.eclipse.swt.graphics.Point;
 
 import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
@@ -18,6 +19,32 @@ public class CanvasInComposite extends ObjectInComposite {
 		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
 		this.figure = figure;
 		this.canvasResizer = canvasResizer;
+		this.label = "";
+
+		activeLayout = GUIBuilderLayout.ABSOLUTE;
+	}
+
+	public CanvasInComposite(Figure figure, ObjectMoverResizer canvasResizer, Point location, Point size) {
+		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
+		this.figure = figure;
+		this.canvasResizer = canvasResizer;
+		this.location = location;
+		this.size = size;
+		this.label = "";
+
+		activeLayout = GUIBuilderLayout.ABSOLUTE;
+	}
+
+	public CanvasInComposite(Figure figure, ObjectMoverResizer canvasResizer, Point location, Point size,
+			String label) {
+		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
+		this.figure = figure;
+		this.canvasResizer = canvasResizer;
+		this.location = location;
+		this.size = size;
+		this.label = label;
+
+		activeLayout = GUIBuilderLayout.ABSOLUTE;
 	}
 
 	public void setLabel(String label) {
@@ -26,8 +53,6 @@ public class CanvasInComposite extends ObjectInComposite {
 		if (canvasResizer instanceof CanvasResizer) {
 			((CanvasResizer) canvasResizer).setText(label);
 		}
-
-		activeLayout = GUIBuilderLayout.ABSOLUTE;
 	}
 
 	public String getLabel() {

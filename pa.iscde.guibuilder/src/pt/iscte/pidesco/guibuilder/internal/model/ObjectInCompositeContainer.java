@@ -1,17 +1,21 @@
 package pt.iscte.pidesco.guibuilder.internal.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
 import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
 public class ObjectInCompositeContainer {
 	private String id;
 	private boolean isRoot;
+	private boolean canBeParent;
 	private ObjectInCompositeContainer parent;
 	private ObjectInComposite object;
 
-	private ArrayList<ObjectInCompositeContainer> childs;
+	private List<ObjectInCompositeContainer> childs;
 
 	public ObjectInCompositeContainer(String id, ObjectInComposite object, ObjectInCompositeContainer parent) {
 		this.id = id;
@@ -24,6 +28,8 @@ public class ObjectInCompositeContainer {
 			((CanvasInComposite) object).getCanvasResizer().setObjectInComposite(this);
 		} else if (object instanceof ComponentInCompositeImpl) {
 			((ComponentInCompositeImpl) object).getObjectMoverResizer().setObjectInComposite(this);
+		} else if (object instanceof ContainerInComposite) {
+			((ContainerInComposite) object).getObjectMoverResizer().setObjectInComposite(this);
 		}
 	}
 
@@ -51,23 +57,16 @@ public class ObjectInCompositeContainer {
 		this.parent = parent;
 	}
 
-	/**
-	 * This method providesa list with all the childs for this object
-	 * 
-	 * @return list of the first degree (direct) childs
-	 */
-	public ArrayList<ObjectInCompositeContainer> getChilds() {
-		return childs;
-	}
-
-	public void addChild(ObjectInCompositeContainer child) {
-		if (child != null) {
-			childs.add(child);
-		}
-	}
-
 	public boolean hasChilds() {
-		return childs.isEmpty();
+		return !childs.isEmpty();
+	}
+
+	public void setCanBeParent(boolean canBeParent) {
+		this.canBeParent = canBeParent;
+	}
+
+	public boolean canBeParent() {
+		return canBeParent;
 	}
 
 	public boolean removeChild(ObjectInCompositeContainer child) {
@@ -96,6 +95,40 @@ public class ObjectInCompositeContainer {
 		}
 	}
 
+	public void addChild(ObjectInCompositeContainer child) {
+		if (child != null) {
+			if (canBeParent) {
+				childs.add(child);
+			} else {
+				throw new IllegalAccessError("This object can not have childs");
+			}
+		} else {
+			throw new NullPointerException("Null child");
+		}
+	}
+
+	/**
+	 * This method providesa list with all the childs for this object
+	 * 
+	 * @return list of the first degree (direct) childs
+	 */
+	public List<ObjectInCompositeContainer> getChilds() {
+		return childs;
+	}
+
+	public List<ObjectInCompositeContainer> getAllChildsByType(GuiLabels.GUIBuilderObjectFamily objectFamily) {
+		List<ObjectInCompositeContainer> allChilds = new ArrayList<ObjectInCompositeContainer>();
+
+		for (ObjectInCompositeContainer c : childs) {
+			if (c.getObjectInComposite().getObjectFamily() == objectFamily) {
+				allChilds.add(c);
+			}
+
+			allChilds.addAll(c.getAllChildsByType(objectFamily));
+		}
+		return allChilds;
+	}
+
 	/**
 	 * This method provides a list with all the childs and sub childs for this
 	 * object
@@ -103,8 +136,8 @@ public class ObjectInCompositeContainer {
 	 * @return list of the all possible direct and indirect childs of this
 	 *         object
 	 */
-	public ArrayList<ObjectInCompositeContainer> getAllSubChilds() {
-		ArrayList<ObjectInCompositeContainer> allChilds = new ArrayList<ObjectInCompositeContainer>();
+	public List<ObjectInCompositeContainer> getAllSubChilds() {
+		List<ObjectInCompositeContainer> allChilds = new ArrayList<ObjectInCompositeContainer>();
 
 		for (ObjectInCompositeContainer c : childs) {
 			allChilds.add(c);

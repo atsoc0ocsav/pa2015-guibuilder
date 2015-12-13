@@ -1,13 +1,16 @@
 package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 public class SWTCodeGenerator implements CodeGeneratorInterface {
 	public enum Element {
-		BUTTON("Button", "button", "SWT.BORDER"), LABEL("Label", "label", "SWT.BORDER"), TEXT_FIELD("Text", "text",
-				"SWT.BORDER"), CHECK_BOX("Button", "checkBox", "SWT.CHECK");
+		BTN("Button", "button", "SWT.BORDER"), LABEL("Label", "label", "SWT.BORDER"), TXT_FIELD("Text", "text",
+				"SWT.BORDER"), CHECK_BOX("Button", "checkBox", "SWT.CHECK"), RADIO_BTN("Button", "radioButton",
+						"SWT.RADIO"), COMPOSITE("Composite", "composite", "SWT.BORDER");
 
 		public String code;
 		public String prefix;
@@ -26,125 +29,176 @@ public class SWTCodeGenerator implements CodeGeneratorInterface {
 		public String getPrefix() {
 			return prefix;
 		}
-		
-		public String getStyle(){
+
+		public String getStyle() {
 			return style;
 		}
 	}
 
-	private final String[] IMPORTS = { "org.eclipse.swt.*;" };
+	private final String[] IMPORTS = { "org.eclipse.swt.*"};
 	public final String CLASS_NAME = "SWTGUIWindow";
-	public final String SHELL_NAME = "shelly";
-	public int appendNameComponent = -1;
+	public final String SHELL_NAME = "shell";
+	public int componentCount = -1;
 
 	@Override
-	public String generateFrame(String[] parameters) {
-		Point dimension = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
+	public int getComponentCount() {
+		return componentCount;
+	}
 
+	@Override
+	public void increaseComponentCount() {
+		componentCount++;
+	}
+
+	/*
+	 * Interface methods
+	 */
+	// Elements code generation
+	@Override
+	public ArrayList<String> generateInitialization(String[] parameters) {
+		Point dimension = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 		return generateFrame(parameters[0], dimension);
 	}
 
-	public String generateFrame(String name, Point dimension) {
-		return new String(
-				  "\t\tDisplay display = new Display();\n" 
-				+ "\t\tShell " + SHELL_NAME + " = new Shell(display);\n"
-				+ "\t\t" + SHELL_NAME + ".setSize(" + dimension.x + "," + dimension.y + ");\n" 
-				+ "\t\t" + SHELL_NAME + ".setText(\"" + name + "\");\n" 
-				+ "\t\t" + SHELL_NAME + ".open();\n\n" 
-				+ "\t\twhile (!" + SHELL_NAME + ".isDisposed()) {\n"
-				+ "\t\t\tif (!display.readAndDispatch()) {\n" 
-				+ "\t\t\t\tdisplay.sleep();\n" 
-				+ "\t\t\t}\n"
-				+ "\t\t\tdisplay.dispose();\n" 
-				+ "\t\t}\n\n");
+	public ArrayList<String> generateFrame(String name, Point dimension) {
+		ArrayList<String> strings = new ArrayList<String>();
+
+		strings.add(SHELL_NAME);
+		strings.add("Display display = new Display();");
+		strings.add("Shell " + SHELL_NAME + " = new Shell(display);");
+		strings.add(SHELL_NAME + ".setSize(" + dimension.x + "," + dimension.y + ");");
+		strings.add(SHELL_NAME + ".setText(\"" + name + "\");");
+
+		return strings;
 	}
 
 	@Override
-	public String generateButton(String[] parameters) {
-		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
-		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
-				Integer.parseInt(parameters[7]), Integer.parseInt(parameters[8]));
-		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[9]),
-				Integer.parseInt(parameters[10]), Integer.parseInt(parameters[11]));
+	public ArrayList<String> generateButton(String[] parameters) {
+		Point location = new Point(Integer.parseInt(parameters[2]), Integer.parseInt(parameters[3]));
+		Point dimension = new Point(Integer.parseInt(parameters[4]), Integer.parseInt(parameters[5]));
+		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[7]),
+				Integer.parseInt(parameters[8]), Integer.parseInt(parameters[9]));
+		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[10]),
+				Integer.parseInt(parameters[11]), Integer.parseInt(parameters[12]));
 
-		return generateElementCode(Element.BUTTON, parameters[0], location, dimension,
-				Boolean.parseBoolean(parameters[5]), backgroundColor, foregroundColor);
+		return generateComponentCode(Element.BTN, parameters[0], parameters[1], location, dimension,
+				Boolean.parseBoolean(parameters[6]), backgroundColor, foregroundColor);
 	}
 
 	@Override
-	public String generateLabel(String[] parameters) {
-		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
-		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
-				Integer.parseInt(parameters[7]), Integer.parseInt(parameters[8]));
-		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[9]),
-				Integer.parseInt(parameters[10]), Integer.parseInt(parameters[11]));
+	public ArrayList<String> generateLabel(String[] parameters) {
+		Point location = new Point(Integer.parseInt(parameters[2]), Integer.parseInt(parameters[3]));
+		Point dimension = new Point(Integer.parseInt(parameters[4]), Integer.parseInt(parameters[5]));
+		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[7]),
+				Integer.parseInt(parameters[8]), Integer.parseInt(parameters[9]));
+		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[10]),
+				Integer.parseInt(parameters[11]), Integer.parseInt(parameters[12]));
 
-		return generateElementCode(Element.LABEL, parameters[0], location, dimension,
-				Boolean.parseBoolean(parameters[5]), backgroundColor, foregroundColor);
+		return generateComponentCode(Element.LABEL, parameters[0], parameters[1], location, dimension,
+				Boolean.parseBoolean(parameters[6]), backgroundColor, foregroundColor);
 	}
 
 	@Override
-	public String generateTextField(String[] parameters) {
-		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
-		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
-				Integer.parseInt(parameters[7]), Integer.parseInt(parameters[8]));
-		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[9]),
-				Integer.parseInt(parameters[10]), Integer.parseInt(parameters[11]));
+	public ArrayList<String> generateTextField(String[] parameters) {
+		Point location = new Point(Integer.parseInt(parameters[2]), Integer.parseInt(parameters[3]));
+		Point dimension = new Point(Integer.parseInt(parameters[4]), Integer.parseInt(parameters[5]));
+		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[7]),
+				Integer.parseInt(parameters[8]), Integer.parseInt(parameters[9]));
+		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[10]),
+				Integer.parseInt(parameters[11]), Integer.parseInt(parameters[12]));
 
-		return generateElementCode(Element.TEXT_FIELD, parameters[0], location, dimension,
-				Boolean.parseBoolean(parameters[5]), backgroundColor, foregroundColor);
+		return generateComponentCode(Element.TXT_FIELD, parameters[0], parameters[1], location, dimension,
+				Boolean.parseBoolean(parameters[6]), backgroundColor, foregroundColor);
 	}
 
 	@Override
-	public String generateCheckBox(String[] parameters) {
-		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
-		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
-				Integer.parseInt(parameters[7]), Integer.parseInt(parameters[8]));
-		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[9]),
-				Integer.parseInt(parameters[10]), Integer.parseInt(parameters[11]));
+	public ArrayList<String> generateCheckBox(String[] parameters) {
+		Point location = new Point(Integer.parseInt(parameters[2]), Integer.parseInt(parameters[3]));
+		Point dimension = new Point(Integer.parseInt(parameters[4]), Integer.parseInt(parameters[5]));
+		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[7]),
+				Integer.parseInt(parameters[8]), Integer.parseInt(parameters[9]));
+		Color foregroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[10]),
+				Integer.parseInt(parameters[11]), Integer.parseInt(parameters[12]));
 
-		return generateElementCode(Element.CHECK_BOX, parameters[0], location, dimension,
-				Boolean.parseBoolean(parameters[5]), backgroundColor, foregroundColor);
+		return generateComponentCode(Element.CHECK_BOX, parameters[0], parameters[1], location, dimension,
+				Boolean.parseBoolean(parameters[6]), backgroundColor, foregroundColor);
+	}
+
+	@Override
+	public ArrayList<String> generateContainer(String[] parameters) {
+		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
+		Point size = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
+
+		// TODO Layout
+
+		return generateContainer(parameters[0], location, size);
+	}
+
+	public ArrayList<String> generateContainer(String containerName, Point location, Point size) {
+		ArrayList<String> strings = new ArrayList<String>();
+		String elementName = Element.COMPOSITE.getPrefix() + (++componentCount);
+
+		// TODO Layout
+
+		strings.add(elementName);
+		strings.add(Element.COMPOSITE.getCode() + " " + elementName + " = new " + Element.COMPOSITE.getCode() + "("
+				+ containerName + "," + Element.COMPOSITE.style + ");");
+		strings.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+		strings.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+		return strings;
 	}
 
 	// Class start and end, constructor start and end, action listeners
 	@Override
-	public String generateStartClass() {
-		return new String("public class " + CLASS_NAME + " {\n");
+	public ArrayList<String> generateClassBegin() {
+		ArrayList<String> strings = new ArrayList<String>();
+		strings.add(CLASS_NAME);
+		strings.add("public class " + CLASS_NAME + " {");
+		return strings;
 	}
 
 	@Override
-	public String generateEndClass() {
-		return new String("\n}");
+	public ArrayList<String> generateClassEnd() {
+		ArrayList<String> strings = new ArrayList<String>();
+		strings.add("}");
+		return strings;
 	}
 
 	@Override
-	public String generateStartConstructorClass() {
-		return new String("\tpublic " + CLASS_NAME + "(){\n");
+	public ArrayList<String> generateConstructorBegin() {
+		ArrayList<String> strings = new ArrayList<String>();
+		strings.add("public " + CLASS_NAME + "() {");
+		return strings;
 	}
 
 	@Override
-	public String generateEndConstructorClass() {
-		return new String("\t}");
+	public ArrayList<String> generateConstructorEnd() {
+		ArrayList<String> strings = new ArrayList<String>();
+		strings.add("");
+		strings.add("\t" + SHELL_NAME + ".open();");
+		strings.add("\twhile (!" + SHELL_NAME + ".isDisposed()) {");
+		strings.add("\t\tif (!display.readAndDispatch()) {");
+		strings.add("\t\t\tdisplay.sleep();");
+		strings.add("\t\t}");
+		strings.add("\t\tdisplay.dispose();");
+		strings.add("\t}");
+		strings.add("}");
+		return strings;
 	}
 
 	@Override
-	public String generateImports() {
-		String str = "";
+	public ArrayList<String> generateImports() {
+		ArrayList<String> strings = new ArrayList<String>();
 
 		for (String s : IMPORTS) {
-			str += "import " + s + "\n";
+			strings.add("import " + s + ";");
 		}
 
-		return str;
+		return strings;
 	}
 
 	@Override
-	public String generateAction(String[] parameters) {
+	public ArrayList<String> generateAction(String[] parameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -152,39 +206,47 @@ public class SWTCodeGenerator implements CodeGeneratorInterface {
 	/*
 	 * Elements code generators
 	 */
-	public String generateButton(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
-			Color foregroundColor) {
-		return generateElementCode(Element.BUTTON, text, location, size, isEnabled, backgroundColor, foregroundColor);
-	}
-
-	public String generateLabel(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
-			Color foregroundColor) {
-		return generateElementCode(Element.LABEL, text, location, size, isEnabled, backgroundColor, foregroundColor);
-	}
-
-	public String generateTextField(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
-			Color foregroundColor) {
-		return generateElementCode(Element.TEXT_FIELD, text, location, size, isEnabled, backgroundColor,
+	public ArrayList<String> generateButton(String compositeName, String text, Point location, Point size,
+			boolean isEnabled, Color backgroundColor, Color foregroundColor) {
+		return generateComponentCode(Element.BTN, compositeName, text, location, size, isEnabled, backgroundColor,
 				foregroundColor);
 	}
 
-	public String generateCheckBox(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
-			Color foregroundColor) {
-		return generateElementCode(Element.CHECK_BOX, text, location, size, isEnabled, backgroundColor,
+	public ArrayList<String> generateLabel(String compositeName, String text, Point location, Point size,
+			boolean isEnabled, Color backgroundColor, Color foregroundColor) {
+		return generateComponentCode(Element.LABEL, compositeName, text, location, size, isEnabled, backgroundColor,
 				foregroundColor);
-	}	
-	
-	public String generateElementCode(Element element, String text, Point location, Point size, boolean isEnabled,
-			Color backgroundColor, Color foregroundColor) {
-		String elementName = element.getPrefix() + (++appendNameComponent);
+	}
 
-		return new String(
-				  "\t\t" + element.getCode() + " " + elementName + " = new " + element.getCode() + "(" + SHELL_NAME + "," + element.getStyle() + ");\n"
-				+ "\t\t" + elementName + ".setText(\"" + text + "\");\n" 
-				+ "\t\t" + elementName + ".setLocation(" + location.x + "," + location.y + ");\n"
-				+ "\t\t" + elementName + ".setSize(" + size.x + "," + size.y + ");\n"
-				+ "\t\t" + elementName + ".setEnabled(" + isEnabled + "); \n" 
-				+ "\t\t" + elementName + ".setBackground(new Color(Display.getCurrent()," + backgroundColor.getRed() + "," + backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));\n"
-				+ "\t\t" + elementName + ".setForeground(new Color(Display.getCurrent()," + foregroundColor.getRed() + "," + foregroundColor.getGreen() + "," + foregroundColor.getBlue() + "));\n");
+	public ArrayList<String> generateTextField(String compositeName, String text, Point location, Point size,
+			boolean isEnabled, Color backgroundColor, Color foregroundColor) {
+		return generateComponentCode(Element.TXT_FIELD, compositeName, text, location, size, isEnabled, backgroundColor,
+				foregroundColor);
+	}
+
+	public ArrayList<String> generateCheckBox(String compositeName, String text, Point location, Point size,
+			boolean isEnabled, Color backgroundColor, Color foregroundColor) {
+		return generateComponentCode(Element.CHECK_BOX, compositeName, text, location, size, isEnabled, backgroundColor,
+				foregroundColor);
+	}
+
+	public ArrayList<String> generateComponentCode(Element element, String compositeName, String text, Point location,
+			Point size, boolean isEnabled, Color backgroundColor, Color foregroundColor) {
+		String elementName = element.getPrefix() + (++componentCount);
+		ArrayList<String> strings = new ArrayList<String>();
+
+		strings.add(elementName);
+		strings.add(element.getCode() + " " + elementName + " = new " + element.getCode() + "(" + compositeName + ","
+				+ element.getStyle() + ");");
+		strings.add(elementName + ".setText(\"" + text + "\");");
+		strings.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+		strings.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+		strings.add(elementName + ".setEnabled(" + isEnabled + ");");
+		strings.add(elementName + ".setBackground(new Color(Display.getCurrent()," + backgroundColor.getRed() + ","
+				+ backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));");
+		strings.add(elementName + ".setForeground(new Color(Display.getCurrent()," + foregroundColor.getRed() + ","
+				+ foregroundColor.getGreen() + "," + foregroundColor.getBlue() + "));");
+
+		return strings;
 	}
 }

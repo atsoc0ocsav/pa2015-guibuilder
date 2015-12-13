@@ -26,12 +26,14 @@ import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInC
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderContainer;
 
 public class GuiBuilderObjFactory {
 	// Dimensions
 	private static final Point DEFAULT_CANVAS_POS_OFFSET = new Point(5, 5);
 	private static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);
 	private static final Dimension DEFAULT_CANVAS_TOPBAR_INIT_DIM = new Dimension(DEFAULT_CANVAS_INIT_DIM.width, 35);
+	private static final Dimension DEFAULT_CONTAINER_DIM = new Dimension(100, 100);
 	private static final Dimension LABELS_MARGIN = new Dimension(5, 5);
 	private static final Dimension BACKGND_MARGIN = new Dimension(14, 14);
 
@@ -96,7 +98,10 @@ public class GuiBuilderObjFactory {
 			imgCanvas.dispose();
 			imgCanvasTopbar.dispose();
 
-			return new CanvasInComposite(backgroundCanvas, imageResizer);
+			return new CanvasInComposite(backgroundCanvas, imageResizer,
+					new Point(canvasBackgndBounds.getLocation().x, canvasBackgndBounds.getLocation().y),
+					new Point(canvasBackgndBounds.getSize().width, canvasBackgndBounds.getSize().height),
+					DEFAULT_FRAME_TITLE_TXT);
 		} else {
 			RectangleFigure fig = new RectangleFigure();
 			fig.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
@@ -105,7 +110,8 @@ public class GuiBuilderObjFactory {
 
 			FigureMoverResizer figHandler = new FigureMoverResizer(fig, guiBuilderView, null, "", false,
 					FigureMoverResizer.Handle.BOT_RIGHT);
-			return new CanvasInComposite(fig, figHandler);
+			return new CanvasInComposite(fig, figHandler, new Point(fig.getLocation().x, fig.getLocation().y),
+					new Point(fig.getSize().width, fig.getSize().height));
 		}
 	}
 
@@ -124,8 +130,8 @@ public class GuiBuilderObjFactory {
 		return scaled;
 	}
 
-	public ComponentInCompositeImpl createComponentFamilyObject(Point position, GuiLabels.GUIBuilderComponent componentType,
-			Canvas canvas, Object... args) {
+	public ComponentInCompositeImpl createComponentFamilyObject(GuiLabels.GUIBuilderComponent componentType,
+			Point position, Canvas canvas, Object... args) {
 		String componentLabel;
 		if (args.length == 0) {
 			switch (componentType) {
@@ -160,7 +166,7 @@ public class GuiBuilderObjFactory {
 		Point componentSize = new Point((fm.getAverageCharWidth() * componentLabel.length()) + LABELS_MARGIN.width + 23,
 				fm.getHeight() + LABELS_MARGIN.height);
 
-		if (isInsideCanvas(position.x,position.y,componentSize.x,componentSize.y)) {
+		if (isInsideCanvas(position.x, position.y, componentSize.x, componentSize.y)) {
 			Control widget;
 
 			RectangleFigure componentBackground = new RectangleFigure();
@@ -233,11 +239,30 @@ public class GuiBuilderObjFactory {
 		return null;
 	}
 
-	public ContainerInComposite createContainerFamilyObject(Point position, String cmpName, Canvas canvas,
-			Figure contents) {
-		// TODO Define method
-		System.err.println("Method undefined");
-		return null;
+	public ContainerInComposite createContainerFamilyObject(GuiLabels.GUIBuilderContainer containerType, Point position,
+			Canvas canvas) {
+		switch (containerType) {
+		case PANEL:
+
+			break;
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
+		}
+
+		if (isInsideCanvas(position.x, position.y, DEFAULT_CONTAINER_DIM.width, DEFAULT_CONTAINER_DIM.height)) {
+			RectangleFigure container = new RectangleFigure();
+			container.setBounds(
+					new Rectangle(position.x, position.y, DEFAULT_CONTAINER_DIM.width, DEFAULT_CONTAINER_DIM.height));
+			container.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+
+			FigureMoverResizer fmr = new FigureMoverResizer(container, guiBuilderView, canvas, null, true,
+					FigureMoverResizer.Handle.values());
+			fmr.setControlMargin(BACKGND_MARGIN);
+
+			return new ContainerInComposite(GUIBuilderContainer.PANEL, container, fmr);
+		} else {
+			return null;
+		}
 	}
 
 	public boolean isInsideCanvas(Point pos) {

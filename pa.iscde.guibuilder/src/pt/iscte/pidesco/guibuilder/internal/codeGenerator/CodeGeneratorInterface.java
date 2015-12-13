@@ -1,26 +1,34 @@
 package pt.iscte.pidesco.guibuilder.internal.codeGenerator;
 
+import java.util.List;
+
 public interface CodeGeneratorInterface {
 
-	public String generateImports();
+	public List<String> generateImports();
 
-	public String generateStartClass();
+	public List<String> generateClassBegin();
 
-	public String generateEndClass();
+	public List<String> generateClassEnd();
 
-	public String generateStartConstructorClass();
+	public List<String> generateConstructorBegin();
 
-	public String generateEndConstructorClass();
+	public List<String> generateConstructorEnd();
 
-	public String generateFrame(String[] parameters);
+	public List<String> generateInitialization(String[] parameters);
 
-	public String generateButton(String[] parameters);
+	public List<String> generateButton(String[] parameters);
 
-	public String generateLabel(String[] parameters);
+	public List<String> generateLabel(String[] parameters);
 
-	public String generateTextField(String[] parameters);
+	public List<String> generateTextField(String[] parameters);
 
-	public String generateCheckBox(String[] parameters);
+	public List<String> generateCheckBox(String[] parameters);
 
-	public String generateAction(String[] parameters);
+	public List<String> generateAction(String[] parameters);
+
+	public List<String> generateContainer(String[] parameters);
+	
+	public int getComponentCount();
+	
+	public void increaseComponentCount();
 }

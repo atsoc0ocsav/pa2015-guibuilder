@@ -140,6 +140,9 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 
 				canvasBackgroundFigure.setBounds(canvasBounds);
 				canvasTopbarFigure.setBounds(topbarBounds);
+				
+				objectInCompositeContainer.getObjectInComposite().setLocation(canvasBounds.x,canvasBounds.y);
+				objectInCompositeContainer.getObjectInComposite().setSize(canvasBounds.width,canvasBounds.height);
 
 				layoutMgr.setConstraint(backgroundRectangle, newPos);
 				updateMgr.addDirtyRegion(backgroundRectangle.getParent(), newPos);

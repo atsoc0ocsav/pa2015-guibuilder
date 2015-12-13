@@ -8,6 +8,7 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.MouseMotionListener;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.UpdateManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -25,19 +26,22 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class FigureMoverResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final Dimension MIN_DIM = new Dimension(CORNER * 3, CORNER * 3);
-	private final Figure figure;
+	private Figure figure;
 	private String text;
 	private boolean enableText = true;
 	private Dimension controlMargin = new Dimension(0, 0);
 	private GuiLabels.GUIBuilderComponent type;
 
-	public FigureMoverResizer(Figure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text, boolean moveable,
-			Handle... handlers) {
+	public FigureMoverResizer(Figure figure, GuiBuilderView guiBuilderView, Canvas canvas, String text,
+			boolean moveable, Handle... handlers) {
 		if (figure == null)
 			throw new NullPointerException();
 
@@ -124,7 +128,6 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 
 			location = event.getLocation();
 			event.consume();
-
 		} else if (event.button == 3) { // Right Button
 			guiBuilderView.openDialogMenu(this, event.x, event.y);
 		}
@@ -160,7 +163,13 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				updateMgr.addDirtyRegion(figure.getParent(), newPos);
 				layoutMgr.layout(figure.getParent());
 
-				if (control != null) {
+				if (objectInCompositeContainer.getObjectInComposite()
+						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
+					((ContainerInComposite) objectInCompositeContainer.getObjectInComposite())
+							.setSize(newPos.getSize().width, newPos.getSize().height);
+					((ContainerInComposite) objectInCompositeContainer.getObjectInComposite())
+							.setLocation(newPos.getLocation().x, newPos.getLocation().y);
+				} else if (control != null) {
 					control.setSize(newPos.getSize().width - controlMargin.width,
 							newPos.getSize().height - controlMargin.height);
 
@@ -171,10 +180,16 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				}
 			} else if (!guiBuilderView.isInsideCanvas(newPos.getLocation().x, newPos.getLocation().y,
 					newPos.getSize().width, newPos.getSize().height)) {
-				if (control != null) {
-					guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, control);
+				if (objectInCompositeContainer.getObjectInComposite()
+						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
+					guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT,
+							objectInCompositeContainer.getId().split("\t")[0]);
 				} else {
-					guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, figure);
+					if (control != null) {
+						guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, control);
+					} else {
+						guiBuilderView.setMessage(guiBuilderView.TOO_BIG_OBJECT, figure);
+					}
 				}
 			}
 		} else { // move
@@ -183,28 +198,59 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 
 			if (moveable && guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)
 					&& !guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
-							objectInCompositeContainer.getObjectInComposite())) {
+							objectInCompositeContainer.getObjectInComposite(), false)) {
+				if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
+						objectInCompositeContainer.getObjectInComposite(), true)) {
+					ObjectInCompositeContainer c = guiBuilderView.getContainerInPosition(pos.x, pos.y);
+					if (objectInCompositeContainer.getParent() != c) {
+						objectInCompositeContainer.getParent().removeChild(objectInCompositeContainer);
+						objectInCompositeContainer.setParent(c);
+						c.addChild(objectInCompositeContainer);
+					}
+				}
 				bounds = bounds.getCopy().translate(offset.width, offset.height);
 				layoutMgr.setConstraint(figure, bounds);
 				figure.translate(offset.width, offset.height);
 				updateMgr.addDirtyRegion(figure.getParent(), bounds);
 
-				if (control != null) {
+				if (objectInCompositeContainer.getObjectInComposite()
+						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
+					((ContainerInComposite) objectInCompositeContainer.getObjectInComposite())
+							.setSize(bounds.getSize().width, bounds.getSize().height);
+					((ContainerInComposite) objectInCompositeContainer.getObjectInComposite()).setLocation(pos.x,
+							pos.y);
+				} else if (control != null) {
 					control.setLocation(figure.getBounds().x + controlMargin.width / 2,
 							figure.getBounds().y + controlMargin.height / 2);
 				}
+
+				// canvas.layout();
+				// canvas.update();
+				// canvas.redraw();
 			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
-				if (control != null) {
-					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
+				if (objectInCompositeContainer.getObjectInComposite()
+						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
+					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG,
+							objectInCompositeContainer.getId().split("\t")[0]);
 				} else {
-					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, figure);
+					if (control != null) {
+						guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
+					} else {
+						guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, figure);
+					}
 				}
 			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
-					objectInCompositeContainer.getObjectInComposite())) {
-				if (control != null) {
-					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, control);
+					objectInCompositeContainer.getObjectInComposite(), false)) {
+				if (objectInCompositeContainer.getObjectInComposite()
+						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
+					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG,
+							objectInCompositeContainer.getId().split("\t")[0]);
 				} else {
-					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, figure);
+					if (control != null) {
+						guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, control);
+					} else {
+						guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, figure);
+					}
 				}
 			}
 		}
@@ -286,10 +332,14 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			case TXTFIELD:
 				((Text) control).setText(str);
 				break;
+			case RADIO_BTN:
+				((Button) control).setText(str);
 			case WIDGET:
 				// ((WidgetInterface) control).setWidgetName(str);
 				System.out.println("uncoment me!");
 				break;
+			default:
+				throw new IllegalArgumentException("Switch case not defined!");
 			}
 		}
 	}
