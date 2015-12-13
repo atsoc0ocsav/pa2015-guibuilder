@@ -1,5 +1,1 @@
 TODO List:
-- Implement parent on objectOnComposite
-	- Also add the concept of children
-- Decidir como fazer update das cores dos widgets
-- Canvas setSize on model when resize(implementar)

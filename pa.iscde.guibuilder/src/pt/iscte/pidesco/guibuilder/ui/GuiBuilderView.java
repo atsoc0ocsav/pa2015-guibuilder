@@ -644,7 +644,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 			container = rootComponent;
 		}
 
-		System.out.println("Container: " + container.getId());
 		return container;
 	}
 
