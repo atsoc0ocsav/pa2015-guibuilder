@@ -8,8 +8,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Spinner;
 
 import pa.iscde.test.ExtensionTestInterface;
+import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetInterface;
-import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator.CodeTarget;
+
 
 public class TestClass implements ExtensionTestInterface, WidgetInterface {
 
