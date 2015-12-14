@@ -183,7 +183,7 @@ public class CodeGenerator {
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.get());
+			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.getAndIncreaseComponentCount());
 
 			buffer.add(widgetCode[0]);
 			buffer.add("");
@@ -282,7 +282,7 @@ public class CodeGenerator {
 
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName);
+			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.getAndIncreaseComponentCount());
 
 			buffer.add(widgetCode[0]);
 			buffer.add("");
