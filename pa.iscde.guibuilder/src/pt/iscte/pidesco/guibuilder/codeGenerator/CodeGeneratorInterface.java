@@ -27,8 +27,10 @@ public interface CodeGeneratorInterface {
 	public List<String> generateAction(String[] parameters);
 
 	public List<String> generateContainer(String[] parameters);
-	
+
 	public int getComponentCount();
-	
+
 	public void increaseComponentCount();
+
+	public int getAndIncreaseComponentCount();
 }

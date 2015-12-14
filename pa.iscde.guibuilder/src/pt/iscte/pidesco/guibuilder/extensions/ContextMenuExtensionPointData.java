@@ -9,17 +9,18 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Menu;
 
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
+import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPoint.OBJECT_FAMILY;
+import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
 public class ContextMenuExtensionPointData {
-	private GuiBuilderView guiBuilderView;
 	private List<ContextMenuExtensionPoint> contextMenuItems;
 
-	public ContextMenuExtensionPointData(GuiBuilderView guiBuilderView) {
-		this.guiBuilderView = guiBuilderView;
+	public ContextMenuExtensionPointData() {
+		contextMenuItems = new ArrayList<ContextMenuExtensionPoint>();
 
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint("pt.iscte.pidesco.guibuilder.contextMenu");
@@ -37,15 +38,26 @@ public class ContextMenuExtensionPointData {
 		}
 	}
 
-	public List<MenuItem> getContextMenuItems(GuiLabels.GUIBuilderObjectFamily target) {
-		List<MenuItem> labels = new ArrayList<MenuItem>();
-
-		for (ContextMenuExtensionPoint c : contextMenuItems) {
-			if (c.getFilter().contains(target)) {
-				labels.add(c.getItem());
-			}
+	public void addContextMenuItems(GuiLabels.GUIBuilderObjectFamily target, Menu menu, ObjectInCompositeContainer obj,
+			Canvas canvas) {
+		OBJECT_FAMILY f;
+		switch (target) {
+		case COMPONENTS:
+			f = OBJECT_FAMILY.COMPONENTS;
+			break;
+		case CONTAINERS:
+			f = OBJECT_FAMILY.CONTAINERS;
+			break;
+		case CANVAS:
+		case LAYOUTS:
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
 		}
 
-		return labels;
+		for (ContextMenuExtensionPoint c : contextMenuItems) {
+			if (c.acceptsType(f)) {
+				c.generateMenuItem(menu, obj, canvas);
+			}
+		}
 	}
 }

@@ -7,7 +7,6 @@ import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -113,7 +112,7 @@ public class GuiBuilderView implements PidescoView {
 		populateTopComposite();
 
 		widgetExtensionPointsData = new WidgetExtensionPointsData(this);
-		contextMenuExtensionPointData = new ContextMenuExtensionPointData(this);
+		contextMenuExtensionPointData = new ContextMenuExtensionPointData();
 
 		populateBottomComposite();
 
@@ -442,36 +441,8 @@ public class GuiBuilderView implements PidescoView {
 				}
 			}
 
-			// Delete Item
-			MenuItem deleteItem = new MenuItem(popupMenu, SWT.NONE);
-			deleteItem.setText(GuiLabels.DialogMenuLabel.DELETE_OBJECT.str());
-			deleteItem.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					ObjectInCompositeContainer object = fmr.getObjectInCompositeContainer();
-
-					if (object.hasChilds()) {
-						if (!MessageDialog.openConfirm(topCanvas.getShell(),
-								GuiLabels.DialogMenuLabel.DELETE_OBJECT.str(),
-								GuiLabels.DialogMenuLabel.DELETE_OBJECT_CONFIRM_MSG.str())) {
-							return;
-						}
-					}
-
-					ObjectInCompositeContainer objectParent = object.getParent();
-
-					if (object.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.COMPONENTS) {
-						((ComponentInCompositeImpl) object.getObjectInComposite()).getControl().dispose();
-					}
-					object.getObjectInComposite().getFigure().setVisible(false);
-
-					objectParent.removeChild(object);
-
-					topCanvas.update();
-					topCanvas.redraw();
-					topCanvas.layout();
-				}
-			});
+			contextMenuExtensionPointData.addContextMenuItems(objectFamily, popupMenu,
+					fmr.getObjectInCompositeContainer(), topCanvas);
 
 			popupMenu.setVisible(true);
 		} else if (fmr instanceof CanvasResizer) {

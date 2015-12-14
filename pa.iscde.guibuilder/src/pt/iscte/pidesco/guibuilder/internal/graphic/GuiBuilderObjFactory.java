@@ -227,6 +227,10 @@ public class GuiBuilderObjFactory {
 			FigureMoverResizer fmr = new FigureMoverResizer(componentBackground, guiBuilderView, widget, componentType,
 					canvas, true, FigureMoverResizer.Handle.values());
 			fmr.setControlMargin(BACKGND_MARGIN);
+			
+			if(componentType== GUIBuilderComponent.WIDGET){
+				//widget
+			}
 
 			return new ComponentInCompositeImpl(componentType, widget, componentBackground, fmr)
 					.setTextAndReturnObject(componentLabel);

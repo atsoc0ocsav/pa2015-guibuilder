@@ -42,6 +42,11 @@ public class SwingCodeGenerator implements CodeGeneratorInterface {
 	public void increaseComponentCount() {
 		componentCount++;
 	}
+	
+	@Override
+	public int getAndIncreaseComponentCount() {
+		return (++componentCount);
+	}
 
 	/*
 	 * Interface methods
