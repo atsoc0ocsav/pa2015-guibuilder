@@ -181,15 +181,28 @@ public class CodeGenerator {
 		ComponentInCompositeImpl component = (ComponentInCompositeImpl) object.getObjectInComposite();
 
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
+
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
 			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName);
 
-			buffer.add(widgetCode[0]);
 			buffer.add("");
 
 			for (int i = 1; i < widgetCode.length; i++) {
-				buffer.add(generateDepthSpace() + (String.format(widgetCode[i], "shell")));
+				if (!widgetCode[i].contains("setBackground") || !widgetCode[i].contains("setForeground")) {
+					buffer.add(generateDepthSpace() + widgetCode[i]);
+				}
+				
+
+				// buffer.add(generateDepthSpace() +
+				// (String.format(widgetCode[i], "shell")));
 			}
+			buffer.add(generateDepthSpace() + widgetCode[0] + ".setBackground(new Color("
+					+ extensionPointsData.getBackgroundColor().getRed() + ","
+					+ extensionPointsData.getBackgroundColor().getGreen() + ","
+					+ extensionPointsData.getBackgroundColor().getBlue() + "));");
+
+			// buffer.add(widgetCode[0]);
+			buffer.add("");
 
 			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode[0] + ");");
 			generator.increaseComponentCount();

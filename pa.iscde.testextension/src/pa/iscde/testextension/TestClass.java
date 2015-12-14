@@ -8,8 +8,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Spinner;
 
 import pa.iscde.test.ExtensionTestInterface;
+import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetInterface;
-import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator.CodeTarget;
+import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
+import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 public class TestClass implements ExtensionTestInterface, WidgetInterface {
 
@@ -44,7 +46,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		spinner.setMaximum(1000);
 		spinner.setSelection(500);
 		spinner.setIncrement(1);
-		spinner.setBackground(new Color(Display.getCurrent(),255,255,255));
+		spinner.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
 
 	}
 
@@ -54,22 +56,70 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	}
 
 	@Override
-	public String[] generateWidgetCode(CodeTarget target,String containerName) {
+	public String[] generateWidgetCode(CodeTarget target, String containerName) {
 		String[] code = null;
 		switch (target) {
 		case SWING:
 			code = new String[] { "spinner", "SpinnerModel spinnerModel = new SpinnerNumberModel(500,0,1000,1);",
-					"JSpinner spinner = new JSpinner(spinnerModel);","spinner.setBackground(new Color(255,255,255));" };
+					"JSpinner spinner = new JSpinner(spinnerModel);",
+					"spinner.setBackground(new Color(255,255,255));" };
 			break;
 		case SWT:
-			code = new String[] { "spinner", "Spinner spinner = new Spinner(%s, SWT.BORDER);",
-					"spinner.setMinimum(0);", "spinner.setMaximum(1000);", "spinner.setSelection(500);",
-					"spinner.setIncrement(1);","spinner.setBackground(new Color(Display.getCurrent(),255,255,255));" };
+			code = new String[] { "spinner", "Spinner spinner = new Spinner(%s, SWT.BORDER);", "spinner.setMinimum(0);",
+					"spinner.setMaximum(1000);", "spinner.setSelection(500);", "spinner.setIncrement(1);",
+					"spinner.setBackground(new Color(Display.getCurrent(),255,255,255));" };
 			break;
 		default:
 			break;
 		}
 		return code;
+	}
+
+	@Override
+	public GUIBuilderComponent getComponentType() {
+
+		return GUIBuilderComponent.WIDGET;
+	}
+
+	@Override
+	public ObjectMoverResizer getObjectMoverResizer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBackgroundColor(Color color) {
+		spinner.setBackground(color);
+
+	}
+
+	@Override
+	public Color getBackgroundColor() {
+
+		return spinner.getBackground();
+	}
+
+	@Override
+	public void setForegroundColor(Color color) {
+		spinner.setForeground(color);
+
+	}
+
+	@Override
+	public Color getForegroundColor() {
+
+		return spinner.getForeground();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		spinner.setEnabled(enabled);
+
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return spinner.isEnabled();
 	}
 
 }
