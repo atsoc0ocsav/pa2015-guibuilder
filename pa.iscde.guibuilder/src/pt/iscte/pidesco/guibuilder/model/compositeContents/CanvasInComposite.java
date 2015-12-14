@@ -16,28 +16,17 @@ public class CanvasInComposite extends ObjectInComposite {
 	public GUIBuilderLayout activeLayout;
 
 	public CanvasInComposite(Figure figure, ObjectMoverResizer canvasResizer) {
-		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
-		this.figure = figure;
-		this.canvasResizer = canvasResizer;
-		this.label = "";
-
-		activeLayout = GUIBuilderLayout.ABSOLUTE;
+		this(figure,canvasResizer,null,null,"");
 	}
 
 	public CanvasInComposite(Figure figure, ObjectMoverResizer canvasResizer, Point location, Point size) {
-		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
-		this.figure = figure;
-		this.canvasResizer = canvasResizer;
-		this.location = location;
-		this.size = size;
-		this.label = "";
-
-		activeLayout = GUIBuilderLayout.ABSOLUTE;
+		this(figure,canvasResizer,location,size,"");
 	}
 
 	public CanvasInComposite(Figure figure, ObjectMoverResizer canvasResizer, Point location, Point size,
 			String label) {
-		super.objectFamily = GUIBuilderObjectFamily.CANVAS;
+		super(GUIBuilderObjectFamily.CANVAS, new ContextMenuItem[] { ContextMenuItem.CHANGE_NAME,
+				ContextMenuItem.GENERATE_CODE, ContextMenuItem.PLUGIN });
 		this.figure = figure;
 		this.canvasResizer = canvasResizer;
 		this.location = location;

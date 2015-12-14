@@ -17,7 +17,7 @@ public class ContainerInComposite extends ObjectInComposite {
 
 	public ContainerInComposite(GUIBuilderContainer containerType, Figure figure,
 			ObjectMoverResizer objectMoverResizer) {
-		super.objectFamily = GUIBuilderObjectFamily.CONTAINERS;
+		super(GUIBuilderObjectFamily.CONTAINERS, new ContextMenuItem[] { ContextMenuItem.PLUGIN });
 		this.containerType = containerType;
 		this.figure = figure;
 		this.objectMoverResizer = objectMoverResizer;

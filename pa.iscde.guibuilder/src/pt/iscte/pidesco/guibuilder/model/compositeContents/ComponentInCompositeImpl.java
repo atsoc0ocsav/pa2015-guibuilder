@@ -24,9 +24,10 @@ public class ComponentInCompositeImpl extends ObjectInComposite implements Compo
 
 	public ComponentInCompositeImpl(GUIBuilderComponent componentType, Control control, Figure figure,
 			ObjectMoverResizer objectMoverResizer) {
-		this.componentType = componentType;
-		super.objectFamily = GUIBuilderObjectFamily.COMPONENTS;
+		super(GUIBuilderObjectFamily.COMPONENTS, new ContextMenuItem[] { ContextMenuItem.CHANGE_NAME,
+				ContextMenuItem.SET_COLOR, ContextMenuItem.PLUGIN });
 
+		this.componentType = componentType;
 		this.control = control;
 		this.figure = figure;
 		this.objectMoverResizer = objectMoverResizer;
