@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
+import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.CanvasInComposite;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;

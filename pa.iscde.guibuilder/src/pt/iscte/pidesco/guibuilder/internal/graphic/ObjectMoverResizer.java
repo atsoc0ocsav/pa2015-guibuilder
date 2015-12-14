@@ -9,7 +9,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 
-import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public abstract class ObjectMoverResizer {

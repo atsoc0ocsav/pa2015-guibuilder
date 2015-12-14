@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="widget" name="GuiBuilder Widget" schema="schema/widget.exsd"/>
+   <extension-point id="contextMenu" name="Elements ContextMenu" schema="schema/contextMenu.exsd"/>
    <extension
          id="guibuilder"
          name="GUI Builder"
@@ -10,16 +11,6 @@
             class="pt.iscte.pidesco.guibuilder.ui.GuiBuilderView"
             icon="icon_gui.png">
       </view>
-   </extension>
-   <extension
-         id="guibuilder"
-         name="GUI Builder"
-         point="pa.iscde.extensionTest.textext">
-      <item
-            class="pt.iscte.pidesco.guibuilder.ui.GuiBuilderView"
-            icon="icon_gui.png"
-            name="GUI Builder">
-      </item>
    </extension>
 
 </plugin>

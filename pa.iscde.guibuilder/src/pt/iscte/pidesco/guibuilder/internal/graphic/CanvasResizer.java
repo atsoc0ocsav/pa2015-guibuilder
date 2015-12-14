@@ -92,7 +92,8 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 			location = event.getLocation();
 			event.consume();
 		} else if (event.button == 3) {
-			guiBuilderView.openDialogMenu(this, event.x, event.y);
+			guiBuilderView.openDialogMenu(objectInCompositeContainer.getObjectInComposite().getObjectFamily(), this,
+					event.x, event.y);
 		}
 	}
 
@@ -140,9 +141,9 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 
 				canvasBackgroundFigure.setBounds(canvasBounds);
 				canvasTopbarFigure.setBounds(topbarBounds);
-				
-				objectInCompositeContainer.getObjectInComposite().setLocation(canvasBounds.x,canvasBounds.y);
-				objectInCompositeContainer.getObjectInComposite().setSize(canvasBounds.width,canvasBounds.height);
+
+				objectInCompositeContainer.getObjectInComposite().setLocation(canvasBounds.x, canvasBounds.y);
+				objectInCompositeContainer.getObjectInComposite().setSize(canvasBounds.width, canvasBounds.height);
 
 				layoutMgr.setConstraint(backgroundRectangle, newPos);
 				updateMgr.addDirtyRegion(backgroundRectangle.getParent(), newPos);
@@ -197,7 +198,7 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 	public Figure getFigure() {
 		return backgroundRectangle;
 	}
-	
+
 	/*
 	 * Not used
 	 */

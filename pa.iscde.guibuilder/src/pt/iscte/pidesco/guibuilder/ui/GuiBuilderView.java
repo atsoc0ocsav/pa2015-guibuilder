@@ -42,23 +42,23 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListDialog;
 
-import pa.iscde.test.ExtensionTestInterface;
 import pt.iscte.pidesco.extensibility.PidescoView;
-import pt.iscte.pidesco.guibuilder.extensions.ExtensionPointsData;
-import pt.iscte.pidesco.guibuilder.internal.codeGenerator.CodeGenerator;
+import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator;
+import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPointData;
+import pt.iscte.pidesco.guibuilder.extensions.WidgetExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
-import pt.iscte.pidesco.guibuilder.internal.model.ObjectInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.ObjectInCompositeContainer;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.CanvasInComposite;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ComponentInCompositeImpl;
-import pt.iscte.pidesco.guibuilder.internal.model.compositeContents.ContainerInComposite;
+import pt.iscte.pidesco.guibuilder.model.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.CanvasInComposite;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
-public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
+public class GuiBuilderView implements PidescoView {
 	private boolean DEBUG = true;
 
 	/*
@@ -96,7 +96,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	/*
 	 * Extension points stuff
 	 */
-	private ExtensionPointsData extensionPointsData;
+	private WidgetExtensionPointsData widgetExtensionPointsData;
+	private ContextMenuExtensionPointData contextMenuExtensionPointData;
 
 	/*
 	 * Constructors and main methods
@@ -111,7 +112,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		createBaseFrame();
 		populateTopComposite();
 
-		extensionPointsData = new ExtensionPointsData(this);
+		widgetExtensionPointsData = new WidgetExtensionPointsData(this);
+		contextMenuExtensionPointData = new ContextMenuExtensionPointData(this);
 
 		populateBottomComposite();
 
@@ -200,8 +202,8 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 							ComponentInCompositeImpl newComponent;
 							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
-										topCanvas, extensionPointsData.getWidgetName(),
-										extensionPointsData.getWidget());
+										topCanvas, widgetExtensionPointsData.getWidgetName(),
+										widgetExtensionPointsData.getWidget());
 							} else {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas);
@@ -379,60 +381,64 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 	private void addNewWidget(Composite compositeButtons, GUIBuilderObjectFamily tabLabel) {
 		Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 		button.setAlignment(SWT.CENTER);
-		button.setText(extensionPointsData.getWidgetName());
+		button.setText(widgetExtensionPointsData.getWidgetName());
 		addDragListener(button, tabLabel.ordinal(), true);
 	}
 
 	/*
 	 * Menus and listeners
 	 */
-	public void openDialogMenu(final ObjectMoverResizer fmr, final int x, final int y) {
+	public void openDialogMenu(GuiLabels.GUIBuilderObjectFamily objectFamily, final ObjectMoverResizer fmr, final int x,
+			final int y) {
 		Menu popupMenu = new Menu(topCanvas);
 
 		if (fmr instanceof FigureMoverResizer) {
-			// Item Rename
-			MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
-			renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
-			renameItem.addSelectionListener(new SelectionAdapter() {
+			if (objectFamily == GUIBuilderObjectFamily.COMPONENTS) {
+				// Item Rename
+				MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
+				renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
+				renameItem.addSelectionListener(new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
-					String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR).open();
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
+						String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR)
+								.open();
 
-					if (inputText != null) {
-						((FigureMoverResizer) fmr).setText(inputText);
+						if (inputText != null) {
+							((FigureMoverResizer) fmr).setText(inputText);
 
-						((FigureMoverResizer) fmr).renameControl(inputText);
+							((FigureMoverResizer) fmr).renameControl(inputText);
 
-						((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-								.setText(inputText);
+							((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
+									.setText(inputText);
+						}
 					}
+				});
+
+				// Item Change Background color and sub-menu
+				MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+				backgroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_BACKGROUND_COLOR.str());
+				Menu chooseBackgroundColorItemMenu = new Menu(backgroundColorItem);
+				backgroundColorItem.setMenu(chooseBackgroundColorItemMenu);
+
+				for (GuiLabels.Color c : GuiLabels.Color.values()) {
+					MenuItem item = new MenuItem(chooseBackgroundColorItemMenu, SWT.NONE);
+					item.setText(c.name());
+					addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), true);
 				}
-			});
 
-			// Item Change Background color and sub-menu
-			MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
-			backgroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_BACKGROUND_COLOR.str());
-			Menu chooseBackgroundColorItemMenu = new Menu(backgroundColorItem);
-			backgroundColorItem.setMenu(chooseBackgroundColorItemMenu);
+				// Item Change Foreground color and sub-menu
+				MenuItem foregroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+				foregroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_FOREGROUND_COLOR.str());
+				Menu chooseForegroundColorItemMenu = new Menu(foregroundColorItem);
+				foregroundColorItem.setMenu(chooseForegroundColorItemMenu);
 
-			for (GuiLabels.Color c : GuiLabels.Color.values()) {
-				MenuItem item = new MenuItem(chooseBackgroundColorItemMenu, SWT.NONE);
-				item.setText(c.name());
-				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), true);
-			}
-
-			// Item Change Foreground color and sub-menu
-			MenuItem foregroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
-			foregroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_FOREGROUND_COLOR.str());
-			Menu chooseForegroundColorItemMenu = new Menu(foregroundColorItem);
-			foregroundColorItem.setMenu(chooseForegroundColorItemMenu);
-
-			for (GuiLabels.Color c : GuiLabels.Color.values()) {
-				MenuItem item = new MenuItem(chooseForegroundColorItemMenu, SWT.NONE);
-				item.setText(c.name());
-				addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), false);
+				for (GuiLabels.Color c : GuiLabels.Color.values()) {
+					MenuItem item = new MenuItem(chooseForegroundColorItemMenu, SWT.NONE);
+					item.setText(c.name());
+					addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), false);
+				}
 			}
 
 			// Delete Item
@@ -536,7 +542,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 				});
 
 				popupMenu.setVisible(true);
-
 			}
 		}
 
@@ -716,11 +721,6 @@ public class GuiBuilderView implements PidescoView, ExtensionTestInterface {
 		} else {
 			return false;
 		}
-	}
-
-	@Override
-	public String getHelloWorld() {
-		return "Hello World from GuiBuilderView";
 	}
 
 	public Canvas getTopCanvas() {
