@@ -132,6 +132,7 @@ public class GuiBuilderObjFactory {
 
 	public ComponentInCompositeImpl createComponentFamilyObject(GuiLabels.GUIBuilderComponent componentType,
 			Point position, Canvas canvas, Object... args) {
+
 		String componentLabel;
 		if (args.length == 0) {
 			switch (componentType) {
@@ -159,7 +160,7 @@ public class GuiBuilderObjFactory {
 		} else if (args.length == 1 && componentType != GUIBuilderComponent.WIDGET) {
 			componentLabel = DEFAULT_WIDGET_TXT;
 		} else {
-			componentLabel = ((String) args[1]);
+			componentLabel = ((String) args[0]);
 		}
 
 		FontMetrics fm = new GC(canvas).getFontMetrics();
@@ -167,7 +168,7 @@ public class GuiBuilderObjFactory {
 				fm.getHeight() + LABELS_MARGIN.height);
 
 		if (isInsideCanvas(position.x, position.y, componentSize.x, componentSize.y)) {
-			Control widget;
+			Control widget = null;
 
 			RectangleFigure componentBackground = new RectangleFigure();
 			if (componentType == GUIBuilderComponent.WIDGET) {
@@ -214,8 +215,10 @@ public class GuiBuilderObjFactory {
 				} else {
 					widget = ((Control) args[1]);
 				}
+				break;
 			default:
 				throw new IllegalArgumentException("Switch case not defined!");
+
 			}
 
 			widget.setLocation(position.x + BACKGND_MARGIN.width / 2, position.y + BACKGND_MARGIN.height / 2);

@@ -124,7 +124,7 @@ public class InputDialog extends Dialog {
 		// so that pressing it will set input
 		// to the entered value
 		Button ok = new Button(shell, SWT.PUSH);
-		ok.setText("OK");
+		ok.setText("Ok");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		ok.setLayoutData(data);
 		ok.addSelectionListener(new SelectionAdapter() {

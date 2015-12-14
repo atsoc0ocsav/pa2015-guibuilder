@@ -201,6 +201,7 @@ public class GuiBuilderView implements PidescoView {
 
 							ComponentInCompositeImpl newComponent;
 							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
+
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas, widgetExtensionPointsData.getWidgetName(),
 										widgetExtensionPointsData.getWidget());
@@ -371,7 +372,7 @@ public class GuiBuilderView implements PidescoView {
 				if (!isWidget) {
 					event.data = objectTypeOrdinal + "\t" + button.getText();
 				} else {
-					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.WIDGET.str() + button.getText();
+					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.WIDGET.str();
 				}
 
 			}
