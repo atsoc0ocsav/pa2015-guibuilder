@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import pt.iscte.pidesco.guibuilder.extensions.WidgetInterface;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
@@ -335,7 +336,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			case RADIO_BTN:
 				((Button) control).setText(str);
 			case WIDGET:
-				// ((WidgetInterface) control).setWidgetName(str);
+				//((WidgetInterface)).setWidgetName(str);
 				System.out.println("uncoment me!");
 				break;
 			default:

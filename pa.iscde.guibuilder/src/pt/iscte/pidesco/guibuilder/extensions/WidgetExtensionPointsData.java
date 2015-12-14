@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
 import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator;
@@ -15,6 +16,8 @@ public class WidgetExtensionPointsData {
 
 	private String widgetName = "";
 	private Control widget = null;
+	private Color backgroundColor = null;
+	private Color foregroundColor = null;
 	private WidgetInterface widgetInterface;
 
 	public WidgetExtensionPointsData(GuiBuilderView guiBuilderView) {
@@ -30,6 +33,8 @@ public class WidgetExtensionPointsData {
 					widgetName = widgetInterface.getWidgetName();
 					widgetInterface.createWidget(guiBuilderView.getTopCanvas());
 					widget = widgetInterface.getWidget();
+					backgroundColor = widgetInterface.getBackgroundColor();
+					foregroundColor = widgetInterface.getForegroundColor();
 					// System.out.println("Name: " + o.getWidgetNames());
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block
@@ -45,6 +50,14 @@ public class WidgetExtensionPointsData {
 
 	public Control getWidget() {
 		return widget;
+	}
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public Color getForegroundColor() {
+		return foregroundColor;
 	}
 
 	public String[] getWidgetCode(CodeGenerator.CodeTarget target, String containerName) {

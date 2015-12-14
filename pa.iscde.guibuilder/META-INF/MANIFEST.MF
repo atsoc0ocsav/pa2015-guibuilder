@@ -14,6 +14,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: pt.iscte.pidesco.guibuilder.codeGenerator,
  pt.iscte.pidesco.guibuilder.extensions,
+ pt.iscte.pidesco.guibuilder.internal.graphic,
  pt.iscte.pidesco.guibuilder.model,
  pt.iscte.pidesco.guibuilder.model.compositeContents,
  pt.iscte.pidesco.guibuilder.ui
