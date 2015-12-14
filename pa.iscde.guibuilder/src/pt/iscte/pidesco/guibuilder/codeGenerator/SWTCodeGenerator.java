@@ -35,7 +35,7 @@ public class SWTCodeGenerator implements CodeGeneratorInterface {
 		}
 	}
 
-	private final String[] IMPORTS = { "org.eclipse.swt.*"};
+	private final String[] IMPORTS = { "org.eclipse.swt.*" };
 	public final String CLASS_NAME = "SWTGUIWindow";
 	public final String SHELL_NAME = "shell";
 	public int componentCount = -1;
@@ -48,6 +48,11 @@ public class SWTCodeGenerator implements CodeGeneratorInterface {
 	@Override
 	public void increaseComponentCount() {
 		componentCount++;
+	}
+
+	@Override
+	public int getAndIncreaseComponentCount() {
+		return (++componentCount);
 	}
 
 	/*

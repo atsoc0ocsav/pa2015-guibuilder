@@ -2,7 +2,8 @@ package pt.iscte.pidesco.guibuilder.extensions;
 
 import java.util.List;
 
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Menu;
 
 import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
@@ -26,16 +27,21 @@ public interface ContextMenuExtensionPoint {
 	 * @return a list of object families
 	 */
 	public List<OBJECT_FAMILY> getFilter();
+	
+	public boolean acceptsType(OBJECT_FAMILY o);
 
+	// TODO
 	/**
 	 * Provides the GUIBuilder with the text item to be displayed in the context
 	 * menu of the selected objects. This item should already implement the
 	 * selection adapter, which is called when the item is selected in the
 	 * context menu
 	 * 
-	 * @return the menu item to be displayed in the GUIBuilder context menu
+	 * @param the
+	 *            menu to which the item should be added
+	 * @param obj
 	 */
-	public MenuItem getItem();
+	public void generateMenuItem(Menu menu, ObjectInCompositeContainer obj, Canvas canvas);
 
 	/**
 	 * This method is called on final code generation and has the objective of
