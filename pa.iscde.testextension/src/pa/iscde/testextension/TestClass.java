@@ -47,6 +47,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		spinner.setSelection(500);
 		spinner.setIncrement(1);
 		spinner.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
+		spinner.setForeground(new Color(Display.getCurrent(), 255, 255, 255));
 
 	}
 
@@ -61,13 +62,14 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		switch (target) {
 		case SWING:
 			code = new String[] { "spinner", "SpinnerModel spinnerModel = new SpinnerNumberModel(500,0,1000,1);",
-					"JSpinner spinner = new JSpinner(spinnerModel);",
-					"spinner.setBackground(new Color(255,255,255));" };
+					"JSpinner spinner = new JSpinner(spinnerModel);", "spinner.setBackground(new Color(255,255,255));",
+					"spinner.setForeground(new Color(255,255,255));" };
 			break;
 		case SWT:
-			code = new String[] { "spinner", "Spinner spinner = new Spinner(%s, SWT.BORDER);", "spinner.setMinimum(0);",
-					"spinner.setMaximum(1000);", "spinner.setSelection(500);", "spinner.setIncrement(1);",
-					"spinner.setBackground(new Color(Display.getCurrent(),255,255,255));" };
+			code = new String[] { "spinner", "Spinner spinner = new Spinner(" + containerName + ", SWT.BORDER);",
+					"spinner.setMinimum(0);", "spinner.setMaximum(1000);", "spinner.setSelection(500);",
+					"spinner.setIncrement(1);", "spinner.setBackground(new Color(Display.getCurrent(),255,255,255));",
+					"spinner.setForeground(new Color(Display.getCurrent(),255,255,255));" };
 			break;
 		default:
 			break;
@@ -79,12 +81,6 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	public GUIBuilderComponent getComponentType() {
 
 		return GUIBuilderComponent.WIDGET;
-	}
-
-	@Override
-	public ObjectMoverResizer getObjectMoverResizer() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

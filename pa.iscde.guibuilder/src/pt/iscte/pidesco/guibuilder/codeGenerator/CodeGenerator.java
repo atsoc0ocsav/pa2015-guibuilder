@@ -183,23 +183,25 @@ public class CodeGenerator {
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName);
+			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.get());
 
+			buffer.add(widgetCode[0]);
 			buffer.add("");
 
 			for (int i = 1; i < widgetCode.length; i++) {
-				if (!widgetCode[i].contains("setBackground") || !widgetCode[i].contains("setForeground")) {
+				if (!widgetCode[i].contains("setBackground") && !widgetCode[i].contains("setForeground")) {
 					buffer.add(generateDepthSpace() + widgetCode[i]);
 				}
-				
-
 				// buffer.add(generateDepthSpace() +
 				// (String.format(widgetCode[i], "shell")));
 			}
 			buffer.add(generateDepthSpace() + widgetCode[0] + ".setBackground(new Color("
-					+ extensionPointsData.getBackgroundColor().getRed() + ","
-					+ extensionPointsData.getBackgroundColor().getGreen() + ","
-					+ extensionPointsData.getBackgroundColor().getBlue() + "));");
+					+ component.getBackgroundColor().getRed() + "," + component.getBackgroundColor().getGreen() + ","
+					+ component.getBackgroundColor().getBlue() + "));");
+
+			buffer.add(generateDepthSpace() + widgetCode[0] + ".setForeground(new Color("
+					+ component.getForegroundColor().getRed() + "," + component.getForegroundColor().getGreen() + ","
+					+ component.getForegroundColor().getBlue() + "));");
 
 			// buffer.add(widgetCode[0]);
 			buffer.add("");
