@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import pt.iscte.pidesco.guibuilder.extensions.WidgetInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.CanvasInComposite;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
@@ -152,13 +153,9 @@ public class GuiBuilderObjFactory {
 				componentLabel = DEFAULT_CHCKBOX_TXT;
 				break;
 			case WIDGET:
-				componentLabel = DEFAULT_WIDGET_TXT;
-				break;
 			default:
 				throw new IllegalArgumentException("Switch case not defined!");
 			}
-		} else if (args.length == 1 && componentType != GUIBuilderComponent.WIDGET) {
-			componentLabel = DEFAULT_WIDGET_TXT;
 		} else {
 			componentLabel = ((String) args[0]);
 		}
@@ -171,19 +168,8 @@ public class GuiBuilderObjFactory {
 			Control widget = null;
 
 			RectangleFigure componentBackground = new RectangleFigure();
-			if (componentType == GUIBuilderComponent.WIDGET) {
-				if (args.length == 1) {
-					widget = ((Control) args[0]);
-				} else {
-					widget = ((Control) args[1]);
-				}
-				componentBackground.setBounds(new Rectangle(position.x, position.y,
-						widget.getSize().x + BACKGND_MARGIN.width, widget.getSize().y + BACKGND_MARGIN.height));
-			} else {
-				componentBackground.setBounds(new Rectangle(position.x, position.y,
-						componentSize.x + BACKGND_MARGIN.width, componentSize.y + BACKGND_MARGIN.height));
-			}
-
+			componentBackground.setBounds(new Rectangle(position.x, position.y, componentSize.x + BACKGND_MARGIN.width,
+					componentSize.y + BACKGND_MARGIN.height));
 			componentBackground.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
 
 			switch (componentType) {
@@ -210,12 +196,6 @@ public class GuiBuilderObjFactory {
 				((Button) widget).setText(componentLabel);
 				break;
 			case WIDGET:
-				if (args.length == 1) {
-					widget = ((Control) args[0]);
-				} else {
-					widget = ((Control) args[1]);
-				}
-				break;
 			default:
 				throw new IllegalArgumentException("Switch case not defined!");
 
@@ -227,13 +207,55 @@ public class GuiBuilderObjFactory {
 			FigureMoverResizer fmr = new FigureMoverResizer(componentBackground, guiBuilderView, widget, componentType,
 					canvas, true, FigureMoverResizer.Handle.values());
 			fmr.setControlMargin(BACKGND_MARGIN);
-			
-			if(componentType== GUIBuilderComponent.WIDGET){
-				//widget
-			}
 
 			return new ComponentInCompositeImpl(componentType, widget, componentBackground, fmr)
 					.setTextAndReturnObject(componentLabel);
+		} else {
+			return null;
+		}
+	}
+
+	public WidgetInCompositeImpl createComponentFamilyObjectWidget(WidgetInCompositeImpl widget, Point position,
+			Canvas canvas) {
+		String label = null;
+		try {
+			label = widget.getText();
+		} catch (UnsupportedOperationException e) {
+
+		}
+
+		Point componentSize;
+		FontMetrics fm = new GC(canvas).getFontMetrics();
+		if (label == null) {
+			componentSize = new Point(
+					(fm.getAverageCharWidth() * DEFAULT_WIDGET_TXT.length()) + LABELS_MARGIN.width + 23,
+					fm.getHeight() + LABELS_MARGIN.height);
+			widget.setText(DEFAULT_WIDGET_TXT);
+		} else {
+			componentSize = new Point((fm.getAverageCharWidth() * label.length()) + LABELS_MARGIN.width + 23,
+					fm.getHeight() + LABELS_MARGIN.height);
+		}
+
+		if (isInsideCanvas(position.x, position.y, componentSize.x, componentSize.y)) {
+			Point componentPosition = new Point(position.x + BACKGND_MARGIN.width / 2,
+					position.y + BACKGND_MARGIN.height / 2);
+			widget.createWidget(canvas, componentPosition, componentSize);
+			Control control = widget.getControl();
+
+			RectangleFigure componentBackground = new RectangleFigure();
+			componentBackground.setBounds(new Rectangle(position.x, position.y,
+					widget.getSize().x + BACKGND_MARGIN.width, widget.getSize().y + BACKGND_MARGIN.height));
+
+			componentBackground.setBackgroundColor(canvas.getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+
+			widget.setFigure(componentBackground);
+
+			FigureMoverResizer fmr = new FigureMoverResizer(componentBackground, guiBuilderView, control,
+					GUIBuilderComponent.WIDGET, canvas, true, FigureMoverResizer.Handle.values());
+			fmr.setControlMargin(BACKGND_MARGIN);
+			widget.setObjectMoverResizer(fmr);
+
+			return widget;
 		} else {
 			return null;
 		}

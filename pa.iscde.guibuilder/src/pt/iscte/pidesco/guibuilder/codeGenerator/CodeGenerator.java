@@ -183,31 +183,19 @@ public class CodeGenerator {
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.getAndIncreaseComponentCount());
+			List<String> widgetCode = extensionPointsData.getWidgetCode(target, containerName,
+					generator.getAndIncreaseComponentCount());
 
-			buffer.add(widgetCode[0]);
+			buffer.add(widgetCode.get(0));
 			buffer.add("");
 
-			for (int i = 1; i < widgetCode.length; i++) {
-				if (!widgetCode[i].contains("setBackground") && !widgetCode[i].contains("setForeground")) {
-					buffer.add(generateDepthSpace() + widgetCode[i]);
-				}
-				// buffer.add(generateDepthSpace() +
-				// (String.format(widgetCode[i], "shell")));
+			for (int i = 1; i < widgetCode.size(); i++) {
+				buffer.add(generateDepthSpace() + widgetCode.get(i));
 			}
-			buffer.add(generateDepthSpace() + widgetCode[0] + ".setBackground(new Color("
-					+ component.getBackgroundColor().getRed() + "," + component.getBackgroundColor().getGreen() + ","
-					+ component.getBackgroundColor().getBlue() + "));");
 
-			buffer.add(generateDepthSpace() + widgetCode[0] + ".setForeground(new Color("
-					+ component.getForegroundColor().getRed() + "," + component.getForegroundColor().getGreen() + ","
-					+ component.getForegroundColor().getBlue() + "));");
-
-			// buffer.add(widgetCode[0]);
 			buffer.add("");
 
-			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode[0] + ");");
-			generator.increaseComponentCount();
+			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode.get(0) + ");");
 		} else {
 			String labelText = component.getText();
 			Control control = component.getControl();
@@ -282,21 +270,15 @@ public class CodeGenerator {
 
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			String[] widgetCode = extensionPointsData.getWidgetCode(target, containerName,generator.getAndIncreaseComponentCount());
+			List<String> widgetCode = extensionPointsData.getWidgetCode(target, containerName,
+					generator.getAndIncreaseComponentCount());
 
-			buffer.add(widgetCode[0]);
+			buffer.add(widgetCode.get(0));
 			buffer.add("");
 
-			for (int i = 1; i < widgetCode.length; i++) {
-				if (widgetCode[i].contains(widgetCode[0])) {
-					buffer.add(generateDepthSpace() + String.format(widgetCode[i], "shell"));
-				} else {
-					buffer.add(generateDepthSpace() + String.format(widgetCode[i], "shell"));
-				}
-
+			for (int i = 1; i < widgetCode.size(); i++) {
+				buffer.add(generateDepthSpace() + String.format(widgetCode.get(i), "shell"));
 			}
-
-			generator.increaseComponentCount();
 		} else {
 			String labelText = component.getText();
 			Control control = component.getControl();

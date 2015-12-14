@@ -13,14 +13,14 @@ import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class ComponentInCompositeImpl extends ObjectInComposite implements ComponentInComposite {
-	private final GUIBuilderComponent componentType;
-	private ObjectMoverResizer objectMoverResizer;
-	private Control control;
+	protected final GUIBuilderComponent componentType;
+	protected ObjectMoverResizer objectMoverResizer;
+	protected Control control;
 
-	private Color backgroundColor;
-	private Color foregroundColor;
-	private String text;
-	private boolean enabled;
+	protected Color backgroundColor;
+	protected Color foregroundColor;
+	protected String text;
+	protected boolean enabled;
 
 	public ComponentInCompositeImpl(GUIBuilderComponent componentType, Control control, Figure figure,
 			ObjectMoverResizer objectMoverResizer) {
@@ -39,33 +39,41 @@ public class ComponentInCompositeImpl extends ObjectInComposite implements Compo
 		this.enabled = control.isEnabled();
 		this.text = "";
 	}
+	
+	public ComponentInCompositeImpl(GUIBuilderComponent componentType, ContextMenuItem[] contextMenuItems) {
+		super(GUIBuilderObjectFamily.COMPONENTS,contextMenuItems);
+	
+		this.componentType=componentType;
+	}
 
+	@Override
 	public GUIBuilderComponent getComponentType() {
 		return componentType;
 	}
 
+	@Override
 	public ObjectMoverResizer getObjectMoverResizer() {
 		return objectMoverResizer;
 	}
 
+	@Override
 	public void setObjectMoverResizer(ObjectMoverResizer objectMoverResizer) {
 		this.objectMoverResizer = objectMoverResizer;
 		;
 	}
 
+	@Override
 	public Control getControl() {
 		return control;
 	}
-
-	public Figure getFigure() {
-		return figure;
-	}
-
+	
 	@Override
 	public void setBackgroundColor(Color color) {
 		this.backgroundColor = color;
 		control.setBackground(color);
 		figure.setBackgroundColor(color);
+		
+		System.out.println("Was called!");
 	}
 
 	@Override
@@ -76,8 +84,8 @@ public class ComponentInCompositeImpl extends ObjectInComposite implements Compo
 	@Override
 	public void setForegroundColor(Color color) {
 		this.foregroundColor = color;
-		control.setBackground(color);
-		figure.setBackgroundColor(color);
+		control.setForeground(color);
+		figure.setForegroundColor(color);
 	}
 
 	@Override

@@ -200,12 +200,8 @@ public class GuiBuilderView implements PidescoView {
 
 							ComponentInCompositeImpl newComponent;
 							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
-
-								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
-										topCanvas, widgetExtensionPointsData.getWidgetName(),
-										widgetExtensionPointsData.getWidget());
-								newComponent.setBackgroundColor(widgetExtensionPointsData.getBackgroundColor());
-								newComponent.setForegroundColor(widgetExtensionPointsData.getForegroundColor());
+								newComponent = objectFactory.createComponentFamilyObjectWidget(
+										widgetExtensionPointsData.getWidgetImplementation(), position, topCanvas);
 							} else {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas);
@@ -238,10 +234,6 @@ public class GuiBuilderView implements PidescoView {
 							}
 							break;
 						case LAYOUTS:
-							// newObject =
-							// objectFactory.createLayoutFamilyObject(position,
-							// objectName, topCanvas, contents);
-
 							for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
 								if (l.str().equals(objectName)) {
 									((CanvasInComposite) rootComponent.getObjectInComposite()).setActiveLayout(l);

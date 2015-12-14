@@ -11,6 +11,7 @@ public interface ComponentInComposite {
 	
 	public Control getControl();
 	public ObjectMoverResizer getObjectMoverResizer();
+	public void setObjectMoverResizer(ObjectMoverResizer mr);
 	
 	public void setBackgroundColor(Color color);
 	public Color getBackgroundColor();

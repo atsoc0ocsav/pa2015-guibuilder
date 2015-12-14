@@ -2,19 +2,9 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="testOfExtension"
-         name="Test of Extension"
-         point="pa.iscde.extensionTest.textext">
-      <item
-            class="pa.iscde.testextension.TestClass"
-            icon="icon_gui.png"
-            name="testExtension">
-      </item>
-   </extension>
-   <extension
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
-            class="pa.iscde.testextension.TestClass"
+            class="pa.iscde.testextension.SuperSpinner"
             name="WidgetExtension">
       </item>
    </extension>
