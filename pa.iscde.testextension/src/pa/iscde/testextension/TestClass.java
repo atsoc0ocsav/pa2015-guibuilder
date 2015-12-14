@@ -47,6 +47,7 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 		spinner.setSelection(500);
 		spinner.setIncrement(1);
 		spinner.setBackground(new Color(Display.getCurrent(), 255, 255, 255));
+		spinner.setForeground(new Color(Display.getCurrent(), 255, 255, 255));
 
 	}
 
@@ -56,18 +57,19 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	}
 
 	@Override
-	public String[] generateWidgetCode(CodeTarget target, String containerName) {
+	public String[] generateWidgetCode(CodeTarget target, String containerName,int count) {
 		String[] code = null;
 		switch (target) {
 		case SWING:
-			code = new String[] { "spinner", "SpinnerModel spinnerModel = new SpinnerNumberModel(500,0,1000,1);",
-					"JSpinner spinner = new JSpinner(spinnerModel);",
-					"spinner.setBackground(new Color(255,255,255));" };
+			code = new String[] { "spinner"+count, "SpinnerModel spinnerModel"+count+" = new SpinnerNumberModel(500,0,1000,1);",
+					"JSpinner spinner"+count+" = new JSpinner(spinnerModel"+count+");", "spinner"+count+".setBackground(new Color(255,255,255));",
+					"spinner"+count+".setForeground(new Color(255,255,255));" };
 			break;
 		case SWT:
-			code = new String[] { "spinner", "Spinner spinner = new Spinner(%s, SWT.BORDER);", "spinner.setMinimum(0);",
-					"spinner.setMaximum(1000);", "spinner.setSelection(500);", "spinner.setIncrement(1);",
-					"spinner.setBackground(new Color(Display.getCurrent(),255,255,255));" };
+			code = new String[] { "spinner"+count, "Spinner spinner"+count+" = new Spinner(" + containerName + ", SWT.BORDER);",
+					"spinner"+count+".setMinimum(0);", "spinner"+count+".setMaximum(1000);", "spinner"+count+".setSelection(500);",
+					"spinner"+count+".setIncrement(1);", "spinner"+count+".setBackground(new Color(Display.getCurrent(),255,255,255));",
+					"spinner"+count+".setForeground(new Color(Display.getCurrent(),255,255,255));" };
 			break;
 		default:
 			break;
@@ -79,12 +81,6 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	public GUIBuilderComponent getComponentType() {
 
 		return GUIBuilderComponent.WIDGET;
-	}
-
-	@Override
-	public ObjectMoverResizer getObjectMoverResizer() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -120,6 +116,29 @@ public class TestClass implements ExtensionTestInterface, WidgetInterface {
 	@Override
 	public boolean isEnabled() {
 		return spinner.isEnabled();
+	}
+
+	@Override
+	public Control getControl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObjectMoverResizer getObjectMoverResizer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setText(String str) {
+		// TODO Auto-generated method stub	
+	}
+
+	@Override
+	public String getText() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

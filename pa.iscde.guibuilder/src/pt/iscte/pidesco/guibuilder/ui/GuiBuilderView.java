@@ -204,6 +204,8 @@ public class GuiBuilderView implements PidescoView {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas, widgetExtensionPointsData.getWidgetName(),
 										widgetExtensionPointsData.getWidget());
+								newComponent.setBackgroundColor(widgetExtensionPointsData.getBackgroundColor());
+								newComponent.setForegroundColor(widgetExtensionPointsData.getForegroundColor());
 							} else {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas);

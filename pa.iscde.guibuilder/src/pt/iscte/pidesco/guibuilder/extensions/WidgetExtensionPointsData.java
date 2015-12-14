@@ -60,8 +60,8 @@ public class WidgetExtensionPointsData {
 		return foregroundColor;
 	}
 
-	public String[] getWidgetCode(CodeGenerator.CodeTarget target, String containerName) {
-		return widgetInterface.generateWidgetCode(target, containerName);
+	public String[] getWidgetCode(CodeGenerator.CodeTarget target, String containerName, int count) {
+		return widgetInterface.generateWidgetCode(target, containerName,count);
 	}
 
 }
