@@ -7,6 +7,7 @@ import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public abstract class ObjectInComposite {
+	
 	protected GuiLabels.GUIBuilderObjectFamily objectFamily;
 	protected Point location;
 	protected Point size;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="contextMenuItem"
+         name="ContextMenu Item"
+         point="pt.iscte.pidesco.guibuilder.contextMenu">
+      <item
+            class="pa.iscde.guibuilder.contextMenuExtension.DeleteContextMenuExtensionPointImplementation"
+            description="Deletes items in canvas">
+      </item>
+   </extension>
+
+</plugin>
