@@ -59,4 +59,9 @@ public class CanvasInComposite extends ObjectInComposite {
 	public void setActiveLayout(GUIBuilderLayout activeLayout) {
 		this.activeLayout = activeLayout;
 	}
+
+	public CanvasResizer getObjectMoverResizer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

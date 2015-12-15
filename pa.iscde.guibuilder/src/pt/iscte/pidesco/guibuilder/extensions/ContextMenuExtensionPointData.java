@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Menu;
 
 import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPoint.OBJECT_FAMILY;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
-import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 
 public class ContextMenuExtensionPointData {
 	private List<ContextMenuExtensionPoint> contextMenuItems;
@@ -38,10 +37,9 @@ public class ContextMenuExtensionPointData {
 		}
 	}
 
-	public void addContextMenuItems(GuiLabels.GUIBuilderObjectFamily target, Menu menu, ObjectInCompositeContainer obj,
-			Canvas canvas) {
+	public void addContextMenuItems(Menu menu, ObjectInCompositeContainer obj, Canvas canvas) {
 		OBJECT_FAMILY f;
-		switch (target) {
+		switch (obj.getObjectInComposite().getObjectFamily()) {
 		case COMPONENTS:
 			f = OBJECT_FAMILY.COMPONENTS;
 			break;

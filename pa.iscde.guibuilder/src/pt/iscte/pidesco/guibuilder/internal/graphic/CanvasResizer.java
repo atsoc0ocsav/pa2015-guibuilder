@@ -92,8 +92,7 @@ public class CanvasResizer extends ObjectMoverResizer implements MouseListener, 
 			location = event.getLocation();
 			event.consume();
 		} else if (event.button == 3) {
-			guiBuilderView.openDialogMenu(objectInCompositeContainer.getObjectInComposite().getObjectFamily(), this,
-					event.x, event.y);
+			guiBuilderView.openDialogMenu(objectInCompositeContainer, event.x, event.y);
 		}
 	}
 

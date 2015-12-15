@@ -7,7 +7,7 @@ import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public abstract class ObjectInComposite {
-	protected enum ContextMenuItem {
+	public enum ContextMenuItem {
 		CHANGE_NAME, SET_COLOR, ALL, PLUGIN, GENERATE_CODE;
 	}
 

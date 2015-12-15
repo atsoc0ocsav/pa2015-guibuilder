@@ -128,8 +128,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			location = event.getLocation();
 			event.consume();
 		} else if (event.button == 3) { // Right Button
-			guiBuilderView.openDialogMenu(objectInCompositeContainer.getObjectInComposite().getObjectFamily(), this,
-					event.x, event.y);
+			guiBuilderView.openDialogMenu(objectInCompositeContainer, event.x, event.y);
 		}
 	}
 
@@ -335,7 +334,7 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 			case RADIO_BTN:
 				((Button) control).setText(str);
 			case WIDGET:
-				//((WidgetInterface)).setWidgetName(str);
+				// ((WidgetInterface)).setWidgetName(str);
 				System.out.println("uncoment me!");
 				break;
 			default:

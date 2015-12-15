@@ -48,10 +48,11 @@ import pt.iscte.pidesco.guibuilder.extensions.WidgetExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
-import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.model.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.model.ObjectInComposite.ContextMenuItem;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.CanvasInComposite;
+import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInComposite;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
@@ -382,139 +383,138 @@ public class GuiBuilderView implements PidescoView {
 	/*
 	 * Menus and listeners
 	 */
-	public void openDialogMenu(GuiLabels.GUIBuilderObjectFamily objectFamily, final ObjectMoverResizer fmr, final int x,
-			final int y) {
+	public void openDialogMenu(final ObjectInCompositeContainer object, final int x, final int y) {
 		Menu popupMenu = new Menu(topCanvas);
 
-		if (fmr instanceof FigureMoverResizer) {
-			if (objectFamily == GUIBuilderObjectFamily.COMPONENTS) {
-				// Item Rename
-				MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
-				renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
-				renameItem.addSelectionListener(new SelectionAdapter() {
+		if ((object.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.CANVAS
+				&& !isOverObject(new Point(x, y), false))
+				|| object.getObjectInComposite().getObjectFamily() != GUIBuilderObjectFamily.CANVAS) {
 
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
-						String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR)
-								.open();
+			for (ContextMenuItem c : ContextMenuItem.values()) {
+				if (object.getObjectInComposite().acceptsMenuItem(c)) {
+					switch (c) {
+					case CHANGE_NAME:
+						MenuItem renameItem = new MenuItem(popupMenu, SWT.NONE);
+						renameItem.setText(GuiLabels.DialogMenuLabel.RENAME.str());
+						renameItem.addSelectionListener(new SelectionAdapter() {
 
-						if (inputText != null) {
-							((FigureMoverResizer) fmr).setText(inputText);
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
+								String inputText = new InputDialog(position.x, position.y, topComposite.getShell(),
+										SWT.BAR).open();
 
-							((FigureMoverResizer) fmr).renameControl(inputText);
+								if (inputText != null) {
+									if (object.getObjectInComposite() instanceof ComponentInComposite) {
+										((FigureMoverResizer) ((ComponentInComposite) object.getObjectInComposite())
+												.getObjectMoverResizer()).setText(inputText);
+										((FigureMoverResizer) ((ComponentInComposite) object.getObjectInComposite())
+												.getObjectMoverResizer()).renameControl(inputText);
+										((ComponentInComposite) object.getObjectInComposite()).setText(inputText);
+									} else if (object.getObjectInComposite() instanceof CanvasInComposite) {
+										((CanvasResizer) ((CanvasInComposite) object.getObjectInComposite())
+												.getCanvasResizer()).setText(inputText);
+										((CanvasInComposite) object.getObjectInComposite()).setLabel(inputText);
 
-							((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-									.setText(inputText);
-						}
-					}
-				});
+									} else if (object.getObjectInComposite() instanceof ContainerInComposite) {
+										((FigureMoverResizer) ((ContainerInComposite) object.getObjectInComposite())
+												.getObjectMoverResizer()).setText(inputText);
+										((FigureMoverResizer) ((ContainerInComposite) object.getObjectInComposite())
+												.getObjectMoverResizer()).renameControl(inputText);
+										((ContainerInComposite) object.getObjectInComposite()).setText(inputText);
+									}
 
-				// Item Change Background color and sub-menu
-				MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
-				backgroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_BACKGROUND_COLOR.str());
-				Menu chooseBackgroundColorItemMenu = new Menu(backgroundColorItem);
-				backgroundColorItem.setMenu(chooseBackgroundColorItemMenu);
+									setMessage(CHANGED_TITLE_MSG, inputText);
+								}
+							}
+						});
+						break;
+					case GENERATE_CODE:
+						MenuItem generateCode = new MenuItem(popupMenu, SWT.NONE);
+						generateCode.setText(GuiLabels.DialogMenuLabel.GENERATE_CODE.str());
+						generateCode.addSelectionListener(new SelectionAdapter() {
 
-				for (GuiLabels.Color c : GuiLabels.Color.values()) {
-					MenuItem item = new MenuItem(chooseBackgroundColorItemMenu, SWT.NONE);
-					item.setText(c.name());
-					addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), true);
-				}
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								ListDialog dialog = new ListDialog(topCanvas.getShell());
+								dialog.setAddCancelButton(true);
+								dialog.setContentProvider(new ArrayContentProvider());
+								dialog.setLabelProvider(new LabelProvider());
 
-				// Item Change Foreground color and sub-menu
-				MenuItem foregroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
-				foregroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_FOREGROUND_COLOR.str());
-				Menu chooseForegroundColorItemMenu = new Menu(foregroundColorItem);
-				foregroundColorItem.setMenu(chooseForegroundColorItemMenu);
-
-				for (GuiLabels.Color c : GuiLabels.Color.values()) {
-					MenuItem item = new MenuItem(chooseForegroundColorItemMenu, SWT.NONE);
-					item.setText(c.name());
-					addColorDialogMenuListener(item, topCanvas, ((FigureMoverResizer) fmr), false);
-				}
-			}
-
-			contextMenuExtensionPointData.addContextMenuItems(objectFamily, popupMenu,
-					fmr.getObjectInCompositeContainer(), topCanvas);
-
-			popupMenu.setVisible(true);
-		} else if (fmr instanceof CanvasResizer) {
-			if (!isOverObject(new Point(x, y), false)) {
-				// Item Window Name
-				MenuItem setWindowName = new MenuItem(popupMenu, SWT.NONE);
-				setWindowName.setText(GuiLabels.DialogMenuLabel.SET_WINDOW_TITLE.str());
-				setWindowName.addSelectionListener(new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
-						String inputText = new InputDialog(position.x, position.y, topComposite.getShell(), SWT.BAR)
-								.open();
-
-						if (inputText != null) {
-							((CanvasResizer) fmr).setText(inputText);
-							((CanvasInComposite) fmr.getObjectInCompositeContainer().getObjectInComposite())
-									.setLabel(inputText);
-							setMessage(CHANGED_TITLE_MSG, inputText);
-						}
-					}
-
-				});
-
-				// Generate code
-				MenuItem generateCode = new MenuItem(popupMenu, SWT.NONE);
-				generateCode.setText(GuiLabels.DialogMenuLabel.GENERATE_CODE.str());
-				generateCode.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						ListDialog dialog = new ListDialog(topCanvas.getShell());
-						dialog.setAddCancelButton(true);
-						dialog.setContentProvider(new ArrayContentProvider());
-						dialog.setLabelProvider(new LabelProvider());
-
-						ArrayList<String> targets = new ArrayList<String>();
-						for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
-							targets.add(t.getTarget());
-						}
-
-						if (DEBUG) {
-							targets.add("All targets");
-						}
-
-						dialog.setInput(targets.toArray());
-						dialog.setTitle("Select target");
-
-						if (dialog.open() == Window.OK) {
-							Object[] result = dialog.getResult();
-
-							if (!DEBUG || (DEBUG && !result[0].equals("All targets"))) {
-								CodeGenerator.CodeTarget target = null;
+								ArrayList<String> targets = new ArrayList<String>();
 								for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
-									if (t.getTarget().equals(result[0])) {
-										target = t;
+									targets.add(t.getTarget());
+								}
+
+								if (DEBUG) {
+									targets.add("All targets");
+								}
+
+								dialog.setInput(targets.toArray());
+								dialog.setTitle("Select target");
+
+								if (dialog.open() == Window.OK) {
+									Object[] result = dialog.getResult();
+
+									if (!DEBUG || (DEBUG && !result[0].equals("All targets"))) {
+										CodeGenerator.CodeTarget target = null;
+										for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+											if (t.getTarget().equals(result[0])) {
+												target = t;
+											}
+										}
+										new CodeGenerator(target, rootComponent, GuiBuilderView.this).generateCode();
+									} else {
+										for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+											new CodeGenerator(t, rootComponent, GuiBuilderView.this).generateCode();
+										}
 									}
 								}
 
-								new CodeGenerator(target, rootComponent, GuiBuilderView.this).generateCode();
-							} else {
-								for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
-									new CodeGenerator(t, rootComponent, GuiBuilderView.this).generateCode();
-								}
 							}
+
+						});
+						break;
+					case PLUGIN:
+						contextMenuExtensionPointData.addContextMenuItems(popupMenu, object, topCanvas);
+						break;
+					case SET_COLOR:
+						MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+						backgroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_BACKGROUND_COLOR.str());
+						Menu chooseBackgroundColorItemMenu = new Menu(backgroundColorItem);
+						backgroundColorItem.setMenu(chooseBackgroundColorItemMenu);
+
+						for (GuiLabels.Color color : GuiLabels.Color.values()) {
+							MenuItem item = new MenuItem(chooseBackgroundColorItemMenu, SWT.NONE);
+							item.setText(color.name());
+							addColorDialogMenuListener(item, topCanvas, object, true);
 						}
 
-					}
-				});
+						MenuItem foregroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
+						foregroundColorItem.setText(GuiLabels.DialogMenuLabel.CHOOSE_FOREGROUND_COLOR.str());
+						Menu chooseForegroundColorItemMenu = new Menu(foregroundColorItem);
+						foregroundColorItem.setMenu(chooseForegroundColorItemMenu);
 
-				popupMenu.setVisible(true);
+						for (GuiLabels.Color color : GuiLabels.Color.values()) {
+							MenuItem item = new MenuItem(chooseForegroundColorItemMenu, SWT.NONE);
+							item.setText(color.name());
+							addColorDialogMenuListener(item, topCanvas, object, false);
+						}
+						break;
+					case ALL:
+					default:
+						throw new IllegalAccessError("Switch case not defined!");
+					}
+				}
 			}
+
+			popupMenu.setVisible(true);
 		}
 
 	}
 
-	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas, final FigureMoverResizer fmr,
-			final boolean background) {
+	private void addColorDialogMenuListener(final MenuItem item, final Canvas canvas,
+			final ObjectInCompositeContainer object, final boolean background) {
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -522,33 +522,29 @@ public class GuiBuilderView implements PidescoView {
 
 				for (GuiLabels.Color c : GuiLabels.Color.values()) {
 					if (c.name().equals(itemText)) {
+						Color color;
 						if (itemText.equals(GuiLabels.Color.Other.name())) {
 							ColorDialog dlg = new ColorDialog(canvas.getShell());
-							dlg.setRGB(fmr.getFigure().getBackgroundColor().getRGB());
+							dlg.setRGB(object.getObjectInComposite().getFigure().getBackgroundColor().getRGB());
 
 							// Change the title bar text
 							dlg.setText("Choose a Color");
-							Color color = new Color(canvas.getDisplay(), dlg.open());
+							color = new Color(canvas.getDisplay(), dlg.open());
+						} else {
+							color = canvas.getDisplay().getSystemColor(c.swt_value());
+						}
 
-							if (background) { // Set background color
-								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-										.setBackgroundColor(color);
-								fmr.setBackgroundColor(color);
-							} else {
-								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-										.setForegroundColor(color);
-								fmr.setForegroundColor(color);
+						if (background) { // Set background color
+							if (object.getObjectInComposite() instanceof ComponentInComposite) {
+								((ComponentInCompositeImpl) object.getObjectInComposite()).setBackgroundColor(color);
+								((FigureMoverResizer) ((ComponentInCompositeImpl) object.getObjectInComposite())
+										.getObjectMoverResizer()).setBackgroundColor(color);
 							}
 						} else {
-							Color color = canvas.getDisplay().getSystemColor(c.swt_value());
-							if (background) { // Set background color
-								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-										.setBackgroundColor(color);
-								fmr.setBackgroundColor(color);
-							} else {
-								((ComponentInCompositeImpl) fmr.getObjectInCompositeContainer().getObjectInComposite())
-										.setForegroundColor(color);
-								fmr.setForegroundColor(color);
+							if (object.getObjectInComposite() instanceof ComponentInComposite) {
+								((ComponentInCompositeImpl) object.getObjectInComposite()).setForegroundColor(color);
+								((FigureMoverResizer) ((ComponentInCompositeImpl) object.getObjectInComposite())
+										.getObjectMoverResizer()).setForegroundColor(color);
 							}
 						}
 						break;
