@@ -11,13 +11,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import pa.iscde.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
-import pa.iscde.guibuilder.extensions.ContextMenuExtensionElement;
+import pa.iscde.guibuilder.extensions.ContextMenuElement;
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pa.iscde.guibuilder.ui.GuiBuilderView;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
-public class DeleteObjectContextMenuItem implements ContextMenuExtensionElement {
+public class DeleteObjectContextMenuItem implements ContextMenuElement {
 	private final OBJECT_FAMILY[] accepts = { OBJECT_FAMILY.COMPONENTS, OBJECT_FAMILY.CONTAINERS };
 	private final String DELETED_OBJECT_MSG = "Deleted %s from canvas!";
 	private final String MENU_ITEM_TEXT = "Delete Object";

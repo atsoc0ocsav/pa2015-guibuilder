@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -89,6 +90,7 @@ public class GuiBuilderView implements PidescoView {
 	private Text messageArea;
 	private GuiBuilderObjFactory objectFactory;
 	private Canvas topCanvas;
+	private Shell shell;
 
 	/*
 	 * Extension points stuff
@@ -103,7 +105,8 @@ public class GuiBuilderView implements PidescoView {
 	public void createContents(final Composite viewArea, final Map<String, Image> imageMap) {
 		this.viewArea = viewArea;
 		this.imageMap = imageMap;
-
+		
+		shell=viewArea.getShell();
 		objectFactory = new GuiBuilderObjFactory(this);
 
 		createBaseFrame();
@@ -683,5 +686,9 @@ public class GuiBuilderView implements PidescoView {
 
 	public ContextMenuExtensionPointData getContextMenuExtensionPointData() {
 		return contextMenuExtensionPointData;
+	}
+	
+	public Shell getShell(){
+		return shell;
 	}
 }

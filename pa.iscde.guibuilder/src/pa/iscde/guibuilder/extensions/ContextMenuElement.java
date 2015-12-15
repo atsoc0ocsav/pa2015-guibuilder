@@ -12,7 +12,7 @@ import pa.iscde.guibuilder.ui.GuiBuilderView;
  * Service containing the operations to be implemented by an extension to the
  * context menu
  */
-public interface ContextMenuExtensionElement {
+public interface ContextMenuElement {
 	/**
 	 * Families of objects that can constitute the window to be built
 	 */

@@ -2,12 +2,16 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="id1"
-         name="name"
+         id="guiBuilderContextMenuItems"
+         name="GUI Builder Context Menu Items"
          point="pt.iscte.pidesco.guibuilder.contextMenu">
       <item
             class="pa.iscde.guibuilder.atsoc0ocsav.deleteItem.DeleteObjectContextMenuItem"
             description="Delete item in the canvas">
+      </item>
+      <item
+            class="pa.iscde.guibuilder.atsoc0ocsav.radioButtonGroup.RadioButtonGroupContextMenuItem"
+            description="Manage Radio buttons groups">
       </item>
    </extension>
 

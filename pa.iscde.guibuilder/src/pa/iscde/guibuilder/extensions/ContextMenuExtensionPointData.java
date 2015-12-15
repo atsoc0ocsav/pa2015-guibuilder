@@ -12,15 +12,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Menu;
 
 import pa.iscde.guibuilder.codeGenerator.CodeGenerator;
-import pa.iscde.guibuilder.extensions.ContextMenuExtensionElement.OBJECT_FAMILY;
+import pa.iscde.guibuilder.extensions.ContextMenuElement.OBJECT_FAMILY;
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 import pa.iscde.guibuilder.ui.GuiBuilderView;
 
 public class ContextMenuExtensionPointData {
-	private List<ContextMenuExtensionElement> contextMenuItems;
+	private List<ContextMenuElement> contextMenuItems;
 
 	public ContextMenuExtensionPointData() {
-		contextMenuItems = new ArrayList<ContextMenuExtensionElement>();
+		contextMenuItems = new ArrayList<ContextMenuElement>();
 
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint("pt.iscte.pidesco.guibuilder.contextMenu");
@@ -30,7 +30,7 @@ public class ContextMenuExtensionPointData {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for (IConfigurationElement c : confElements) {
 				try {
-					contextMenuItems.add((ContextMenuExtensionElement) c.createExecutableExtension("class"));
+					contextMenuItems.add((ContextMenuElement) c.createExecutableExtension("class"));
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				}
@@ -55,7 +55,7 @@ public class ContextMenuExtensionPointData {
 			throw new IllegalArgumentException("Switch case not defined!");
 		}
 
-		for (ContextMenuExtensionElement c : contextMenuItems) {
+		for (ContextMenuElement c : contextMenuItems) {
 			if (c.acceptsType(f)) {
 				c.generateMenuItem(menu, obj, guiBuilderView);
 			}
@@ -65,7 +65,7 @@ public class ContextMenuExtensionPointData {
 	public List<String> generateCodeForObject(CodeGenerator.CodeTarget target, ObjectInCompositeContainer obj,
 			String variableName) {
 		List<String> code = new ArrayList<String>();
-		for (ContextMenuExtensionElement c : contextMenuItems) {
+		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
 			try {
@@ -83,7 +83,7 @@ public class ContextMenuExtensionPointData {
 
 	public List<String> generateCommonCode(CodeGenerator.CodeTarget target) {
 		List<String> code = new ArrayList<String>();
-		for (ContextMenuExtensionElement c : contextMenuItems) {
+		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
 			try {
