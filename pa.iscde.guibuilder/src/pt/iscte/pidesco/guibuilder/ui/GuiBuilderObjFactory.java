@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal.graphic;
+package pt.iscte.pidesco.guibuilder.ui;
 
 import java.util.Map;
 
@@ -24,12 +24,10 @@ import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.CanvasInComposite;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
-import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderContainer;
 
-public class GuiBuilderObjFactory {
+class GuiBuilderObjFactory {
 	// Dimensions
 	private static final Point DEFAULT_CANVAS_POS_OFFSET = new Point(5, 5);
 	private static final Dimension DEFAULT_CANVAS_INIT_DIM = new Dimension(400, 400);

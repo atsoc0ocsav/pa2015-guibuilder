@@ -119,53 +119,47 @@ public class CodeGenerator {
 		ArrayList<String> buffer = new ArrayList<String>();
 
 		for (ObjectInCompositeContainer o : object.getChilds()) {
+			List<String> strings;
+			
 			switch (o.getObjectInComposite().getObjectFamily()) {
 			case CANVAS:
 				throw new IllegalArgumentException("Double canvas definition in object tree!");
 			case COMPONENTS:
-				List<String> strings1;
-
 				switch (target) {
 				case SWING:
-					strings1 = generateSwingComponent(o, containerName);
+					strings = generateSwingComponent(o, containerName);
 					break;
 				case SWT:
-					strings1 = generateSWTComponent(o, containerName);
+					strings = generateSWTComponent(o, containerName);
 					break;
 				default:
 					throw new IllegalArgumentException("Switch case not defined!");
-				}
-
-				if (strings1.size() > 0) {
-					for (int i = 1; i < strings1.size(); i++) {
-						buffer.add(strings1.get(i));
-					}
-				}
+				}				
 				break;
 			case CONTAINERS:
-				List<String> strings2;
-
 				switch (target) {
 				case SWING:
-					strings2 = generateSwingContainer(o, containerName);
+					strings = generateSwingContainer(o, containerName);
 					break;
 				case SWT:
-					strings2 = generateSWTContainer(o, containerName);
+					strings = generateSWTContainer(o, containerName);
 					break;
 				default:
 					throw new IllegalArgumentException("Switch case not defined!");
-				}
-
-				if (strings2.size() > 0) {
-					for (int i = 1; i < strings2.size(); i++) {
-						buffer.add(strings2.get(i));
-					}
 				}
 				break;
 			case LAYOUTS:
-				throw new IllegalArgumentException("Layout should be set on canvas object!");
+				throw new IllegalArgumentException("Layout should be set on canvas/ container object!");
 			default:
 				throw new IllegalArgumentException("Switch case not defined!");
+			}
+			
+			if (strings.size() > 0) {
+				for (int i = 1; i < strings.size(); i++) {
+					buffer.add(strings.get(i));
+				}
+				
+				guiBuilderView.getContextMenuExtensionPointData().getCodeForObject(target, o, strings.get(0));
 			}
 		}
 

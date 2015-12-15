@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import pt.iscte.pidesco.guibuilder.internal.GuiBuilderActivator;
+import pt.iscte.pidesco.guibuilder.GuiBuilderActivator;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 

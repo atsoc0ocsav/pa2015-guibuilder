@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ContextMenuExtension
-Bundle-SymbolicName: pa.iscde.guibuilder.contextMenuExtension;singleton:=true
+Bundle-SymbolicName: pa.iscde.guibuilder.atsoc0ocsav;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: pt.iscte.pidesco.guibuilder;bundle-version="1.0.0",

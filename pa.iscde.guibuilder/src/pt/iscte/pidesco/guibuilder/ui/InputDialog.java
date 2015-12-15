@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class InputDialog extends Dialog {
+class InputDialog extends Dialog {
 	private String message;
 	private String input;
 	private int positionX;

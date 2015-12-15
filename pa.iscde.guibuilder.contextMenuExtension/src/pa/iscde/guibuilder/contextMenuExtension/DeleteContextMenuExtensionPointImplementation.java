@@ -7,7 +7,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -15,12 +14,14 @@ import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPoint;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ComponentInCompositeImpl;
+import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class DeleteContextMenuExtensionPointImplementation implements ContextMenuExtensionPoint {
-	private OBJECT_FAMILY[] accepts = { OBJECT_FAMILY.COMPONENTS };
-
+	private final OBJECT_FAMILY[] accepts = { OBJECT_FAMILY.COMPONENTS,OBJECT_FAMILY.CONTAINERS };
+	private final String DELETED_OBJECT_MSG="Deleted %s from canvas!";
+	
 	@Override
 	public List<OBJECT_FAMILY> getFilter() {
 		return Arrays.asList(accepts);
@@ -37,7 +38,7 @@ public class DeleteContextMenuExtensionPointImplementation implements ContextMen
 	}
 
 	@Override
-	public void generateMenuItem(Menu menu, final ObjectInCompositeContainer obj, final Canvas canvas) {
+	public void generateMenuItem(Menu menu, final ObjectInCompositeContainer obj, final GuiBuilderView guiBuilderView ) {
 		MenuItem deleteItem = new MenuItem(menu, SWT.NONE);
 		deleteItem.setText(GuiLabels.DialogMenuLabel.DELETE_OBJECT.str());
 		deleteItem.addSelectionListener(new SelectionAdapter() {
@@ -45,7 +46,7 @@ public class DeleteContextMenuExtensionPointImplementation implements ContextMen
 			public void widgetSelected(SelectionEvent e) {
 
 				if (obj.hasChilds()) {
-					if (!MessageDialog.openConfirm(canvas.getShell(), GuiLabels.DialogMenuLabel.DELETE_OBJECT.str(),
+					if (!MessageDialog.openConfirm(guiBuilderView.getTopCanvas().getShell(), GuiLabels.DialogMenuLabel.DELETE_OBJECT.str(),
 							GuiLabels.DialogMenuLabel.DELETE_OBJECT_CONFIRM_MSG.str())) {
 						return;
 					}
@@ -60,9 +61,11 @@ public class DeleteContextMenuExtensionPointImplementation implements ContextMen
 				obj.getObjectInComposite().getFigure().setVisible(false);
 				objectParent.removeChild(obj);
 
-				canvas.update();
-				canvas.redraw();
-				canvas.layout();
+				guiBuilderView.getTopCanvas().update();
+				guiBuilderView.getTopCanvas().redraw();
+				guiBuilderView.getTopCanvas().layout();
+				
+				guiBuilderView.setMessage(DELETED_OBJECT_MSG, obj.getId().split("\t")[0]);
 			}
 		});
 	}

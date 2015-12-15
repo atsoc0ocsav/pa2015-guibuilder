@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal.graphic;
+package pt.iscte.pidesco.guibuilder.ui;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
 
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public abstract class ObjectMoverResizer {
 	protected static final int CORNER = 10;

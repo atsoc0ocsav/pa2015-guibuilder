@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Extension Point Test
-Bundle-SymbolicName: pa.iscde.extensionTest;singleton:=true
+Bundle-SymbolicName: pa.iscde.extensionsIdentifier;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: pt.iscte.pidesco;bundle-version="0.1.0",

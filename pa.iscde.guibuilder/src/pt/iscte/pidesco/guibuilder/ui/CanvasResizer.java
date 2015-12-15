@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal.graphic;
+package pt.iscte.pidesco.guibuilder.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +24,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class CanvasResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
 	private static final int CORNER = 50;

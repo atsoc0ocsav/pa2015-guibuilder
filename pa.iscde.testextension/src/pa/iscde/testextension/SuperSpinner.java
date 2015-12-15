@@ -39,7 +39,7 @@ public class SuperSpinner extends WidgetInCompositeImpl {
 	}
 
 	@Override
-	public void createWidget(Canvas canvas, Point location, Point size) {
+	public void createWidget(Canvas canvas, Point location, Point size){
 		this.location = location;
 		this.size = size;
 

@@ -3,7 +3,7 @@ package pt.iscte.pidesco.guibuilder.model.compositeContents;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
-import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
+import pt.iscte.pidesco.guibuilder.ui.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 public interface ComponentInComposite {

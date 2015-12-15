@@ -46,9 +46,6 @@ import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator;
 import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPointData;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetExtensionPointsData;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetInCompositeImpl;
-import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
-import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
-import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
 import pt.iscte.pidesco.guibuilder.model.ObjectInComposite;
 import pt.iscte.pidesco.guibuilder.model.ObjectInComposite.ContextMenuItem;
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
@@ -74,13 +71,13 @@ public class GuiBuilderView implements PidescoView {
 
 	// Messages
 	private final String INITIAL_MSG = "Welcome to GUIBuilder!";
-	private final String ADDED_OBJECT_MSG = "Added %s to canvas";
-	public final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas";
-	public final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"";
-	private final String SET_LAYOUT = "Set %s on canvas";
-	public final String OVER_OBJECT_MSG = "Tried to drop %s over other object";
-	public final String TOO_BIG_OBJECT = "Object %s is too big for canvas";
-	public final String GENERATED_CODE_FOR_TARGET = "Generated source code for %s target";
+	private final String ADDED_OBJECT_MSG = "Added %s to canvas!";
+	public final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas!";
+	final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"!";
+	private final String SET_LAYOUT = "Set %s on canvas!";
+	final String OVER_OBJECT_MSG = "Tried to drop %s over other object!";
+	final String TOO_BIG_OBJECT = "Object %s is too big for canvas!";
+	public final String GENERATED_CODE_FOR_TARGET = "Generated source code for %s target!";
 
 	/*
 	 * Variables
@@ -342,9 +339,6 @@ public class GuiBuilderView implements PidescoView {
 				tabItem.setImage(imageMap.get(COMPONENTS_TAB_ICON_FILENAME));
 				for (GuiLabels.GUIBuilderComponent c : GuiLabels.GUIBuilderComponent.values()) {
 					if (c != GuiLabels.GUIBuilderComponent.WIDGET) {
-						if (c == GUIBuilderComponent.RADIO_BTN)
-							continue;
-
 						Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 						button.setAlignment(SWT.CENTER);
 						button.setText(c.str());
@@ -428,7 +422,7 @@ public class GuiBuilderView implements PidescoView {
 	/*
 	 * Menus and listeners
 	 */
-	public void openDialogMenu(final ObjectInCompositeContainer object, final int x, final int y) {
+	void openDialogMenu(final ObjectInCompositeContainer object, final int x, final int y) {
 		Menu popupMenu = new Menu(topCanvas);
 
 		if ((object.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.CANVAS
@@ -521,7 +515,7 @@ public class GuiBuilderView implements PidescoView {
 						});
 						break;
 					case PLUGIN:
-						contextMenuExtensionPointData.addContextMenuItems(popupMenu, object, topCanvas);
+						contextMenuExtensionPointData.addContextMenuItems(popupMenu, object, this);
 						break;
 					case SET_COLOR:
 						MenuItem backgroundColorItem = new MenuItem(popupMenu, SWT.CASCADE);
@@ -627,7 +621,7 @@ public class GuiBuilderView implements PidescoView {
 		return false;
 	}
 
-	public Composite getTopComposite() {
+	Composite getTopComposite() {
 		return topComposite;
 	}
 
@@ -639,7 +633,7 @@ public class GuiBuilderView implements PidescoView {
 		return objectFactory.isInsideCanvas(x, y, width, height);
 	}
 
-	public ObjectInCompositeContainer getContainerInPosition(int x, int y) {
+	ObjectInCompositeContainer getContainerInPosition(int x, int y) {
 		ObjectInCompositeContainer container = null;
 
 		for (ObjectInCompositeContainer c : rootComponent.getAllChildsByType(GUIBuilderObjectFamily.CONTAINERS)) {
@@ -732,5 +726,9 @@ public class GuiBuilderView implements PidescoView {
 
 	public Canvas getTopCanvas() {
 		return topCanvas;
+	}
+
+	public ContextMenuExtensionPointData getContextMenuExtensionPointData() {
+		return contextMenuExtensionPointData;
 	}
 }

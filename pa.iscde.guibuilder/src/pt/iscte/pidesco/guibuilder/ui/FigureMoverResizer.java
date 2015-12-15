@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal.graphic;
+package pt.iscte.pidesco.guibuilder.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.pidesco.guibuilder.model.ObjectInCompositeContainer;
 import pt.iscte.pidesco.guibuilder.model.compositeContents.ContainerInComposite;
-import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
-import pt.iscte.pidesco.guibuilder.ui.GuiLabels;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class FigureMoverResizer extends ObjectMoverResizer implements MouseListener, MouseMotionListener {
@@ -227,30 +225,12 @@ public class FigureMoverResizer extends ObjectMoverResizer implements MouseListe
 				// canvas.update();
 				// canvas.redraw();
 			} else if (!guiBuilderView.isInsideCanvas(pos.x, pos.y, figure.getSize().width, figure.getSize().height)) {
-				if (objectInCompositeContainer.getObjectInComposite()
-						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
-					guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG,
-							objectInCompositeContainer.getId().split("\t")[0]);
-				} else {
-					if (control != null) {
-						guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, control);
-					} else {
-						guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG, figure);
-					}
-				}
+				guiBuilderView.setMessage(guiBuilderView.OUT_OF_BOUNDS_OBJECT_MSG,
+						objectInCompositeContainer.getId().split("\t")[0]);
 			} else if (guiBuilderView.isOverObject(pos.x, pos.y, figure.getSize().width, figure.getSize().height,
 					objectInCompositeContainer.getObjectInComposite(), false)) {
-				if (objectInCompositeContainer.getObjectInComposite()
-						.getObjectFamily() == GUIBuilderObjectFamily.CONTAINERS) {
-					guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG,
-							objectInCompositeContainer.getId().split("\t")[0]);
-				} else {
-					if (control != null) {
-						guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, control);
-					} else {
-						guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG, figure);
-					}
-				}
+				guiBuilderView.setMessage(guiBuilderView.OVER_OBJECT_MSG,
+						objectInCompositeContainer.getId().split("\t")[0]);
 			}
 		}
 

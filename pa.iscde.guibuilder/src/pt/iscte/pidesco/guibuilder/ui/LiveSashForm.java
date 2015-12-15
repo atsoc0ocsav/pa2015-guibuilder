@@ -53,7 +53,7 @@ import org.eclipse.swt.graphics.*;
  * @version $Id: LiveSashForm.java,v 1.19 2005/06/04 19:21:45 szeiger Exp $
  */
 
-public class LiveSashForm extends Composite {
+class LiveSashForm extends Composite {
 	/**
 	 * Style constant for disabling live update behavior (value is 1&lt;&lt;1).
 	 * <p>

@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.guibuilder.internal;
+package pt.iscte.pidesco.guibuilder;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

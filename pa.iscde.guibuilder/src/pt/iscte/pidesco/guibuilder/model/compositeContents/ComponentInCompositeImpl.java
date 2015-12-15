@@ -7,8 +7,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.pidesco.guibuilder.internal.graphic.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.model.ObjectInComposite;
+import pt.iscte.pidesco.guibuilder.ui.ObjectMoverResizer;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pt.iscte.pidesco.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
