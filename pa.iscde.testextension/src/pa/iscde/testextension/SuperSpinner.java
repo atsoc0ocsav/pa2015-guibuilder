@@ -40,7 +40,8 @@ public class SuperSpinner extends WidgetInCompositeImpl {
 
 	@Override
 	public void createWidget(Canvas canvas, Point location, Point size) {
-		super.createWidget(canvas, location, size);
+		this.location = location;
+		this.size = size;
 
 		Spinner spinner = new Spinner(canvas, SWT.BORDER);
 		spinner.setMinimum(DEFAULT_MINIMUM);

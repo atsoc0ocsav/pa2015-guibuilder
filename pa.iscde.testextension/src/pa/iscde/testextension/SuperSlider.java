@@ -41,7 +41,9 @@ public class SuperSlider extends WidgetInCompositeImpl {
 
 	@Override
 	public void createWidget(Canvas canvas, Point location, Point size) {
-		super.createWidget(canvas, location, size);
+		//super.createWidget(canvas, location, size);
+		this.location = location;
+		this.size = size;
 
 		control = new Slider(canvas, SWT.BORDER);
 		((Slider) control).setMinimum(DEFAULT_MINIMUM);
