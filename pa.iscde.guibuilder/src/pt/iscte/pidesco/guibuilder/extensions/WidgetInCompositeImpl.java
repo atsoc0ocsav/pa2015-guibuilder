@@ -13,9 +13,4 @@ public abstract class WidgetInCompositeImpl extends ComponentInCompositeImpl
 		super(GUIBuilderComponent.WIDGET, contextMenuItems);
 	}
 
-	@Override
-	public void createWidget(Canvas canvas, Point location, Point size) {
-		this.location = location;
-		this.size = size;
-	}
 }
