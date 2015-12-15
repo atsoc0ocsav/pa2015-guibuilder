@@ -183,19 +183,28 @@ public class CodeGenerator {
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
 
 			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			List<String> widgetCode = extensionPointsData.getWidgetCode(target, containerName,
+			ArrayList<ArrayList<String>> widgetsCode = extensionPointsData.getWidgetsCode(target, containerName,
 					generator.getAndIncreaseComponentCount());
+			
+			for (int t = 0 ; t< widgetsCode.size();t++) {
+				
+				ArrayList<String> widgetCode = widgetsCode.get(t);
+				
+				buffer.add(widgetCode.get(0));
+				buffer.add("");
 
-			buffer.add(widgetCode.get(0));
-			buffer.add("");
+				for (int i = 1; i < widgetCode.size(); i++) {
+					buffer.add(generateDepthSpace() + widgetCode.get(i));
+				}
 
-			for (int i = 1; i < widgetCode.size(); i++) {
-				buffer.add(generateDepthSpace() + widgetCode.get(i));
+				buffer.add("");
+
+				buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode.get(0) + ");");
 			}
 
-			buffer.add("");
+		
 
-			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode.get(0) + ");");
+			
 		} else {
 			String labelText = component.getText();
 			Control control = component.getControl();
@@ -269,16 +278,19 @@ public class CodeGenerator {
 		ComponentInCompositeImpl component = (ComponentInCompositeImpl) object.getObjectInComposite();
 
 		if (component.getComponentType() == GuiLabels.GUIBuilderComponent.WIDGET) {
-			WidgetExtensionPointsData extensionPointsData = new WidgetExtensionPointsData(guiBuilderView);
-			List<String> widgetCode = extensionPointsData.getWidgetCode(target, containerName,
-					generator.getAndIncreaseComponentCount());
-
-			buffer.add(widgetCode.get(0));
-			buffer.add("");
-
-			for (int i = 1; i < widgetCode.size(); i++) {
-				buffer.add(generateDepthSpace() + String.format(widgetCode.get(i), "shell"));
-			}
+			// WidgetExtensionPointsData extensionPointsData = new
+			// WidgetExtensionPointsData(guiBuilderView);
+			// List<String> widgetCode =
+			// extensionPointsData.getWidgetCode(target, containerName,
+			// generator.getAndIncreaseComponentCount());
+			//
+			// buffer.add(widgetCode.get(0));
+			// buffer.add("");
+			//
+			// for (int i = 1; i < widgetCode.size(); i++) {
+			// buffer.add(generateDepthSpace() +
+			// String.format(widgetCode.get(i), "shell"));
+			// }
 		} else {
 			String labelText = component.getText();
 			Control control = component.getControl();

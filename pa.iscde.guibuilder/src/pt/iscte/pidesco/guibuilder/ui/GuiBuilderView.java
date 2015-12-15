@@ -45,6 +45,7 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.guibuilder.codeGenerator.CodeGenerator;
 import pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPointData;
 import pt.iscte.pidesco.guibuilder.extensions.WidgetExtensionPointsData;
+import pt.iscte.pidesco.guibuilder.extensions.WidgetInCompositeImpl;
 import pt.iscte.pidesco.guibuilder.internal.graphic.CanvasResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.FigureMoverResizer;
 import pt.iscte.pidesco.guibuilder.internal.graphic.GuiBuilderObjFactory;
@@ -198,10 +199,25 @@ public class GuiBuilderView implements PidescoView {
 								}
 							}
 
-							ComponentInCompositeImpl newComponent;
+							ComponentInCompositeImpl newComponent = null;
 							if (objectName.contains(GUIBuilderComponent.WIDGET.str())) {
-								newComponent = objectFactory.createComponentFamilyObjectWidget(
-										widgetExtensionPointsData.getWidgetImplementation(), position, topCanvas);
+
+								for (String nameWidget : widgetExtensionPointsData.getWidgetsName()) {
+
+									for (WidgetInCompositeImpl widgetImpl : widgetExtensionPointsData
+											.getWidgetsImplementation()) {
+
+										if (objectName.contains(nameWidget.replaceAll(" ", "")) && objectName
+												.contains(widgetImpl.getWidgetName().replaceAll(" ", ""))) {
+
+											newComponent = objectFactory.createComponentFamilyObjectWidget(widgetImpl,
+													position, topCanvas);
+										}
+
+									}
+
+								}
+
 							} else {
 								newComponent = objectFactory.createComponentFamilyObject(componentType, position,
 										topCanvas);
@@ -210,16 +226,36 @@ public class GuiBuilderView implements PidescoView {
 							if (newComponent != null) {
 								ObjectInCompositeContainer container = getContainerInPosition(position.x, position.y);
 
-								contents.add(newComponent.getFigure());
-								newObjectInCompositeComponentContainer = new ObjectInCompositeContainer(
-										objectName + "\t" + System.currentTimeMillis(), newComponent, container);
-								newObjectInCompositeComponentContainer.setCanBeParent(false);
-								container.addChild(newObjectInCompositeComponentContainer);
-
 								if (componentType == GUIBuilderComponent.WIDGET) {
+									for (String nameWidget : widgetExtensionPointsData.getWidgetsName()) {
+
+										for (WidgetInCompositeImpl widgetImpl : widgetExtensionPointsData
+												.getWidgetsImplementation()) {
+
+											if (objectName.contains(nameWidget.replaceAll(" ", "")) && objectName
+													.contains(widgetImpl.getWidgetName().replaceAll(" ", ""))) {
+
+												contents.add(newComponent.getFigure());
+												newObjectInCompositeComponentContainer = new ObjectInCompositeContainer(
+														objectName + "\t" + System.currentTimeMillis(), newComponent,
+														container);
+												newObjectInCompositeComponentContainer.setCanBeParent(false);
+												container.addChild(newObjectInCompositeComponentContainer);
+											}
+
+										}
+
+									}
 									setMessage(ADDED_OBJECT_MSG,
 											objectName.replaceAll(GUIBuilderComponent.WIDGET.str(), ""));
 								} else {
+
+									contents.add(newComponent.getFigure());
+									newObjectInCompositeComponentContainer = new ObjectInCompositeContainer(
+											objectName + "\t" + System.currentTimeMillis(), newComponent, container);
+									newObjectInCompositeComponentContainer.setCanBeParent(false);
+									container.addChild(newObjectInCompositeComponentContainer);
+
 									setMessage(ADDED_OBJECT_MSG, objectName);
 								}
 							} else {
@@ -314,7 +350,9 @@ public class GuiBuilderView implements PidescoView {
 						addDragListener(button, tabLabel.ordinal(), false);
 					} else {
 						// add widget
+
 						addNewWidget(compositeButtons, tabLabel);
+
 					}
 				}
 
@@ -365,7 +403,8 @@ public class GuiBuilderView implements PidescoView {
 				if (!isWidget) {
 					event.data = objectTypeOrdinal + "\t" + button.getText();
 				} else {
-					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.WIDGET.str();
+					event.data = objectTypeOrdinal + "\t" + GUIBuilderComponent.WIDGET.str()
+							+ button.getText().replaceAll(" ", "");
 				}
 
 			}
@@ -373,10 +412,16 @@ public class GuiBuilderView implements PidescoView {
 	}
 
 	private void addNewWidget(Composite compositeButtons, GUIBuilderObjectFamily tabLabel) {
-		Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
-		button.setAlignment(SWT.CENTER);
-		button.setText(widgetExtensionPointsData.getWidgetName());
-		addDragListener(button, tabLabel.ordinal(), true);
+
+		for (int i = 0; i < widgetExtensionPointsData.getWidgetsName().size(); i++) {
+
+			Button button = new Button(compositeButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+			button.setAlignment(SWT.CENTER);
+			button.setText(widgetExtensionPointsData.getWidgetsName().get(i));
+			addDragListener(button, tabLabel.ordinal(), true);
+
+		}
+
 	}
 
 	/*

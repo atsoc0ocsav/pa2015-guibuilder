@@ -1,7 +1,6 @@
 package pa.iscde.testextension;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -43,36 +42,38 @@ public class SuperSpinner extends WidgetInCompositeImpl {
 	public void createWidget(Canvas canvas, Point location, Point size) {
 		super.createWidget(canvas, location, size);
 
-		control = new Spinner(canvas, SWT.BORDER);
-		((Spinner) control).setMinimum(DEFAULT_MINIMUM);
-		((Spinner) control).setMaximum(DEFAULT_MAXIMUM);
-		((Spinner) control).setSelection(DEFAULT_SELECTION);
-		((Spinner) control).setIncrement(DEFAULT_INCREMET);
-		((Spinner) control).setLocation(location);
-		((Spinner) control).setSize(size);
-		((Spinner) control).setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		((Spinner) control).setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		Spinner spinner = new Spinner(canvas, SWT.BORDER);
+		spinner.setMinimum(DEFAULT_MINIMUM);
+		spinner.setMaximum(DEFAULT_MAXIMUM);
+		spinner.setSelection(DEFAULT_SELECTION);
+		spinner.setIncrement(DEFAULT_INCREMET);
+		spinner.setLocation(location);
+		spinner.setSize(size);
+		spinner.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		spinner.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
 		minimum = DEFAULT_MINIMUM;
 		maximum = DEFAULT_MAXIMUM;
 		selection = DEFAULT_SELECTION;
 		increment = DEFAULT_INCREMET;
 
-		this.backgroundColor = control.getBackground();
-		this.foregroundColor = control.getForeground();
-		this.enabled = control.isEnabled();
+		this.control = spinner;
+		this.backgroundColor = spinner.getBackground();
+		this.foregroundColor = spinner.getForeground();
+		this.enabled = spinner.isEnabled();
 
+		System.out.println("updated? " + this.backgroundColor);
 		System.out.println("Background: " + control.getBackground());
 	}
 
 	@Override
-	public List<String> generateWidgetCode(CodeTarget target, String containerName, int count) {
-		List<String> code = new ArrayList<String>();
+	public ArrayList<String> generateWidgetCode(CodeTarget target, String containerName, int count) {
+		ArrayList<String> code = new ArrayList<String>();
 		String elementName = VARIABLE_PREFIX + count;
 
 		code.add(elementName);
 
-		System.out.println("Back: " + backgroundColor);
+		System.out.println("Back: " + control.getBackground());
 
 		switch (target) {
 		case SWING:

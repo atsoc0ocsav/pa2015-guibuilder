@@ -1,6 +1,6 @@
 package pt.iscte.pidesco.guibuilder.extensions;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -14,8 +14,8 @@ import pt.iscte.pidesco.guibuilder.ui.GuiBuilderView;
 
 public class WidgetExtensionPointsData {
 
-	private String widgetName = "";
-	private WidgetInCompositeImpl widgetImpl;
+	private ArrayList<WidgetInCompositeImpl> widgetsImpl = new ArrayList<WidgetInCompositeImpl>();
+	private ArrayList<String> widgetsName = new ArrayList<String>();
 
 	public WidgetExtensionPointsData(GuiBuilderView guiBuilderView) {
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
@@ -26,26 +26,31 @@ public class WidgetExtensionPointsData {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for (IConfigurationElement c : confElements) {
 				try {
-					widgetImpl = (WidgetInCompositeImpl) c.createExecutableExtension("class");
-					widgetName = widgetImpl.getWidgetName();
-					// System.out.println("Name: " + o.getWidgetNames());
+					WidgetInCompositeImpl widgetImpl = (WidgetInCompositeImpl) c.createExecutableExtension("class");
+					widgetsName.add(widgetImpl.getWidgetName());
+					widgetsImpl.add(widgetImpl);
 				} catch (CoreException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		}
 	}
 
-	public String getWidgetName() {
-		return widgetName;
+	public ArrayList<String> getWidgetsName() {
+		return widgetsName;
 	}
 
-	public WidgetInCompositeImpl getWidgetImplementation() {
-		return widgetImpl;
+	public ArrayList<WidgetInCompositeImpl> getWidgetsImplementation() {
+		return widgetsImpl;
 	}
 
-	public List<String> getWidgetCode(CodeGenerator.CodeTarget target, String containerName, int count) {
-		return widgetImpl.generateWidgetCode(target, containerName, count);
+	public ArrayList<ArrayList<String>> getWidgetsCode(CodeGenerator.CodeTarget target, String containerName,
+			int count) {
+		ArrayList<ArrayList<String>> widgetsCode = new ArrayList<ArrayList<String>>();
+
+		for (int i = 0; i < widgetsImpl.size(); i++) {
+			widgetsCode.add(widgetsImpl.get(i).generateWidgetCode(target, containerName, count));
+		}
+		return widgetsCode;
 	}
 }

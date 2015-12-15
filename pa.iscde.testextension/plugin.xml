@@ -5,7 +5,14 @@
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
             class="pa.iscde.testextension.SuperSpinner"
-            name="WidgetExtension">
+            name="WidgetExtensionSuperSpinner">
+      </item>
+   </extension>
+   <extension
+         point="pt.iscte.pidesco.guibuilder.widget">
+      <item
+            class="pa.iscde.testextension.SuperSlider"
+            name="WidgetExtensionSuperSlider">
       </item>
    </extension>
 
