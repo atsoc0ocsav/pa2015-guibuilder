@@ -2,13 +2,13 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="widget" name="GuiBuilder Widget" schema="schema/widget.exsd"/>
-   <extension-point id="contextMenu" name="Elements ContextMenu" schema="schema/contextMenu.exsd"/>
+   <extension-point id="contextMenu" name="Context Menu Element" schema="schema/contextMenu.exsd"/>
    <extension
          id="guibuilder"
          name="GUI Builder"
          point="pt.iscte.pidesco.view">
       <view
-            class="pt.iscte.pidesco.guibuilder.ui.GuiBuilderView"
+            class="pa.iscde.guibuilder.ui.GuiBuilderView"
             icon="icon_gui.png">
       </view>
    </extension>

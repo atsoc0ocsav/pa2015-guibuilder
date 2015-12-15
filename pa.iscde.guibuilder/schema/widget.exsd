@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="pt.iscte.pidesco.guibuilder" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="pa.iscde.guibuilder" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="pt.iscte.pidesco.guibuilder" id="widget" name="GuiBuilder Widget"/>
+         <meta.schema plugin="pa.iscde.guibuilder" id="widget" name="GuiBuilder Widget"/>
       </appinfo>
       <documentation>
          [Add new widget]

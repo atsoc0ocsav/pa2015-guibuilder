@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="pt.iscte.pidesco.guibuilder" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="pa.iscde.guibuilder" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="pt.iscte.pidesco.guibuilder" id="contextMenu" name="Elements ContextMenu"/>
+         <meta.schema plugin="pa.iscde.guibuilder" id="contextMenu" name="Elements ContextMenu"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -57,13 +57,6 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPoint"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

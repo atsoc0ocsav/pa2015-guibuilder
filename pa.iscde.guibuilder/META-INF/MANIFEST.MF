@@ -12,13 +12,32 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.draw2d;bundle-version="3.10.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: pt.iscte.pidesco.guibuilder.codeGenerator,
- pt.iscte.pidesco.guibuilder.extensions,
- pt.iscte.pidesco.guibuilder.model,
- pt.iscte.pidesco.guibuilder.model.compositeContents,
- pt.iscte.pidesco.guibuilder.ui
+Export-Package: pa.iscde.guibuilder.codeGenerator;uses:="org.eclipse.swt.graphics,pa.iscde.guibuilder.model,pa.iscde.guibuilder.ui",
+ pa.iscde.guibuilder.extensions;
+  uses:="pa.iscde.guibuilder.codeGenerator,
+   org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets,
+   pa.iscde.guibuilder.model,
+   pa.iscde.guibuilder.ui,
+   pa.iscde.guibuilder.model.compositeContents",
+ pa.iscde.guibuilder.model;uses:="org.eclipse.swt.graphics,pa.iscde.guibuilder.ui,org.eclipse.draw2d",
+ pa.iscde.guibuilder.model.compositeContents;
+  uses:="org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets,
+   org.eclipse.draw2d,
+   pa.iscde.guibuilder.ui,
+   pa.iscde.guibuilder.model",
+ pa.iscde.guibuilder.ui;
+  uses:="org.eclipse.swt.graphics,
+   pa.iscde.guibuilder.extensions,
+   org.eclipse.swt.widgets,
+   pt.iscte.pidesco.extensibility,
+   org.eclipse.draw2d,
+   pa.iscde.guibuilder.model,
+   org.eclipse.draw2d.geometry,
+   pa.iscde.guibuilder.model.compositeContents"
 Import-Package: org.eclipse.jface.dialogs,
  org.eclipse.jface.viewers,
  org.eclipse.jface.window,
  org.eclipse.ui.dialogs
-Bundle-Activator: pt.iscte.pidesco.guibuilder.GuiBuilderActivator
+Bundle-Activator: pa.iscde.guibuilder.GuiBuilderActivator

@@ -2,17 +2,20 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         id="widgetExtensionSuperSpinner"
+         name="SuperSpinner"
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
-            class="pa.iscde.testextension.SuperSpinner"
-            name="WidgetExtensionSuperSpinner">
+            class="pa.iscde.guibuilder.rudiluis.SuperSpinner"
+            name="widgetExtensionSuperSpinner">
       </item>
    </extension>
    <extension
+         id="WidgetExtensionSuperSlider"
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
-            class="pa.iscde.testextension.SuperSlider"
-            name="WidgetExtensionSuperSlider">
+            class="pa.iscde.guibuilder.rudiluis.SuperSlider"
+            name="widgetExtensionSuperSlider">
       </item>
    </extension>
 
