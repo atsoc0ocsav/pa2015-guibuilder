@@ -71,22 +71,7 @@ public class SuperSlider extends WidgetInComposite {
 		ArrayList<String> code = new ArrayList<String>();
 		String elementName = VARIABLE_PREFIX + count;
 		code.add(elementName);
+		code.add("Falto ser implementada!!!! -> SuperSlider");
 		return code;
-	}
-	
-	public void setSliderMinimum(int sliderMinimum) {
-		this.sliderMinimum = sliderMinimum;
-	}
-	
-	public void setSliderMaximum(int sliderMaximum) {
-		this.sliderMaximum = sliderMaximum;
-	}
-	
-	public void setSliderIncrement(int sliderIncrement) {
-		this.sliderIncrement = sliderIncrement;
-	}
-	
-	public void setSliderSelection(int sliderSelection) {
-		this.sliderSelection = sliderSelection;
 	}
 }
