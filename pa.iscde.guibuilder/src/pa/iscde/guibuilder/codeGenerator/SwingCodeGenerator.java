@@ -32,7 +32,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 		}
 	}
 
-	private final String[] IMPORTS = { "javax.swing.*", "java.awt.Color" };
+	private final String[] IMPORTS = { "javax.swing.*", "java.awt.*" };
 	public final String CLASS_NAME = "SwingGUIWindow";
 	public final String JFRAME_NAME = "frame";
 	public int componentCount = -1;
