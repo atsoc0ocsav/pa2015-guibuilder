@@ -79,9 +79,11 @@ public class CodeGenerator {
 
 		depth++;
 
-		List<String> stringsInitialization = codeGenerator.generateInitialization(new String[] { canvas.getLabel(),
-				String.valueOf(canvas.getSize().x), String.valueOf(canvas.getSize().y) });
-		stringsInitialization.addAll(guiBuilderView.getContextMenuExtensionPointData().generateCommonCode(target));
+		List<String> stringsInitialization = codeGenerator
+				.generateInitialization(new String[] { canvas.getLabel(), String.valueOf(canvas.getSize().x),
+						String.valueOf(canvas.getSize().y), canvas.getActiveLayout().str() });
+		stringsInitialization.addAll(guiBuilderView.getContextMenuExtensionPointData().generateCommonCodeBegin(target,
+				stringsInitialization.get(0)));
 		for (int i = 1; i < stringsInitialization.size(); i++) {
 			code.add(generateDepthSpace() + stringsInitialization.get(i));
 		}
@@ -89,6 +91,12 @@ public class CodeGenerator {
 		List<String> objectsCode = generateObjects(rootContainer, stringsInitialization.get(0), target);
 		if (objectsCode != null)
 			code.addAll(objectsCode);
+
+		List<String> stringFinalization = guiBuilderView.getContextMenuExtensionPointData()
+				.generateCommonCodeEnd(target, stringsInitialization.get(0));
+		for (int i = 1; i < stringFinalization.size(); i++) {
+			code.add(generateDepthSpace() + stringFinalization.get(i));
+		}
 
 		depth--;
 		for (String s : codeGenerator.generateConstructorEnd()) {
@@ -161,7 +169,10 @@ public class CodeGenerator {
 					buffer.add(strings.get(i));
 				}
 
-				guiBuilderView.getContextMenuExtensionPointData().generateCodeForObject(target, o, strings.get(0));
+				for (String s : guiBuilderView.getContextMenuExtensionPointData().generateCodeForObject(target, o,
+						containerName, strings.get(0))) {
+					buffer.add(generateDepthSpace() + s);
+				}
 			}
 		}
 
@@ -230,7 +241,8 @@ public class CodeGenerator {
 		List<String> buffer = new ArrayList<String>();
 		ContainerInComposite component = (ContainerInComposite) object.getObjectInComposite();
 
-		List<String> containerCode = generator.generateContainer(component.getLocation(), component.getSize());
+		List<String> containerCode = generator.generateContainer(component.getLocation(), component.getSize(),
+				component.getActiveLayout());
 		buffer.add(containerCode.get(0));
 		buffer.add("");
 		for (int i = 1; i < containerCode.size(); i++) {
@@ -311,7 +323,7 @@ public class CodeGenerator {
 		ContainerInComposite component = (ContainerInComposite) object.getObjectInComposite();
 
 		List<String> containerCode = generator.generateContainer(containerName, component.getLocation(),
-				component.getSize());
+				component.getSize(), component.getActiveLayout());
 		buffer.add(containerCode.get(0));
 		buffer.add("");
 		for (int i = 1; i < containerCode.size(); i++) {

@@ -105,8 +105,8 @@ public class GuiBuilderView implements PidescoView {
 	public void createContents(final Composite viewArea, final Map<String, Image> imageMap) {
 		this.viewArea = viewArea;
 		this.imageMap = imageMap;
-		
-		shell=viewArea.getShell();
+
+		shell = viewArea.getShell();
 		objectFactory = new GuiBuilderObjFactory(this);
 
 		createBaseFrame();
@@ -687,8 +687,8 @@ public class GuiBuilderView implements PidescoView {
 	public ContextMenuExtensionPointData getContextMenuExtensionPointData() {
 		return contextMenuExtensionPointData;
 	}
-	
-	public Shell getShell(){
+
+	public Shell getShell() {
 		return shell;
 	}
 }

@@ -24,8 +24,6 @@ interface CodeGeneratorInterface {
 
 	public List<String> generateCheckBox(String[] parameters);
 
-	public List<String> generateAction(String[] parameters);
-
 	public List<String> generateContainer(String[] parameters);
 
 	public int getComponentCount();

@@ -59,8 +59,12 @@ public interface ContextMenuElement {
 	 * @throws UnsupportedOperationException
 	 *             in case the methods does not applies to this extension
 	 */
-	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object, String objectName)
+	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object,
+			String containerName, String objectName) throws UnsupportedOperationException;
+
+	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName)
 			throws UnsupportedOperationException;
 
-	public List<String> generateCommonCode(CodeTarget target) throws UnsupportedOperationException;
+	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName)
+			throws UnsupportedOperationException;
 }

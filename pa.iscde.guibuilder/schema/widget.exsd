@@ -62,7 +62,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="pa.iscde.guibuilder.extensions.WidgetInComposite:"/>
                </appinfo>
             </annotation>
          </attribute>

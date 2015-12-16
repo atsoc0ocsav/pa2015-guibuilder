@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":pt.iscte.pidesco.guibuilder.extensions.ContextMenuExtensionPoint"/>
+                  <meta.attribute kind="java" basedOn=":pa.iscde.guibuilder.extensions.ContextMenuElement"/>
                </appinfo>
             </annotation>
          </attribute>

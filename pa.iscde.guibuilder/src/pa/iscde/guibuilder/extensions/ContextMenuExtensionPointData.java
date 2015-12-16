@@ -63,17 +63,17 @@ public class ContextMenuExtensionPointData {
 	}
 
 	public List<String> generateCodeForObject(CodeGenerator.CodeTarget target, ObjectInCompositeContainer obj,
-			String variableName) {
+			String containerName, String variableName) {
 		List<String> code = new ArrayList<String>();
 		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
 			try {
-				s = c.generateCodeForObject(target, obj, variableName);
+				s = c.generateCodeForObject(target, obj, containerName, variableName);
 			} catch (UnsupportedOperationException e) {
 			}
 
-			if (s != null) {
+			if (s != null && !s.isEmpty()) {
 				code.addAll(s);
 			}
 		}
@@ -81,17 +81,36 @@ public class ContextMenuExtensionPointData {
 		return code;
 	}
 
-	public List<String> generateCommonCode(CodeGenerator.CodeTarget target) {
+	public List<String> generateCommonCodeBegin(CodeGenerator.CodeTarget target, String containerName) {
 		List<String> code = new ArrayList<String>();
 		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
 			try {
-				s = c.generateCommonCode(target);
+				s = c.generateCommonCodeBegin(target, containerName);
 			} catch (UnsupportedOperationException e) {
 			}
 
-			if (s != null) {
+			if (s != null && !s.isEmpty()) {
+				code.add("");
+				code.addAll(s);
+			}
+		}
+
+		return code;
+	}
+
+	public List<String> generateCommonCodeEnd(CodeGenerator.CodeTarget target, String containerName) {
+		List<String> code = new ArrayList<String>();
+		for (ContextMenuElement c : contextMenuItems) {
+			List<String> s = null;
+
+			try {
+				s = c.generateCommonCodeEnd(target, containerName);
+			} catch (UnsupportedOperationException e) {
+			}
+
+			if (s != null && !s.isEmpty()) {
 				code.add("");
 				code.addAll(s);
 			}

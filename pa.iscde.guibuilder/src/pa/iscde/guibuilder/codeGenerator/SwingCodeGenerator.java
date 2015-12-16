@@ -1,10 +1,14 @@
 package pa.iscde.guibuilder.codeGenerator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
+
+import pa.iscde.guibuilder.ui.GuiLabels;
+import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderLayout;
 
 class SwingCodeGenerator implements CodeGeneratorInterface {
 	public enum Element {
@@ -42,7 +46,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	public void increaseComponentCount() {
 		componentCount++;
 	}
-	
+
 	@Override
 	public int getAndIncreaseComponentCount() {
 		return (++componentCount);
@@ -53,13 +57,20 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	 */
 	// Elements code generation
 	@Override
-	public ArrayList<String> generateInitialization(String[] parameters) {
+	public List<String> generateInitialization(String[] parameters) {
 		Point dimension = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-		return generateFrame(parameters[0], dimension);
+
+		for (GUIBuilderLayout l : GUIBuilderLayout.values()) {
+			if (l.str().equals(parameters[3])) {
+				return generateFrame(parameters[0], dimension, l);
+			}
+		}
+
+		return new ArrayList<String>();
 	}
 
-	private ArrayList<String> generateFrame(String name, Point dimension) {
-		ArrayList<String> strings = new ArrayList<String>();
+	private List<String> generateFrame(String name, Point dimension, GuiLabels.GUIBuilderLayout layout) {
+		List<String> strings = new ArrayList<String>();
 
 		// TODO Layout
 		strings.add(JFRAME_NAME);
@@ -67,11 +78,20 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 		strings.add(JFRAME_NAME + ".setSize(" + dimension.x + "," + dimension.y + ");");
 		strings.add(JFRAME_NAME + ".setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);");
 
+		switch (layout) {
+		case ABSOLUTE:
+			strings.add(JFRAME_NAME + ".setLayout(null);");
+			break;
+		case FLOW:
+			strings.add(JFRAME_NAME + ".setLayout(new FlowLayout());");
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
+		}
 		return strings;
 	}
 
 	@Override
-	public ArrayList<String> generateButton(String[] parameters) {
+	public List<String> generateButton(String[] parameters) {
 		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
 		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
@@ -84,7 +104,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	}
 
 	@Override
-	public ArrayList<String> generateLabel(String[] parameters) {
+	public List<String> generateLabel(String[] parameters) {
 		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
 		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
@@ -97,7 +117,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	}
 
 	@Override
-	public ArrayList<String> generateTextField(String[] parameters) {
+	public List<String> generateTextField(String[] parameters) {
 		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
 		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
@@ -110,7 +130,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	}
 
 	@Override
-	public ArrayList<String> generateCheckBox(String[] parameters) {
+	public List<String> generateCheckBox(String[] parameters) {
 		Point location = new Point(Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 		Point dimension = new Point(Integer.parseInt(parameters[3]), Integer.parseInt(parameters[4]));
 		Color backgroundColor = new Color(Display.getDefault(), Integer.parseInt(parameters[6]),
@@ -123,54 +143,67 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	}
 
 	@Override
-	public ArrayList<String> generateContainer(String[] parameters) {
+	public List<String> generateContainer(String[] parameters) {
 		Point location = new Point(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]));
 		Point size = new Point(Integer.parseInt(parameters[2]), Integer.parseInt(parameters[3]));
 
-		// TODO Layout
+		for (GUIBuilderLayout l : GUIBuilderLayout.values()) {
+			if (l.str().equals(parameters[4])) {
+				return generateContainer(location, size, l);
+			}
+		}
 
-		return generateContainer(location, size);
+		return new ArrayList<String>();
 	}
 
-	public ArrayList<String> generateContainer(Point location, Point size) {
+	public List<String> generateContainer(Point location, Point size, GUIBuilderLayout layout) {
 		ArrayList<String> strings = new ArrayList<String>();
 		String elementName = Element.PANEL.getPrefix() + (++componentCount);
-
-		// TODO Layout
 
 		strings.add(elementName);
 		strings.add(Element.PANEL.getCode() + " " + elementName + " = new " + Element.PANEL.getCode() + "();");
 		strings.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
 		strings.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+
+		switch (layout) {
+		case ABSOLUTE:
+			strings.add(elementName + ".setLayout(null);");
+			break;
+		case FLOW:
+			strings.add(elementName + ".setLayout(new FlowLayout());");
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
+		}
+
 		return strings;
 	}
 
 	// Class start and end, constructor start and end, action listeners
 	@Override
-	public ArrayList<String> generateClassBegin() {
-		ArrayList<String> strings = new ArrayList<String>();
+	public List<String> generateClassBegin() {
+		List<String> strings = new ArrayList<String>();
 		strings.add(CLASS_NAME);
 		strings.add("public class " + CLASS_NAME + " {");
 		return strings;
 	}
 
 	@Override
-	public ArrayList<String> generateClassEnd() {
-		ArrayList<String> strings = new ArrayList<String>();
+	public List<String> generateClassEnd() {
+		List<String> strings = new ArrayList<String>();
 		strings.add("}");
 		return strings;
 	}
 
 	@Override
-	public ArrayList<String> generateConstructorBegin() {
-		ArrayList<String> strings = new ArrayList<String>();
+	public List<String> generateConstructorBegin() {
+		List<String> strings = new ArrayList<String>();
 		strings.add("public " + CLASS_NAME + "() {");
 		return strings;
 	}
 
 	@Override
-	public ArrayList<String> generateConstructorEnd() {
-		ArrayList<String> strings = new ArrayList<String>();
+	public List<String> generateConstructorEnd() {
+		List<String> strings = new ArrayList<String>();
 		strings.add("");
 		strings.add("\t" + JFRAME_NAME + ".setVisible(true);");
 		strings.add("}");
@@ -178,8 +211,8 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 	}
 
 	@Override
-	public ArrayList<String> generateImports() {
-		ArrayList<String> strings = new ArrayList<String>();
+	public List<String> generateImports() {
+		List<String> strings = new ArrayList<String>();
 
 		for (String s : IMPORTS) {
 			strings.add("import " + s + ";");
@@ -188,41 +221,35 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 		return strings;
 	}
 
-	@Override
-	public ArrayList<String> generateAction(String[] parameters) {
-		// TODO
-		return null;
-	}
-
 	/*
 	 * Elements code generators
 	 */
-	public ArrayList<String> generateButton(String text, Point location, Point size, boolean isEnabled,
+	public List<String> generateButton(String text, Point location, Point size, boolean isEnabled,
 			Color backgroundColor, Color foregroundColor) {
 		return generateComponentCode(Element.BTN, text, location, size, isEnabled, backgroundColor, foregroundColor);
 	}
 
-	public ArrayList<String> generateLabel(String text, Point location, Point size, boolean isEnabled,
-			Color backgroundColor, Color foregroundColor) {
+	public List<String> generateLabel(String text, Point location, Point size, boolean isEnabled, Color backgroundColor,
+			Color foregroundColor) {
 		return generateComponentCode(Element.LABEL, text, location, size, isEnabled, backgroundColor, foregroundColor);
 	}
 
-	public ArrayList<String> generateTextField(String text, Point location, Point size, boolean isEnabled,
+	public List<String> generateTextField(String text, Point location, Point size, boolean isEnabled,
 			Color backgroundColor, Color foregroundColor) {
 		return generateComponentCode(Element.TXT_FIELD, text, location, size, isEnabled, backgroundColor,
 				foregroundColor);
 	}
 
-	public ArrayList<String> generateCheckBox(String text, Point location, Point size, boolean isEnabled,
+	public List<String> generateCheckBox(String text, Point location, Point size, boolean isEnabled,
 			Color backgroundColor, Color foregroundColor) {
 		return generateComponentCode(Element.CHECK_BOX, text, location, size, isEnabled, backgroundColor,
 				foregroundColor);
 	}
 
-	public ArrayList<String> generateComponentCode(Element element, String text, Point location, Point size,
+	public List<String> generateComponentCode(Element element, String text, Point location, Point size,
 			boolean isEnabled, Color backgroundColor, Color foregroundColor) {
 		String elementName = element.getPrefix() + (++componentCount);
-		ArrayList<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<String>();
 
 		strings.add(elementName);
 		strings.add(element.getCode() + " " + elementName + " = new " + element.getCode() + "(\"" + text + "\");");
