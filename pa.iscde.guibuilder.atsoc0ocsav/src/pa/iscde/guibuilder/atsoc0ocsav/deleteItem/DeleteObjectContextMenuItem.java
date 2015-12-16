@@ -12,10 +12,12 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import pa.iscde.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pa.iscde.guibuilder.extensions.ContextMenuElement;
+import pa.iscde.guibuilder.model.ObjectInComposite;
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
-import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
+import pa.iscde.guibuilder.model.compositeContents.ComponentInComposite;
+import pa.iscde.guibuilder.model.compositeContents.ContainerInComposite;
+import pa.iscde.guibuilder.ui.FigureMoverResizer;
 import pa.iscde.guibuilder.ui.GuiBuilderView;
-import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 
 public class DeleteObjectContextMenuItem implements ContextMenuElement {
 	private final OBJECT_FAMILY[] accepts = { OBJECT_FAMILY.COMPONENTS, OBJECT_FAMILY.CONTAINERS };
@@ -46,6 +48,7 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 		deleteItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				ObjectInComposite object = obj.getObjectInComposite();
 
 				if (obj.hasChilds()) {
 					if (!MessageDialog.openConfirm(guiBuilderView.getTopCanvas().getShell(), MENU_ITEM_TEXT,
@@ -55,11 +58,16 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 				}
 
 				ObjectInCompositeContainer objectParent = obj.getParent();
-				if (obj.getObjectInComposite().getObjectFamily() == GUIBuilderObjectFamily.COMPONENTS) {
-					((ComponentInCompositeImpl) obj.getObjectInComposite()).getControl().dispose();
+				if (object instanceof ComponentInComposite) {
+					((ComponentInComposite) object).getControl().dispose();
+					((FigureMoverResizer) (((ComponentInComposite) object).getObjectMoverResizer())).getFigure()
+							.setVisible(false);
+				} else if (object instanceof ContainerInComposite) {
+					((FigureMoverResizer) (((ContainerInComposite) object).getObjectMoverResizer())).getFigure()
+							.setVisible(false);
 				}
 
-				obj.getObjectInComposite().getFigure().setVisible(false);
+				object.getFigure().setVisible(false);
 				objectParent.removeChild(obj);
 
 				guiBuilderView.getTopCanvas().update();

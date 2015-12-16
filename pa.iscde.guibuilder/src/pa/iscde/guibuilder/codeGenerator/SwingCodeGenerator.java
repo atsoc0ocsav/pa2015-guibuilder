@@ -84,6 +84,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 			break;
 		case FLOW:
 			strings.add(JFRAME_NAME + ".setLayout(new FlowLayout());");
+			break;
 		default:
 			throw new IllegalArgumentException("Switch case not defined!");
 		}
@@ -171,6 +172,7 @@ class SwingCodeGenerator implements CodeGeneratorInterface {
 			break;
 		case FLOW:
 			strings.add(elementName + ".setLayout(new FlowLayout());");
+			break;
 		default:
 			throw new IllegalArgumentException("Switch case not defined!");
 		}

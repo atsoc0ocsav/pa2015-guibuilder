@@ -90,6 +90,7 @@ class SWTCodeGenerator implements CodeGeneratorInterface {
 			break;
 		case FLOW:
 			strings.add(SHELL_NAME + ".setLayout(new FillLayout(SWT.HORIZONTAL));");
+			break;
 		default:
 			throw new IllegalArgumentException("Switch case not defined!");
 		}
@@ -167,13 +168,22 @@ class SWTCodeGenerator implements CodeGeneratorInterface {
 		List<String> strings = new ArrayList<String>();
 		String elementName = Element.COMPOSITE.getPrefix() + (++componentCount);
 
-		// TODO Layout
-
 		strings.add(elementName);
 		strings.add(Element.COMPOSITE.getCode() + " " + elementName + " = new " + Element.COMPOSITE.getCode() + "("
 				+ containerName + "," + Element.COMPOSITE.style + ");");
 		strings.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
 		strings.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+
+		switch (layout) {
+		case ABSOLUTE:
+			strings.add(elementName + ".setLayout(null);");
+			break;
+		case FLOW:
+			strings.add(elementName + ".setLayout(new FillLayout(SWT.HORIZONTAL));");
+			break;
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
+		}
 		return strings;
 	}
 

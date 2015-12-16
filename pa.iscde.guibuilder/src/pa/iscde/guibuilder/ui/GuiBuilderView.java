@@ -74,10 +74,11 @@ public class GuiBuilderView implements PidescoView {
 	private final String ADDED_OBJECT_MSG = "Added %s to canvas!";
 	public final String OUT_OF_BOUNDS_OBJECT_MSG = "Object %s dropped out of canvas!";
 	final String CHANGED_TITLE_MSG = "Changed window title to \"%s\"!";
-	private final String SET_LAYOUT = "Set %s on canvas!";
+	private final String SET_LAYOUT = "Set %s on %s!";
 	final String OVER_OBJECT_MSG = "Tried to drop %s over other object!";
 	final String TOO_BIG_OBJECT = "Object %s is too big for canvas!";
 	public final String GENERATED_CODE_FOR_TARGET = "Generated source code for %s target!";
+	private final String NO_CODE_TARGET_SELECTED = "No code target selected!";
 
 	/*
 	 * Variables
@@ -239,8 +240,13 @@ public class GuiBuilderView implements PidescoView {
 						case LAYOUTS:
 							for (GuiLabels.GUIBuilderLayout l : GuiLabels.GUIBuilderLayout.values()) {
 								if (l.str().equals(objectName)) {
-									((CanvasInComposite) rootComponent.getObjectInComposite()).setActiveLayout(l);
-									setMessage(SET_LAYOUT, objectName);
+									ObjectInCompositeContainer object = getContainerInPosition(position.x, position.y);
+									if (object.getObjectInComposite() instanceof CanvasInComposite) {
+										((CanvasInComposite) object.getObjectInComposite()).setActiveLayout(l);
+									} else if (object.getObjectInComposite() instanceof ContainerInComposite) {
+										((ContainerInComposite) object.getObjectInComposite()).setActiveLayout(l);
+									}
+									setMessage(SET_LAYOUT, l.str(), object.getId().split("\t")[0]);
 								}
 							}
 							break;
@@ -397,7 +403,8 @@ public class GuiBuilderView implements PidescoView {
 							public void widgetSelected(SelectionEvent e) {
 								Point position = topCanvas.getDisplay().map(topCanvas, null, new Point(x, y));
 								String inputText = new InputDialog(position.x, position.y, topComposite.getShell(),
-										SWT.BAR).open();
+										SWT.BAR, GuiLabels.DialogMenuLabel.RENAME.str(), "Please enter new name:")
+												.open();
 
 								if (inputText != null) {
 									if (object.getObjectInComposite() instanceof ComponentInComposite) {
@@ -451,18 +458,23 @@ public class GuiBuilderView implements PidescoView {
 								if (dialog.open() == Window.OK) {
 									Object[] result = dialog.getResult();
 
-									if (!DEBUG || (DEBUG && !result[0].equals("All targets"))) {
-										CodeGenerator.CodeTarget target = null;
-										for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
-											if (t.getTarget().equals(result[0])) {
-												target = t;
+									if (result.length != 0) {
+										if (!DEBUG || (DEBUG && !result[0].equals("All targets"))) {
+											CodeGenerator.CodeTarget target = null;
+											for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+												if (t.getTarget().equals(result[0])) {
+													target = t;
+												}
+											}
+											new CodeGenerator(target, rootComponent, GuiBuilderView.this)
+													.generateCode();
+										} else {
+											for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
+												new CodeGenerator(t, rootComponent, GuiBuilderView.this).generateCode();
 											}
 										}
-										new CodeGenerator(target, rootComponent, GuiBuilderView.this).generateCode();
 									} else {
-										for (CodeGenerator.CodeTarget t : CodeGenerator.CodeTarget.values()) {
-											new CodeGenerator(t, rootComponent, GuiBuilderView.this).generateCode();
-										}
+										setMessage(NO_CODE_TARGET_SELECTED);
 									}
 								}
 

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-class InputDialog extends Dialog {
+public class InputDialog extends Dialog {
 	private String message;
 	private String input;
 	private int positionX;
@@ -30,11 +30,16 @@ class InputDialog extends Dialog {
 	 */
 	public InputDialog(int positionX, int positionY, Shell parent, int style) {
 		// Let users override the default styles
+		this(positionX, positionY, parent, style, "Input Dialog", "Please enter a value:");
+	}
+
+	public InputDialog(int positionX, int positionY, Shell parent, int style, String text, String message) {
+		// Let users override the default styles
 		super(parent, style);
 		this.positionX = positionX;
 		this.positionY = positionY;
-		setText("Input Dialog");
-		setMessage("Please enter a value:");
+		setText(text);
+		setMessage(message);
 	}
 
 	/**

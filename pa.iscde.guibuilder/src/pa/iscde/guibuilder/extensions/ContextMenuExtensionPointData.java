@@ -74,6 +74,9 @@ public class ContextMenuExtensionPointData {
 			}
 
 			if (s != null && !s.isEmpty()) {
+				if (code.size() != 0) {
+					code.add("");
+				}
 				code.addAll(s);
 			}
 		}
@@ -92,7 +95,9 @@ public class ContextMenuExtensionPointData {
 			}
 
 			if (s != null && !s.isEmpty()) {
-				code.add("");
+				if (code.size() != 0) {
+					code.add("");
+				}
 				code.addAll(s);
 			}
 		}
@@ -111,7 +116,9 @@ public class ContextMenuExtensionPointData {
 			}
 
 			if (s != null && !s.isEmpty()) {
-				code.add("");
+				if (code.size() != 0) {
+					code.add("");
+				}
 				code.addAll(s);
 			}
 		}

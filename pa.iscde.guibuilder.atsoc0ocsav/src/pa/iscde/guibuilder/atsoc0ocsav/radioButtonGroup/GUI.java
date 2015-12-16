@@ -7,6 +7,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -17,6 +18,7 @@ import org.eclipse.swt.widgets.Label;
 
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 import pa.iscde.guibuilder.ui.GuiBuilderView;
+import pa.iscde.guibuilder.ui.InputDialog;
 
 public class GUI extends Dialog {
 	private final String ADDED_TO_BUTTON_GROUP = "Added %s to radio button group %d!";
@@ -36,8 +38,8 @@ public class GUI extends Dialog {
 		this.guiBuilderView = guiBuilderView;
 	}
 
-	protected Control createDialogArea(Composite parent) {
-		Composite container = (Composite) super.createDialogArea(parent);
+	protected Control createDialogArea(final Composite parent) {
+		final Composite container = (Composite) super.createDialogArea(parent);
 
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
@@ -46,7 +48,7 @@ public class GUI extends Dialog {
 		gridData.grabExcessVerticalSpace = true;
 
 		new Label(container, SWT.NONE).setText("Select group to include radio button:");
-		
+
 		comboBox = new Combo(container, SWT.READ_ONLY);
 		List<String> items = new ArrayList<String>();
 		items.add("None");
@@ -54,10 +56,11 @@ public class GUI extends Dialog {
 		RadioButtonGroupModel group = radioButtonGroups.getGroupByRadioButton(object);
 		int index = 0;
 		for (int i = 0; i < radioButtonGroups.getRadioButtonGroups().size(); i++) {
-			items.add("Group " + radioButtonGroups.getRadioButtonGroups().get(i).getID());
+			RadioButtonGroupModel g = radioButtonGroups.getRadioButtonGroups().get(i);
+			items.add("Group " + g.getID());
 
-			if (group != null && radioButtonGroups.getRadioButtonGroups().get(i).equals(group)) {
-				index = i + 1;
+			if (group != null && g.equals(group)) {
+				index = i;
 			}
 		}
 
@@ -69,6 +72,38 @@ public class GUI extends Dialog {
 		bottomButtons.setLayoutData(gridData);
 		bottomButtons.setLayout(new FillLayout());
 
+		final Button setTitle = new Button(bottomButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
+		setTitle.setText("Set group title");
+		setTitle.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Point position = e.display.map(parent, null, new Point(e.x, e.y));
+				String name = new InputDialog(position.x, position.y, container.getShell(), SWT.BAR).open();
+
+				if (name != null) {
+					int selectedIndex = comboBox.getSelectionIndex();
+					String selectedItem = comboBox.getItem(selectedIndex);
+					radioButtonGroups.getGroupByID(Integer.parseInt(selectedItem.split(" ")[1])).setText(name);
+					
+					List<String> items = new ArrayList<String>();
+					items.add("None");
+					for (int i = 0; i < radioButtonGroups.getRadioButtonGroups().size(); i++) {
+						RadioButtonGroupModel g = radioButtonGroups.getRadioButtonGroups().get(i);
+						items.add("Group " + g.getID() + (g.getText() != null ? " - " + g.getText() : ""));
+					}
+
+					comboBox.setItems(items.toArray(new String[items.size()]));
+					comboBox.select(selectedIndex);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		setTitle.setEnabled(false);
+		
 		Button addGroup = new Button(bottomButtons, SWT.CENTER | SWT.WRAP | SWT.PUSH);
 		addGroup.setText("Add group");
 		addGroup.addSelectionListener(new SelectionListener() {
@@ -79,23 +114,14 @@ public class GUI extends Dialog {
 
 				List<String> items = new ArrayList<String>();
 				items.add("None");
-				RadioButtonGroupModel group = radioButtonGroups.getGroupByRadioButton(object);
-				int index = -1;
 				for (int i = 0; i < radioButtonGroups.getRadioButtonGroups().size(); i++) {
-					items.add("Group " + radioButtonGroups.getRadioButtonGroups().get(i).getID());
-
-					if (group != null && radioButtonGroups.getRadioButtonGroups().get(i).equals(group)) {
-						index = i;
-					}
+					RadioButtonGroupModel g = radioButtonGroups.getRadioButtonGroups().get(i);
+					items.add("Group " + g.getID() + (g.getText() != null ? " - " + g.getText() : ""));
 				}
 
 				comboBox.setItems(items.toArray(new String[items.size()]));
-
-				if (index != -1) {
-					comboBox.select(index);
-				} else {
-					comboBox.select(items.size() - 1);
-				}
+				comboBox.select(items.size() - 1);
+				setTitle.setEnabled(true);
 			}
 
 			@Override
@@ -114,22 +140,32 @@ public class GUI extends Dialog {
 
 				List<String> items = new ArrayList<String>();
 				items.add("None");
-				RadioButtonGroupModel group = radioButtonGroups.getGroupByRadioButton(object);
-				int index = -1;
 				for (int i = 0; i < radioButtonGroups.getRadioButtonGroups().size(); i++) {
-					items.add("Group " + radioButtonGroups.getRadioButtonGroups().get(i).getID());
-
-					if (group != null && radioButtonGroups.getRadioButtonGroups().get(i).equals(group)) {
-						index = i;
-					}
+					RadioButtonGroupModel g = radioButtonGroups.getRadioButtonGroups().get(i);
+					items.add("Group " + g.getID() + (g.getText() != null ? " - " + g.getText() : ""));
 				}
 
 				comboBox.setItems(items.toArray(new String[items.size()]));
+				
+				if(items.size()==1){
+					setTitle.setEnabled(false);
+				}
+				comboBox.select(items.size() - 1);
+			}
 
-				if (index != -1) {
-					comboBox.select(index);
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		comboBox.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (comboBox.getSelectionIndex() == 0) {
+					setTitle.setEnabled(false);
 				} else {
-					comboBox.select(0);
+					setTitle.setEnabled(true);
 				}
 			}
 

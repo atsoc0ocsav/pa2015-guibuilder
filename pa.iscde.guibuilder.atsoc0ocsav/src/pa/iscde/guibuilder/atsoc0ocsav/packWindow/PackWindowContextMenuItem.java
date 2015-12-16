@@ -67,15 +67,17 @@ public class PackWindowContextMenuItem implements ContextMenuElement {
 	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName)
 			throws UnsupportedOperationException {
 		List<String> code = new ArrayList<String>();
-		switch (target) {
-		case SWING:
-			code.add(containerName + ".pack();");
-			break;
-		case SWT:
-			code.add(containerName + ".pack();");
-			break;
-		default:
-			throw new IllegalArgumentException("Switch case not defined!");
+		if (pack) {
+			switch (target) {
+			case SWING:
+				code.add(containerName + ".pack();");
+				break;
+			case SWT:
+				code.add(containerName + ".pack();");
+				break;
+			default:
+				throw new IllegalArgumentException("Switch case not defined!");
+			}
 		}
 
 		return code;

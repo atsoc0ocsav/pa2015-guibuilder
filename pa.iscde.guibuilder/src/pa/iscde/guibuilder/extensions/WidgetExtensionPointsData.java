@@ -64,7 +64,9 @@ public class WidgetExtensionPointsData {
 			List<String> c = w.generateWidgetCode(target, containerName, count);
 
 			if (c != null && !c.isEmpty()) {
-				code.add("");
+				if (code.size() != 0) {
+					code.add("");
+				}
 				code.addAll(c);
 			}
 		}

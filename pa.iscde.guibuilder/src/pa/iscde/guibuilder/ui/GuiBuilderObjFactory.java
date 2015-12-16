@@ -2,7 +2,6 @@ package pa.iscde.guibuilder.ui;
 
 import java.util.Map;
 
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -20,11 +19,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import pa.iscde.guibuilder.extensions.WidgetInComposite;
-import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 import pa.iscde.guibuilder.model.compositeContents.CanvasInComposite;
 import pa.iscde.guibuilder.model.compositeContents.ComponentInComposite;
 import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pa.iscde.guibuilder.model.compositeContents.ContainerInComposite;
+import pa.iscde.guibuilder.model.compositeContents.ContainerInCompositeImpl;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderContainer;
 
@@ -260,13 +259,6 @@ class GuiBuilderObjFactory {
 		}
 	}
 
-	public ObjectInCompositeContainer createLayoutFamilyObject(Point position, String cmpName, Canvas canvas,
-			Figure contents) {
-		// TODO Define graphical component
-		System.err.println("Method undefined");
-		return null;
-	}
-
 	public ContainerInComposite createContainerFamilyObject(GuiLabels.GUIBuilderContainer containerType, Point position,
 			Canvas canvas) {
 		switch (containerType) {
@@ -287,7 +279,7 @@ class GuiBuilderObjFactory {
 					FigureMoverResizer.Handle.values());
 			fmr.setControlMargin(BACKGND_MARGIN);
 
-			return new ContainerInComposite(GUIBuilderContainer.PANEL, container, fmr);
+			return new ContainerInCompositeImpl(GUIBuilderContainer.PANEL, container, fmr);
 		} else {
 			return null;
 		}

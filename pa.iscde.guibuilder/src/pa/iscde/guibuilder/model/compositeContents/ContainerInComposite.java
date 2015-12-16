@@ -1,56 +1,21 @@
 package pa.iscde.guibuilder.model.compositeContents;
 
-import org.eclipse.draw2d.Figure;
-import org.eclipse.swt.graphics.Point;
-
-import pa.iscde.guibuilder.model.ObjectInCompositeImpl;
+import pa.iscde.guibuilder.model.ObjectInComposite;
 import pa.iscde.guibuilder.ui.GuiLabels;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderContainer;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderLayout;
-import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderObjectFamily;
 import pa.iscde.guibuilder.ui.ObjectMoverResizer;
 
-public class ContainerInComposite extends ObjectInCompositeImpl {
-	private final GUIBuilderContainer containerType;
-	private ObjectMoverResizer objectMoverResizer;
-	public GUIBuilderLayout activeLayout;
-	private String text;
+public interface ContainerInComposite extends ObjectInComposite {
+	public ObjectMoverResizer getObjectMoverResizer();
 
-	public ContainerInComposite(GUIBuilderContainer containerType, Figure figure,
-			ObjectMoverResizer objectMoverResizer) {
-		super(GUIBuilderObjectFamily.CONTAINERS, new ContextMenuItem[] { ContextMenuItem.PLUGIN });
-		this.containerType = containerType;
-		this.figure = figure;
-		this.objectMoverResizer = objectMoverResizer;
+	public GUIBuilderContainer getContainerType();
 
-		super.size = new Point(figure.getSize().width, figure.getSize().height);
-		super.location = new Point(figure.getLocation().x, figure.getLocation().y);
+	public GuiLabels.GUIBuilderLayout getActiveLayout();
 
-		activeLayout = GUIBuilderLayout.ABSOLUTE;
-		text = "";
-	}
+	public void setActiveLayout(GUIBuilderLayout activeLayout);
 
-	public ObjectMoverResizer getObjectMoverResizer() {
-		return objectMoverResizer;
-	}
+	public void setText(String text);
 
-	public GUIBuilderContainer getContainerType() {
-		return containerType;
-	}
-
-	public GuiLabels.GUIBuilderLayout getActiveLayout() {
-		return activeLayout;
-	}
-
-	public void setActiveLayout(GUIBuilderLayout activeLayout) {
-		this.activeLayout = activeLayout;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public String getText() {
-		return text;
-	}
+	public String getText();
 }

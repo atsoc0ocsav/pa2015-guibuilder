@@ -82,10 +82,18 @@ public class CodeGenerator {
 		List<String> stringsInitialization = codeGenerator
 				.generateInitialization(new String[] { canvas.getLabel(), String.valueOf(canvas.getSize().x),
 						String.valueOf(canvas.getSize().y), canvas.getActiveLayout().str() });
-		stringsInitialization.addAll(guiBuilderView.getContextMenuExtensionPointData().generateCommonCodeBegin(target,
-				stringsInitialization.get(0)));
 		for (int i = 1; i < stringsInitialization.size(); i++) {
 			code.add(generateDepthSpace() + stringsInitialization.get(i));
+		}
+
+		List<String> list = guiBuilderView.getContextMenuExtensionPointData().generateCommonCodeBegin(target,
+				stringsInitialization.get(0));
+		if (list.size() > 0) {
+			code.add("");
+			code.add(generateDepthSpace() + "// Context Menu Plug-In code");
+			for (int i = 0; i < list.size(); i++) {
+				code.add(generateDepthSpace() + list.get(i));
+			}
 		}
 
 		List<String> objectsCode = generateObjects(rootContainer, stringsInitialization.get(0), target);
@@ -94,8 +102,12 @@ public class CodeGenerator {
 
 		List<String> stringFinalization = guiBuilderView.getContextMenuExtensionPointData()
 				.generateCommonCodeEnd(target, stringsInitialization.get(0));
-		for (int i = 1; i < stringFinalization.size(); i++) {
-			code.add(generateDepthSpace() + stringFinalization.get(i));
+		if (stringFinalization.size() > 0) {
+			code.add("");
+			code.add(generateDepthSpace() + "// Context Menu Plug-In code");
+			for (int i = 0; i < stringFinalization.size(); i++) {
+				code.add(generateDepthSpace() + stringFinalization.get(i));
+			}
 		}
 
 		depth--;
@@ -110,7 +122,6 @@ public class CodeGenerator {
 
 		File classFile = ClassFileGenerator.createFile(stringsClassBegin.get(0));
 		ClassFileGenerator.writeToFile(classFile, code);
-		// ClassFileGenerator.openFileInEditor(classFile);
 
 		guiBuilderView.setMessage(guiBuilderView.GENERATED_CODE_FOR_TARGET, target.getTarget());
 	}
@@ -169,9 +180,14 @@ public class CodeGenerator {
 					buffer.add(strings.get(i));
 				}
 
-				for (String s : guiBuilderView.getContextMenuExtensionPointData().generateCodeForObject(target, o,
-						containerName, strings.get(0))) {
-					buffer.add(generateDepthSpace() + s);
+				List<String> l = guiBuilderView.getContextMenuExtensionPointData().generateCodeForObject(target, o,
+						containerName, strings.get(0));
+				if (l.size() > 0) {
+					buffer.add("");
+					buffer.add(generateDepthSpace() + "// Context Menu Plug-In code");
+					for (String s : l) {
+						buffer.add(generateDepthSpace() + s);
+					}
 				}
 			}
 		}
@@ -193,6 +209,7 @@ public class CodeGenerator {
 
 			buffer.add(widgetCode.get(0));
 			buffer.add("");
+			buffer.add(generateDepthSpace() + "// Widget Plug-In code");
 			for (int i = 1; i < widgetCode.size(); i++) {
 				buffer.add(generateDepthSpace() + widgetCode.get(i));
 			}
@@ -276,6 +293,7 @@ public class CodeGenerator {
 
 			buffer.add(widgetCode.get(0));
 			buffer.add("");
+			buffer.add(generateDepthSpace() + "// Widget Plug-In code");
 			for (int i = 1; i < widgetCode.size(); i++) {
 				buffer.add(generateDepthSpace() + widgetCode.get(i));
 			}

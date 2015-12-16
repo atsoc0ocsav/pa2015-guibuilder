@@ -19,10 +19,10 @@ public class SuperSpinner extends WidgetInComposite {
 
 	private String nameSpinner = "Spinner Super";
 
-	private int minimum = 0;
-	private int maximum = 0;
-	private int selection = 0;
-	private int increment = 0;
+	private int sliderMinimum = 0;
+	private int sliderMaximum = 0;
+	private int sliderSelection = 0;
+	private int sliderIncrement = 0;
 
 	public SuperSpinner() {
 		super(new ContextMenuItem[] { ContextMenuItem.SET_COLOR, ContextMenuItem.PLUGIN });
@@ -53,10 +53,10 @@ public class SuperSpinner extends WidgetInComposite {
 		spinner.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		spinner.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
-		minimum = DEFAULT_MINIMUM;
-		maximum = DEFAULT_MAXIMUM;
-		selection = DEFAULT_SELECTION;
-		increment = DEFAULT_INCREMET;
+		sliderMinimum = DEFAULT_MINIMUM;
+		sliderMaximum = DEFAULT_MAXIMUM;
+		sliderSelection = DEFAULT_SELECTION;
+		sliderIncrement = DEFAULT_INCREMET;
 
 		this.control = spinner;
 		this.backgroundColor = spinner.getBackground();
@@ -72,9 +72,11 @@ public class SuperSpinner extends WidgetInComposite {
 		code.add(elementName);
 		switch (target) {
 		case SWING:
-			code.add("SpinnerModel " + elementName + " = new SpinnerNumberModel(" + selection + "," + minimum + ","
-					+ maximum + "," + increment + ");");
+			code.add("SpinnerModel " + elementName + " = new SpinnerNumberModel(" + sliderSelection + ","
+					+ sliderMinimum + "," + sliderMaximum + "," + sliderIncrement + ");");
 			code.add("JSpinner " + elementName + " = new JSpinner(" + elementName + ");");
+			code.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+			code.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
 			code.add(elementName + ".setBackground(new Color(" + backgroundColor.getRed() + ","
 					+ backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));");
 			code.add(elementName + ".setForeground(new Color(" + foregroundColor.getRed() + ","
@@ -82,10 +84,12 @@ public class SuperSpinner extends WidgetInComposite {
 			break;
 		case SWT:
 			code.add("Spinner " + elementName + " = new Spinner(" + containerName + ", SWT.BORDER);");
-			code.add(elementName + ".setMinimum(" + minimum + ");");
-			code.add(elementName + ".setMaximum(" + maximum + ");");
-			code.add(elementName + ".setSelection(" + selection + ");");
-			code.add(elementName + ".setIncrement(" + increment + ");");
+			code.add(elementName + ".setMinimum(" + sliderMinimum + ");");
+			code.add(elementName + ".setMaximum(" + sliderMaximum + ");");
+			code.add(elementName + ".setSelection(" + sliderSelection + ");");
+			code.add(elementName + ".setIncrement(" + sliderIncrement + ");");
+			code.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+			code.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
 			code.add(elementName + ".setBackground(new Color(Display.getCurrent()," + backgroundColor.getRed() + ","
 					+ backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));");
 			code.add(elementName + ".setForeground(new Color(Display.getCurrent()," + foregroundColor.getRed() + ","

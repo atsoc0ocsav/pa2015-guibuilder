@@ -8,7 +8,7 @@ import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 public class RadioButtonGroupModel {
 	private List<ObjectInCompositeContainer> radioButtons;
 	private int id;
-	private String text;
+	private String text=null;
 
 	public RadioButtonGroupModel(int id) {
 		this.id = id;

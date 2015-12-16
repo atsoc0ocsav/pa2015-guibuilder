@@ -70,8 +70,36 @@ public class SuperSlider extends WidgetInComposite {
 	public ArrayList<String> generateWidgetCode(CodeTarget target, String containerName, int count) {
 		ArrayList<String> code = new ArrayList<String>();
 		String elementName = VARIABLE_PREFIX + count;
+
 		code.add(elementName);
-		code.add("Falto ser implementada!!!! -> SuperSlider");
+		switch (target) {
+		case SWING:
+			code.add("JSlider " + elementName + " = new JSlider(" + sliderMinimum + "," + sliderMaximum + ","
+					+ sliderSelection + ");");
+			code.add(elementName + ".setValue(" + sliderSelection + ");");
+			code.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+			code.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+			code.add(elementName + ".setBackground(new Color(" + backgroundColor.getRed() + ","
+					+ backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));");
+			code.add(elementName + ".setForeground(new Color(" + foregroundColor.getRed() + ","
+					+ foregroundColor.getGreen() + "," + foregroundColor.getBlue() + "));");
+			break;
+		case SWT:
+			code.add("Slider " + elementName + " = new Slider(" + containerName + ", SWT.BORDER);");
+			code.add(elementName + ".setMinimum(" + sliderMinimum + ");");
+			code.add(elementName + ".setMaximum(" + sliderMaximum + ");");
+			code.add(elementName + ".setSelection(" + sliderSelection + ");");
+			code.add(elementName + ".setIncrement(" + sliderIncrement + ");");
+			code.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
+			code.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
+			code.add(elementName + ".setBackground(new Color(Display.getCurrent()," + backgroundColor.getRed() + ","
+					+ backgroundColor.getGreen() + "," + backgroundColor.getBlue() + "));");
+			code.add(elementName + ".setForeground(new Color(Display.getCurrent()," + foregroundColor.getRed() + ","
+					+ foregroundColor.getGreen() + "," + foregroundColor.getBlue() + "));");
+			break;
+		default:
+			throw new IllegalArgumentException("Switch case not defined!");
+		}
 		return code;
 	}
 }
