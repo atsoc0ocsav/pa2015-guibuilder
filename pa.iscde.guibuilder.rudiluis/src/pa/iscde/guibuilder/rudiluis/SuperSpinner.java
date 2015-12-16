@@ -72,9 +72,9 @@ public class SuperSpinner extends WidgetInComposite {
 		code.add(elementName);
 		switch (target) {
 		case SWING:
-			code.add("SpinnerModel " + elementName + " = new SpinnerNumberModel(" + sliderSelection + ","
+			code.add("SpinnerModel spinnerModel"+count+" = new SpinnerNumberModel(" + sliderSelection + ","
 					+ sliderMinimum + "," + sliderMaximum + "," + sliderIncrement + ");");
-			code.add("JSpinner " + elementName + " = new JSpinner(" + elementName + ");");
+			code.add("JSpinner " + elementName + " = new JSpinner(spinnerModel" + count + ");");
 			code.add(elementName + ".setLocation(" + location.x + "," + location.y + ");");
 			code.add(elementName + ".setSize(" + size.x + "," + size.y + ");");
 			code.add(elementName + ".setBackground(new Color(" + backgroundColor.getRed() + ","

@@ -10,10 +10,15 @@ import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 public abstract class WidgetInComposite extends ComponentInCompositeImpl {
+	
+	
 	public WidgetInComposite(ContextMenuItem[] contextMenuItems) {
 		super(GUIBuilderComponent.WIDGET, contextMenuItems);
 	}
-
+/**
+ * 
+ * @return
+ */
 	public abstract String getWidgetName();
 
 	public abstract void setWidgetName(String widgetName);
