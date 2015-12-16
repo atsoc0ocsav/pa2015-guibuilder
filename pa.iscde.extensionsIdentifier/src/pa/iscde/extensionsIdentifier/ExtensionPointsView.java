@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -26,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+
 import pt.iscte.pidesco.extensibility.PidescoView;
 
 public class ExtensionPointsView implements PidescoView {
@@ -80,18 +80,6 @@ public class ExtensionPointsView implements PidescoView {
 					String[] attributeNames = e.getAttributeNames();
 					for (String att : attributeNames) {
 						str.append(att + ": " + e.getAttribute(att) + "\n");
-
-						System.out.println("Att: " + att + "\t Content: " + e.getAttribute(att));
-					}
-					if (combo.getItem(combo.getSelectionIndex()).endsWith("textext")) {
-						ExtensionTestInterface o;
-						try {
-							o = (ExtensionTestInterface) e.createExecutableExtension("class");
-
-							System.out.println(o.getHelloWorld());
-						} catch (CoreException e1) {
-							System.err.println(e1.getMessage());
-						}
 					}
 				}
 
