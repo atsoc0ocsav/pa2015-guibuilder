@@ -12,6 +12,7 @@
    </extension>
    <extension
          id="WidgetExtensionSuperSlider"
+         name="SuperSlider"
          point="pt.iscte.pidesco.guibuilder.widget">
       <item
             class="pa.iscde.guibuilder.rudiluis.SuperSlider"

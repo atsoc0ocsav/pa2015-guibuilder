@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="guiBuilderContextMenuItems"
-         name="GUI Builder Context Menu Items"
+         name="GUIBuilder Context Menu Items"
          point="pt.iscte.pidesco.guibuilder.contextMenu">
       <item
             class="pa.iscde.guibuilder.atsoc0ocsav.deleteItem.DeleteObjectContextMenuItem"
@@ -12,6 +12,10 @@
       <item
             class="pa.iscde.guibuilder.atsoc0ocsav.radioButtonGroup.RadioButtonGroupContextMenuItem"
             description="Manage Radio buttons groups">
+      </item>
+      <item
+            class="pa.iscde.guibuilder.atsoc0ocsav.packWindow.PackWindowContextMenuItem"
+            description="Pack/ Unpack window">
       </item>
    </extension>
 

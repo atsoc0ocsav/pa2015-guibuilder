@@ -28,6 +28,7 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 		return Arrays.asList(accepts);
 	}
 
+	@Override
 	public boolean acceptsType(OBJECT_FAMILY o) {
 		for (OBJECT_FAMILY object : accepts) {
 			if (object.equals(o)) {
@@ -71,13 +72,20 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 	}
 
 	@Override
-	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object, String objectName)
+	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object,
+			String containerName, String objectName) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName)
 			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> generateCommonCode(CodeTarget target) throws UnsupportedOperationException {
+	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName)
+			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 }
