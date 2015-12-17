@@ -24,6 +24,8 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	 * ContextMenuItem.PLUGIN exemplo super(new ContextMenuItem[] {
 	 * ContextMenuItem.SET_COLOR, ContextMenuItem.PLUGIN });
 	 * 
+	 * Importante: É necessário retirar os argumentos do construtor da classe
+	 * 
 	 * @param contextMenuItems
 	 */
 
