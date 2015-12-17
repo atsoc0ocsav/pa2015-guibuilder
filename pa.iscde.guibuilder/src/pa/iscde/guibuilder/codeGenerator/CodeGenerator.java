@@ -207,13 +207,15 @@ public class CodeGenerator {
 			List<String> widgetCode = ((WidgetInComposite) object.getObjectInComposite()).generateWidgetCode(target,
 					containerName, generator.getAndIncreaseComponentCount());
 
-			buffer.add(widgetCode.get(0));
-			buffer.add("");
-			buffer.add(generateDepthSpace() + "// Widget Plug-In code");
-			for (int i = 1; i < widgetCode.size(); i++) {
-				buffer.add(generateDepthSpace() + widgetCode.get(i));
+			if (widgetCode != null && widgetCode.size() > 0) {
+				buffer.add(widgetCode.get(0));
+				buffer.add("");
+				buffer.add(generateDepthSpace() + "// Widget Plug-In code");
+				for (int i = 1; i < widgetCode.size(); i++) {
+					buffer.add(generateDepthSpace() + widgetCode.get(i));
+				}
+				buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode.get(0) + ");");
 			}
-			buffer.add(generateDepthSpace() + containerName + ".add(" + widgetCode.get(0) + ");");
 		} else {
 			String labelText = component.getText();
 			Control control = component.getControl();
@@ -291,11 +293,13 @@ public class CodeGenerator {
 			List<String> widgetCode = ((WidgetInComposite) object.getObjectInComposite()).generateWidgetCode(target,
 					containerName, generator.getAndIncreaseComponentCount());
 
-			buffer.add(widgetCode.get(0));
-			buffer.add("");
-			buffer.add(generateDepthSpace() + "// Widget Plug-In code");
-			for (int i = 1; i < widgetCode.size(); i++) {
-				buffer.add(generateDepthSpace() + widgetCode.get(i));
+			if (widgetCode != null && widgetCode.size() > 0) {
+				buffer.add(widgetCode.get(0));
+				buffer.add("");
+				buffer.add(generateDepthSpace() + "// Widget Plug-In code");
+				for (int i = 1; i < widgetCode.size(); i++) {
+					buffer.add(generateDepthSpace() + widgetCode.get(i));
+				}
 			}
 		} else {
 			String labelText = component.getText();

@@ -14,42 +14,38 @@ public class SuperProgressBar extends WidgetInComposite {
 	
 	private String widgetName = "Super Progress";
 
-	public SuperProgressBar(ContextMenuItem[] contextMenuItems) {
+	public SuperProgressBar() {
 		super(new ContextMenuItem[] { ContextMenuItem.SET_COLOR, ContextMenuItem.PLUGIN });
 	}
 
 	@Override
 	public String getWidgetName() {
-		// TODO Auto-generated method stub
 		return widgetName;
 	}
 
 	@Override
 	public void setWidgetName(String widgetName) {
-		// TODO Auto-generated method stub
 		this.widgetName = widgetName;
 	}
 
 	@Override
 	public void createWidget(Canvas canvas, Point location, Point size) {
-		// TODO Auto-generated method stub
 		this.location = location;
 		this.size = size;
 		
-		 ProgressBar pb = new ProgressBar(canvas, SWT.HORIZONTAL);
-	    pb.setMinimum(0);
-	    pb.setMaximum(100);
-	    pb.setSelection(50);
-	    pb.setBounds(10, 10, 200, 20);
-	    pb.setSize(size);
-	    pb.setLocation(location);
-	    pb.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-	    pb.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		control = new ProgressBar(canvas, SWT.HORIZONTAL);
+		((ProgressBar) control).setMinimum(0);
+		((ProgressBar) control).setMaximum(100);
+		((ProgressBar) control).setSelection(50);
+		((ProgressBar) control).setBounds(10, 10, 200, 20);
+		((ProgressBar) control).setSize(size);
+		((ProgressBar) control).setLocation(location);
+		((ProgressBar) control).setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		((ProgressBar) control).setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
-	    this.control = pb;
-	    this.backgroundColor = pb.getBackground();
-		this.foregroundColor = pb.getForeground();
-		this.enabled = pb.isEnabled();
+	    this.backgroundColor = control.getBackground();
+		this.foregroundColor = control.getForeground();
+		this.enabled = control.isEnabled();
 	}
 
 	@Override
