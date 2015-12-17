@@ -19,14 +19,5 @@
             name="widgetExtensionSuperSlider">
       </item>
    </extension>
-   <extension
-         id="WidgetExtensionSuperProgressBar"
-         name="SuperProgressBar"
-         point="pt.iscte.pidesco.guibuilder.widget">
-      <item
-            class="pa.iscde.guibuilder.rudiluis.SuperProgressBar"
-            name="widgetExtensionSuperProgressBar">
-      </item>
-   </extension>
 
 </plugin>
