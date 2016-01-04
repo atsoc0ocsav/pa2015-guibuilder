@@ -28,7 +28,8 @@ public interface ContextMenuElementCodeGenerator {
 	 * @param objectName
 	 *            is the variable name to be used in the generated code
 	 * @return a list containing the code lines to be added to the generated
-	 *         code
+	 *         code. In case there is no generated code, a null pointer or an
+	 *         empty list should be returned
 	 */
 	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object,
 			String containerName, String objectName);
@@ -46,7 +47,8 @@ public interface ContextMenuElementCodeGenerator {
 	 *            is the parent element that should be referenced, in case the
 	 *            selected target used hierarchical scheme (for instance SWT)
 	 * @return a list containing the code lines to be added to the generated
-	 *         code
+	 *         code. In case there is no generated code, a null pointer or an
+	 *         empty list should be returned
 	 */
 	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName);
 
@@ -63,7 +65,8 @@ public interface ContextMenuElementCodeGenerator {
 	 *            is the parent element that should be referenced, in case the
 	 *            selected target used hierarchical scheme (for instance SWT)
 	 * @return a list containing the code lines to be added to the generated
-	 *         code
+	 *         code. In case there is no generated code, a null pointer or an
+	 *         empty list should be returned
 	 */
 	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName);
 }
