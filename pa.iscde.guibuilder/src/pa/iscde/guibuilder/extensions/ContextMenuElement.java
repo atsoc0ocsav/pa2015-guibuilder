@@ -8,6 +8,7 @@ import pa.iscde.guibuilder.ui.GuiBuilderView;
 /**
  * Service containing the operations to be implemented by an extension to the
  * context menu extension point
+ * Two examples of use of this class can be found here: https://goo.gl/S154s9
  */
 public interface ContextMenuElement {
 	/**
@@ -21,7 +22,7 @@ public interface ContextMenuElement {
 	 * This methods allows for accessing if the context menu's element is
 	 * applicable to a specific object belonging to an object family
 	 * 
-	 * @param the
+	 * @param o is the
 	 *            object family to test
 	 * @return if this context menu element is applicable to the specified
 	 *         object family
@@ -35,9 +36,9 @@ public interface ContextMenuElement {
 	 * 
 	 * @param menu
 	 *            where to generate the menu item
-	 * @param object
+	 * @param obj is the object
 	 *            from where the menu was called
-	 * @param GUIBuilder's
+	 * @param guiBuilderView is the GUIBuilder's
 	 *            view, allowing access to numerous canvas elements namely the
 	 *            canvas and error messages
 	 */

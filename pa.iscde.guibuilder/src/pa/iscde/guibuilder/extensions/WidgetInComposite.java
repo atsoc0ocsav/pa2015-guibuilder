@@ -10,6 +10,8 @@ import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
 /**
+ * Service containing the operations to be implemented by an extension to the
+ * widget extension point
  * Two examples of use of this class can be found here: https://goo.gl/RNSFna
  */
 public abstract class WidgetInComposite extends ComponentInCompositeImpl {
@@ -20,7 +22,7 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	 * this class childs to call super constructor with the indication of which
 	 * context menu elements need/ have to be available
 	 * 
-	 * @param context
+	 * @param contextMenuItems is an array containing an indication of all context
 	 *            menu items to display in this widget
 	 */
 
@@ -39,7 +41,7 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	/**
 	 * Set the widget name displayed in the tab bar
 	 * 
-	 * @param name
+	 * @param widgetName
 	 *            to be displayed
 	 */
 
@@ -54,8 +56,7 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	 * 
 	 * @param canvas
 	 *            where widget will be created
-	 * @param widget
-	 *            location in canvas
+	 * @param location of the widget in canvas
 	 * @param size
 	 *            of the widget
 	 */
@@ -72,9 +73,8 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	 * the count. In the first line of generated code is then returned the used
 	 * variable name.
 	 * 
-	 * @param indication
-	 *            of the target for where to generate the code
-	 * @param parent
+	 * @param target for where to generate the code
+	 * @param containerName is the parent
 	 *            container to which the widget may refer, if needed
 	 * @param count
 	 *            value to be added to the used variables names
