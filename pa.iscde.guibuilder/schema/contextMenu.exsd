@@ -6,7 +6,7 @@
          <meta.schema plugin="pa.iscde.guibuilder" id="contextMenu" name="Elements ContextMenu"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         [This extension point allows for the programmer to create new context menu items to be displayed in the GUIBuilder, in specific component.]
       </documentation>
    </annotation>
 
@@ -83,7 +83,7 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         [There were developed three examples of use of this extension point, which can be found here https://goo.gl/S154s9]
       </documentation>
    </annotation>
 
@@ -92,7 +92,7 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Enter API information here.]
+         [There are two main interfaces that constitute this extension point: the first one named ContextMenuElement contains the generation of the context menu item itself, as well as the action that it should take in case of selection. In case the implemented extension generates lines of code to be included in the generated code, the implemented plugin should also implement the ContextMenuElementCodeGenerator, which contains the methods needed for code generation.]
       </documentation>
    </annotation>
 

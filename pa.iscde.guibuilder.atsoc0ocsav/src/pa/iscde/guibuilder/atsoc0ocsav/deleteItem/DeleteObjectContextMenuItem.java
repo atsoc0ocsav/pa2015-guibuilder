@@ -1,8 +1,5 @@
 package pa.iscde.guibuilder.atsoc0ocsav.deleteItem;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -10,7 +7,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import pa.iscde.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pa.iscde.guibuilder.extensions.ContextMenuElement;
 import pa.iscde.guibuilder.model.ObjectInComposite;
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
@@ -24,11 +20,6 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 	private final String DELETED_OBJECT_MSG = "Deleted %s from canvas!";
 	private final String MENU_ITEM_TEXT = "Delete Object";
 	private final String DELETE_OBJECT_CONFIRM_MSG = "This object has other objects inside. Do you want to continue?";
-
-	@Override
-	public List<OBJECT_FAMILY> getFilter() {
-		return Arrays.asList(accepts);
-	}
 
 	@Override
 	public boolean acceptsType(OBJECT_FAMILY o) {
@@ -77,23 +68,5 @@ public class DeleteObjectContextMenuItem implements ContextMenuElement {
 				guiBuilderView.setMessage(DELETED_OBJECT_MSG, obj.getId().split("\t")[0]);
 			}
 		});
-	}
-
-	@Override
-	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object,
-			String containerName, String objectName) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName)
-			throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName)
-			throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
 	}
 }

@@ -92,10 +92,10 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Implemented WidgetInterface, 
+         [Implement WidgetInterface, 
 Not necessary to define the location of widget, 
 getWidgetName() is the name to be shown in Tabbar,
-String[] generateCodeWidget(GeneratorCode.selectTarget target) the first element of the array must be the name of component and in SWT target code, the composite name must be defined with %s (which is later replaced by the correct name)]
+String[] generateCodeWidget(GeneratorCode.selectTarget target) the first element of the array must be the name of component]
       </documentation>
    </annotation>
 

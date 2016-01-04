@@ -68,16 +68,16 @@ public class ContextMenuExtensionPointData {
 		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
-			try {
-				s = c.generateCodeForObject(target, obj, containerName, variableName);
-			} catch (UnsupportedOperationException e) {
-			}
+			if (c instanceof ContextMenuElementCodeGenerator) {
+				s = ((ContextMenuElementCodeGenerator) c).generateCodeForObject(target, obj, containerName,
+						variableName);
 
-			if (s != null && !s.isEmpty()) {
-				if (code.size() != 0) {
-					code.add("");
+				if (s != null && !s.isEmpty()) {
+					if (code.size() != 0) {
+						code.add("");
+					}
+					code.addAll(s);
 				}
-				code.addAll(s);
 			}
 		}
 
@@ -89,16 +89,15 @@ public class ContextMenuExtensionPointData {
 		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
-			try {
-				s = c.generateCommonCodeBegin(target, containerName);
-			} catch (UnsupportedOperationException e) {
-			}
+			if (c instanceof ContextMenuElementCodeGenerator) {
+				s = ((ContextMenuElementCodeGenerator) c).generateCommonCodeBegin(target, containerName);
 
-			if (s != null && !s.isEmpty()) {
-				if (code.size() != 0) {
-					code.add("");
+				if (s != null && !s.isEmpty()) {
+					if (code.size() != 0) {
+						code.add("");
+					}
+					code.addAll(s);
 				}
-				code.addAll(s);
 			}
 		}
 
@@ -110,16 +109,15 @@ public class ContextMenuExtensionPointData {
 		for (ContextMenuElement c : contextMenuItems) {
 			List<String> s = null;
 
-			try {
-				s = c.generateCommonCodeEnd(target, containerName);
-			} catch (UnsupportedOperationException e) {
-			}
+			if (c instanceof ContextMenuElementCodeGenerator) {
+				s = ((ContextMenuElementCodeGenerator) c).generateCommonCodeEnd(target, containerName);
 
-			if (s != null && !s.isEmpty()) {
-				if (code.size() != 0) {
-					code.add("");
+				if (s != null && !s.isEmpty()) {
+					if (code.size() != 0) {
+						code.add("");
+					}
+					code.addAll(s);
 				}
-				code.addAll(s);
 			}
 		}
 

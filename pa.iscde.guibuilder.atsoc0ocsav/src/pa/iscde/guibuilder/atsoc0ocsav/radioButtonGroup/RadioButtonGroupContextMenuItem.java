@@ -1,7 +1,6 @@
 package pa.iscde.guibuilder.atsoc0ocsav.radioButtonGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -12,26 +11,20 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import pa.iscde.guibuilder.codeGenerator.CodeGenerator.CodeTarget;
 import pa.iscde.guibuilder.extensions.ContextMenuElement;
+import pa.iscde.guibuilder.extensions.ContextMenuElementCodeGenerator;
 import pa.iscde.guibuilder.model.ObjectInCompositeContainer;
 import pa.iscde.guibuilder.model.compositeContents.ComponentInComposite;
 import pa.iscde.guibuilder.ui.GuiBuilderView;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
-public class RadioButtonGroupContextMenuItem implements ContextMenuElement {
+public class RadioButtonGroupContextMenuItem implements ContextMenuElement, ContextMenuElementCodeGenerator {
 	private final OBJECT_FAMILY[] accepts = { OBJECT_FAMILY.COMPONENTS };
 	private final String MENU_ITEM_TEXT = "Add to radio button group...";
-
 	private final String VAR_NAME = "radioButtonGroup";
-
 	private RadioButtonGroupsContainer radioButtonGroups;
 
 	public RadioButtonGroupContextMenuItem() {
 		radioButtonGroups = new RadioButtonGroupsContainer();
-	}
-
-	@Override
-	public List<OBJECT_FAMILY> getFilter() {
-		return Arrays.asList(accepts);
 	}
 
 	public boolean acceptsType(OBJECT_FAMILY o) {
@@ -60,7 +53,7 @@ public class RadioButtonGroupContextMenuItem implements ContextMenuElement {
 
 	@Override
 	public List<String> generateCodeForObject(CodeTarget target, ObjectInCompositeContainer object,
-			String containerName, String objectName) throws UnsupportedOperationException {
+			String containerName, String objectName) {
 		List<String> code = new ArrayList<String>();
 		if (radioButtonGroups.getGroupByRadioButton(object) != null) {
 
@@ -81,8 +74,7 @@ public class RadioButtonGroupContextMenuItem implements ContextMenuElement {
 	}
 
 	@Override
-	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName)
-			throws UnsupportedOperationException {
+	public List<String> generateCommonCodeBegin(CodeTarget target, String containerName) {
 		List<String> code = new ArrayList<String>();
 		String elementName;
 
@@ -112,8 +104,7 @@ public class RadioButtonGroupContextMenuItem implements ContextMenuElement {
 	}
 
 	@Override
-	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName)
-			throws UnsupportedOperationException {
+	public List<String> generateCommonCodeEnd(CodeTarget target, String containerName) {
 		return null;
 	}
 }

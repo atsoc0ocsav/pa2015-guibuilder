@@ -1,6 +1,6 @@
 package pa.iscde.guibuilder.extensions;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
@@ -9,24 +9,19 @@ import pa.iscde.guibuilder.codeGenerator.CodeGenerator;
 import pa.iscde.guibuilder.model.compositeContents.ComponentInCompositeImpl;
 import pa.iscde.guibuilder.ui.GuiLabels.GUIBuilderComponent;
 
+/**
+ * Two examples of use of this class can be found here: https://goo.gl/RNSFna
+ */
 public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 
 	/**
-	 * Existe um exemplo de como usar esta classe em
-	 * https://github.com/atsoc0ocsav/pa2015-guibuilder/blob/master/pa.iscde.
-	 * guibuilder.rudiluis/src/pa/iscde/guibuilder/rudiluis/SuperSpinner.java
-	 */
-
-	/**
-	 * ContextMenuItem é um enumerado com as opcções disponíveis quando é usado
-	 * o botão direito do rato No construtor é necessário chamar o super com as
-	 * opcções desejadas, sendo o último elemento do array
-	 * ContextMenuItem.PLUGIN exemplo super(new ContextMenuItem[] {
-	 * ContextMenuItem.SET_COLOR, ContextMenuItem.PLUGIN });
+	 * Constructor for the widget. It receives an array containing all the
+	 * options that this widget accepts on a context menu. It is demanding for
+	 * this class childs to call super constructor with the indication of which
+	 * context menu elements need/ have to be available
 	 * 
-	 * Importante: É necessário retirar os argumentos do construtor da classe
-	 * 
-	 * @param contextMenuItems
+	 * @param context
+	 *            menu items to display in this widget
 	 */
 
 	public WidgetInComposite(ContextMenuItem[] contextMenuItems) {
@@ -34,46 +29,58 @@ public abstract class WidgetInComposite extends ComponentInCompositeImpl {
 	}
 
 	/**
-	 * Esta string será apresentada na TabBar
+	 * Returns the name that is being displayed in tab bar to refer to this
+	 * widget
 	 * 
-	 * @return nome do widget
+	 * @return displayed widget name
 	 */
 	public abstract String getWidgetName();
 
 	/**
-	 * Alterar o nome do widget apresentado no TabBar
+	 * Set the widget name displayed in the tab bar
 	 * 
-	 * @param widgetName
+	 * @param name
+	 *            to be displayed
 	 */
 
 	public abstract void setWidgetName(String widgetName);
 
 	/**
-	 * Este método serve para criar o widget sendo também necessário fazer o
-	 * update de variávies da super classe nomeadamente control, location, size,
-	 * backgroundColor, foregroundColor e enabled
+	 * Upon the call of this method, it should create the widget in the canvas
+	 * and in the indicated position. Don't forget to keep a copy of the
+	 * variables in the model (i.e. not only in the GUI component), being
+	 * therefore necessary to update super class values such as control,
+	 * location, size, backgroundColor, foreground color and enabled.
 	 * 
 	 * @param canvas
-	 * @param location
+	 *            where widget will be created
+	 * @param widget
+	 *            location in canvas
 	 * @param size
+	 *            of the widget
 	 */
 
 	public abstract void createWidget(Canvas canvas, Point location, Point size);
 
 	/**
-	 * The first line of generated code has to have the name of the widget
-	 * variable Tem que ser gerado o código para SWING e SWT
+	 * When GUIBuilder code generator is invoked, this method is therefore
+	 * called. It should generate the code lines for this widget, according to
+	 * the indicated code target. It is also important to take in note that some
+	 * code target may need for the widget to refer to a parent component, which
+	 * is also passed in this method. Finally, in the generated code for this
+	 * widget, the variables names should be composed of a static prefix plus
+	 * the count. In the first line of generated code is then returned the used
+	 * variable name.
 	 * 
-	 * @param target
-	 *            CodeGenerator.CodeTarget é um enumerado tendo como conteudo
-	 *            SWING e SWT
-	 * @param containerName
-	 *            é só para ser usado no contexto da geração de codigo para SWT, usado para definir um componente swt
+	 * @param indication
+	 *            of the target for where to generate the code
+	 * @param parent
+	 *            container to which the widget may refer, if needed
 	 * @param count
-	 *            esta variável tem que estar junta com a variável do widget
-	 * @return Lista com o código de um determinado target
+	 *            value to be added to the used variables names
+	 * @return list with the widget variable name in first place followed by the
+	 *         code lines
 	 */
 
-	public abstract ArrayList<String> generateWidgetCode(CodeGenerator.CodeTarget target, String containerName,
-			int count);
+	public abstract List<String> generateWidgetCode(CodeGenerator.CodeTarget target, String containerName, int count);
 }

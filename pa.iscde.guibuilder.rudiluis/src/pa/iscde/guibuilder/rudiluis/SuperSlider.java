@@ -1,6 +1,7 @@
 package pa.iscde.guibuilder.rudiluis;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -67,8 +68,8 @@ public class SuperSlider extends WidgetInComposite {
 	}
 
 	@Override
-	public ArrayList<String> generateWidgetCode(CodeTarget target, String containerName, int count) {
-		ArrayList<String> code = new ArrayList<String>();
+	public List<String> generateWidgetCode(CodeTarget target, String containerName, int count) {
+		List<String> code = new ArrayList<String>();
 		String elementName = VARIABLE_PREFIX + count;
 
 		code.add(elementName);
