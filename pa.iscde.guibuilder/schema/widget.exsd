@@ -92,7 +92,8 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Implement WidgetInterface, 
+         [Extends the WidgetInComposite class, 
+Important create the constructor with super information (see more in examples),
 Not necessary to define the location of widget, 
 getWidgetName() is the name to be shown in Tabbar,
 String[] generateCodeWidget(GeneratorCode.selectTarget target) the first element of the array must be the name of component]
